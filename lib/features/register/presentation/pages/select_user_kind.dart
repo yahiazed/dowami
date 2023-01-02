@@ -10,7 +10,6 @@ import 'package:dowami/features/terms/presentation/pages/privacy_policy_screen.d
 import 'package:dowami/features/terms/presentation/pages/terms_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -32,9 +31,7 @@ class SelectAccountKind extends StatelessWidget {
             elevation: 0,
             actions: [
               TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
+                  onPressed: () {Navigator.pop(context);},
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -43,7 +40,7 @@ class SelectAccountKind extends StatelessWidget {
                         style: taj14Blue().copyWith(
                             fontWeight: FontWeight.bold, color: Colors.black),
                       ),
-                      Icon(
+                      const Icon(
                         Icons.arrow_forward,
                         color: Colors.black,
                       )
@@ -57,26 +54,26 @@ class SelectAccountKind extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   RichText(
-                      text: TextSpan(children: [
+                      text: TextSpan(
+                        children: [
                     TextSpan(text: "WeToDawmi".tr(context), style: taj15Blue()),
-                    TextSpan(
-                        text: "Dawami".tr(context),
-                        style: taj15Blue().copyWith(color: Recolor.amberColor)),
-                  ])).paddingB(context, 0.02),
-                  RichText(
-                      text: TextSpan(children: [
-                    TextSpan(
-                        text: "Happy".tr(context), style: taj25BoldBlue2()),
-                    TextSpan(
-                        text: "join".tr(context) + '\t',
-                        style: taj25BoldBlue2()
-                            .copyWith(color: Recolor.amberColor)),
-                    TextSpan(text: "us".tr(context), style: taj25BoldBlue2()),
-                  ])).paddingB(context, 0.02),
-                  Text(
-                    'chooseAccount'.tr(context),
-                    style: taj16BoldBlue(),
+                    TextSpan(text: "Dawami".tr(context), style: taj15Blue().copyWith(color: Recolor.amberColor)),
+                        ],
+                      ),
                   ).paddingB(context, 0.02),
+
+                  RichText(
+                      text: TextSpan(
+                          children: [
+                    TextSpan(text: "Happy".tr(context), style: taj25BoldBlue2()),
+                    TextSpan(text: '${"join".tr(context)}\t', style: taj25BoldBlue2().copyWith(color: Recolor.amberColor),),
+                    TextSpan(text: "us".tr(context), style: taj25BoldBlue2()),
+
+                          ],
+                      ),
+                  ).paddingB(context, 0.02),
+                  Text(
+                    'chooseAccount'.tr(context), style: taj16BoldBlue(),).paddingB(context, 0.02),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [

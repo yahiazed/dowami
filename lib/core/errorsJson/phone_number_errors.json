@@ -1,0 +1,58 @@
+{
+    "status": false,
+    "message": "validation error",
+    "errors": {
+        "mobile": [
+            "mobile is already registered"
+        ]
+    }
+}
+
+{
+    "status": false,
+    "message": "validation error",
+    "errors": {
+        "mobile": [
+            "mobile is not valid"
+        ]
+    }
+}
+
+
+{
+    "success": "Success",
+    "code": 188760
+}
+
+
+
+
+{
+    "status": false,
+    "message": "validation error",
+    "errors": {
+        "national_id": [
+            "national id is not valid"
+        ]
+    }
+}
+
+{
+    "status": true,
+    "message": "User Created Successfully",
+    "token": "5|gvF9YOQBjmD2V34l422BsdrWqS6LH0tSJ5l6YB3O"
+}
+{
+    "status": false,
+    "message": "validation error",
+    "errors": {
+        "national_id": [
+            "national id is already registered"
+        ]
+    }
+}
+
+{
+    "status": true,
+    "errors": "User Not Found"
+}

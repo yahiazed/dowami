@@ -5,16 +5,13 @@ import 'package:flutter/services.dart';
 
 class AppLocalizations {
   final Locale? locale;
-  AppLocalizations({
-    this.locale,
-  });
+  AppLocalizations({this.locale,});
 
   static AppLocalizations? of(BuildContext context) {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate =
-      _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
 
   late Map<String, String> _localizedStrings;
 

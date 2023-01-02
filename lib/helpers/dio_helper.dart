@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../constant/strings/strings.dart';
 
@@ -8,6 +9,13 @@ abstract class DioHelper {
     required dynamic data,
     String token,
   });
+  Future<Response> postDataWithFile({
+    required String url,
+    required dynamic data,
+    String token,
+    required XFile xFile
+  });
+
 
   Future<Response> putData({
     required String url,
@@ -43,13 +51,15 @@ class DioHelperImpl implements DioHelper {
   }
 
   @override
-  Future<Response> postData(
-      {required String url, required data, String? token}) async {
+  Future<Response> postData({required String url, required data, String? token}) async {
     dio.options.headers = {
       //'lang': appLanguage,
       'Content-Type': 'application/json',
       'Authorization': token ?? '',
     };
+
+   try{}on DioError catch(e){print(e.toString());}
+
     return await dio.post(url, data: data);
   }
 
@@ -62,5 +72,30 @@ class DioHelperImpl implements DioHelper {
       'Authorization': token ?? '',
     };
     return await dio.put(url, data: data);
+  }
+
+  @override
+  Future<Response> postDataWithFile({required String url, required  data, String? token,required XFile xFile })async {
+
+  /*  dio.options.headers = {
+      //'lang': appLanguage,
+      'Content-Type': 'multipart/form-data',
+      'Authorization': token ?? '',
+
+    };*/
+var formData= FormData.fromMap(data);
+formData .files.add(MapEntry('avatar',MultipartFile .fromFileSync(xFile.path, filename: xFile.path.split('/').last)
+));
+
+    return await dio.post (
+        url,
+        data: formData,
+        options:Options(
+            contentType: 'multipart/form-data',
+            followRedirects: false,
+            validateStatus: (status) {
+              return status! < 500;
+            })
+    );
   }
 }

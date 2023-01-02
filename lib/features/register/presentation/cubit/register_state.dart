@@ -34,16 +34,20 @@ class SuccessSendOtpState extends RegisterState {
 }
 
 class ErrorSendOtpState extends RegisterState {
-  String errorMsg;
+ final String errorMsg;
 
-  ErrorSendOtpState({required this.errorMsg});
+  const ErrorSendOtpState({required this.errorMsg});
 }
 
 class TimeOutSendSmsCodeState extends RegisterState {}
 
 class StartTimeDownState extends RegisterState {}
 
-class SuccessCodeState extends RegisterState {}
+
+class SuccessCodeState extends RegisterState {
+  int userId;
+  SuccessCodeState({required this.userId});
+}
 
 class ErrorCodeState extends RegisterState {
   String errorMsg;
@@ -53,3 +57,26 @@ class ErrorCodeState extends RegisterState {
 }
 
 class EndTimeDownState extends RegisterState {}
+
+class StartPickImageState extends RegisterState {}
+class SuccessPickImageState extends RegisterState {
+  final File imageFile;
+   const SuccessPickImageState({required this.imageFile});
+}
+
+class ErrorPickImageState extends RegisterState {
+  final String errorMsg;
+
+  const ErrorPickImageState({required this.errorMsg});
+}
+
+
+class SuccessProfileDataState extends RegisterState {
+  final String token;
+  const SuccessProfileDataState({required this.token});
+}
+class ErrorProfileDataState extends RegisterState {
+  final String errorMsg;
+
+  const ErrorProfileDataState({required this.errorMsg});
+}

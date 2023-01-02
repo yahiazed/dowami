@@ -39,10 +39,12 @@ class RegisterStepTwoScreen extends StatelessWidget {
     return BlocConsumer<RegisterCubit, RegisterState>(
       listener: (context, state) {
         if (state is SuccessCodeState) {
+          RegisterCubit.get(context).userId=state.userId;
+          print( RegisterCubit.get(context).userId);
           navigateTo(context, AddPasswordScreen(phoneNumber: phoneNumber));
         }
         if (state is ErrorCodeState) {
-          showErrorToast(message: 'Invalid Code');
+          showErrorToast(message:state.errorMsg);
         }
       },
       builder: (context, state) {
@@ -86,8 +88,12 @@ class RegisterStepTwoScreen extends StatelessWidget {
       child: Center(
         child: RichText(
             text: TextSpan(children: [
-          TextSpan(text: 'أعد ارسال الرمز', style: taj14Blue()),
-          TextSpan(
+          TextSpan(text: 'أعد ارسال الرمز',
+              style: taj14Blue().copyWith(decoration:state is TimeOutSendSmsCodeState?TextDecoration.underline:TextDecoration.none )
+          ),
+              state is TimeOutSendSmsCodeState
+              ?const TextSpan():
+              TextSpan(
             text: '${RegisterCubit.get(context).second} ثانية',
             style: taj14Amber().copyWith(
                 decoration: state is TimeOutSendSmsCodeState

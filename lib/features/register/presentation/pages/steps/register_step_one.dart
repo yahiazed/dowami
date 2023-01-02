@@ -133,7 +133,7 @@ class RegisterStepOneScreen extends StatelessWidget {
         text: TextSpan(children: [
       TextSpan(text: "Happy".tr(context), style: taj25BoldBlue2()),
       TextSpan(
-          text: "join".tr(context) + '\t',
+          text: '${"join".tr(context)}\t',
           style: taj25BoldBlue2().copyWith(color: Recolor.amberColor)),
       TextSpan(text: "us".tr(context), style: taj25BoldBlue2()),
     ])).paddingB(context, 0.02);

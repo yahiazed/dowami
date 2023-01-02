@@ -5,6 +5,7 @@ import 'package:dowami/constant/shared_function/navigator.dart';
 import 'package:dowami/constant/shared_widgets/shard_elevated_button.dart';
 import 'package:dowami/constant/shared_widgets/shared_appbar.dart';
 import 'package:dowami/constant/shared_widgets/shared_card_input.dart';
+import 'package:dowami/constant/shared_widgets/toast.dart';
 import 'package:dowami/constant/text_style/text_style.dart';
 import 'package:dowami/features/register/presentation/cubit/register_cubit.dart';
 import 'package:dowami/features/terms/presentation/pages/privacy_policy_screen.dart';
@@ -16,7 +17,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../constant/shared_widgets/shared_accept_terms.dart';
+import '../../../data/models/user_model.dart';
 import 'captain/car_register_screen.dart';
+import 'register_final_screen.dart';
 
 class FillUserRegisterDataScreen extends StatelessWidget {
   String phoneNumber;
@@ -37,7 +40,17 @@ class FillUserRegisterDataScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isAcceptTerms = false;
     return BlocConsumer<RegisterCubit, RegisterState>(
-      listener: (context, state) {},
+      listener: (context, state) {
+
+        if(state is SuccessProfileDataState ){
+          print(state.token);
+          navigateTo(context,const RegisterFinalScreen());
+        }
+        if(state is ErrorProfileDataState){
+          showErrorToast(message: state.errorMsg);
+        }
+
+      },
       builder: (context, state) {
         var cubit = RegisterCubit.get(context);
         return Scaffold(
@@ -52,7 +65,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      _buildRow1(context, nameController),
+                      _buildRow1(context, nameController,cubit),
                       _buildRow2(context, fNameController, surNameController),
                       _buildRow3(context, emailController),
                       _buildRow4(context, nNumController),
@@ -77,13 +90,36 @@ class FillUserRegisterDataScreen extends StatelessWidget {
 
   Widget _buildButton(BuildContext context) {
     return sharedElevatedButton(
-      onPressed: () {
+      onPressed: ()async {
         if (registerDataFormKey.currentState!.validate()) {
           switch (RegisterCubit.get(context).userType) {
             case 'captain':
               navigateTo(context, CarRegisterScreen());
               break;
             case 'client':
+              var userModel=UserModel(
+                userId: RegisterCubit.get(context).userId,
+                birthDate: dateController.text,
+                nickName: surNameController.text,
+                fatherName: fNameController.text,
+                firstName: nameController.text,
+                 city: cityController.text,
+                area: regionController.text,
+                district: neighborhoodController.text,
+                gender: RegisterCubit.get(context).isMale?'Male':'Female',
+                nationalId: nNumController.text,
+               // avatar:  RegisterCubit.get(context).picked
+
+              );
+
+              try{
+                await RegisterCubit.get(context).sendCompleteProfileData(userModel: userModel);
+
+              }catch(e){}
+
+
+
+
               print('Client+++');
               break;
           }
@@ -167,6 +203,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
           controller: dateController,
           hintText: '?',
           keyboardType: TextInputType.none,
+          txtStyle: taj12RegGree(),
           onTap: () async {
             DateTime? pickedDate = await showDatePicker(
                 context: context,
@@ -187,15 +224,16 @@ class FillUserRegisterDataScreen extends StatelessWidget {
                   formattedDate; //set output date to TextField value.
               RegisterCubit.get(context).birthDate =
                   formattedDate; //set output date to TextField value.
-            } else {}
+            } else {debugPrint('null in date');}
           },
         )
             .roundWidget(
-                width: 0.30.widthX(context),
+                width: 0.3.widthX(context),
                 height: 0.035.heightX(context),
                 radius: 9)
             .cardAll(elevation: 7, radius: 10)
             .paddingSH(context, 0.02),
+
         Text("Gender".tr(context), style: taj12RegGreeHint())
             .paddingSH(context, 0.015),
         Row(
@@ -267,7 +305,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
     );
   }
 
-  Row _buildRow1(BuildContext context, TextEditingController nameController) {
+  Row _buildRow1(BuildContext context, TextEditingController nameController,RegisterCubit cubit) {
     return Row(
       children: [
         Expanded(
@@ -276,17 +314,38 @@ class FillUserRegisterDataScreen extends StatelessWidget {
               labelText: 'name'.tr(context),
               keyboardType: TextInputType.text),
         ),
-        Container(
-          width: 0.35.widthX(context),
-          height: 0.1.heightX(context),
-          decoration: BoxDecoration(
-              border: Border.all(color: Recolor.mainColor, width: 2),
-              color: Recolor.underLineColor,
-              shape: BoxShape.circle),
-          child: Icon(
-            Icons.camera_alt_outlined,
-            color: Recolor.mainColor,
-          ),
+        InkWell(
+          onTap: ()async{
+            await cubit.pickImageFromGallery();
+
+          },
+          child:  cubit.imageFile==null ? Container(
+            width: 0.35.widthX(context),
+            height: 0.1.heightX(context),
+            decoration: BoxDecoration(
+                border: Border.all(color: Recolor.mainColor, width: 2),
+                color: Recolor.underLineColor,
+                shape: BoxShape.circle,
+            ),
+              child: Icon(
+              Icons.camera_alt_outlined,
+              color: Recolor.mainColor,)
+          )
+
+
+          :
+          Container(
+            width: 0.35.widthX(context),
+            height: 0.1.heightX(context),
+            decoration: BoxDecoration(
+                border: Border.all(color: Recolor.mainColor, width: 2),
+                color: Recolor.underLineColor,
+                shape: BoxShape.circle,
+                image: DecorationImage(image:   FileImage(cubit.imageFile!),fit: BoxFit.contain,)
+            ),
+          )
+
+          ,
         )
       ],
     );

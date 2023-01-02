@@ -24,10 +24,8 @@ class SelectLog extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SvgPicture.asset(logo).sizeDown(context, 0.06),
-            Text('Welcome'.tr(context), style: taj14Blue())
-                .paddingB(context, 0.03),
-            Text('BeReady'.tr(context), style: taj19BoldBlue())
-                .paddingB(context, 0.03),
+            Text('Welcome'.tr(context), style: taj14Blue()).paddingB(context, 0.03),
+            Text('BeReady'.tr(context), style: taj19BoldBlue()).paddingB(context, 0.03),
             sharedElevatedButton(
                     onPressed: () {
                       navigateRep(context, LogInScreen());

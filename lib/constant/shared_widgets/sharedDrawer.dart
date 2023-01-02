@@ -13,7 +13,7 @@ Drawer sharedDrawer(BuildContext context,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadiusDirectional.only(
               bottomEnd: Radius.circular(30), topEnd: Radius.circular(30))),
-      shadowColor: Recolor.rowColor,
+     // shadowColor: Recolor.rowColor,
       child: Container(
         clipBehavior: Clip.antiAliasWithSaveLayer,
         decoration: const BoxDecoration(

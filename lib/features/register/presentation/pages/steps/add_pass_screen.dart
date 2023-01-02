@@ -6,20 +6,23 @@ import 'package:dowami/constant/shared_widgets/shared_card_input.dart';
 import 'package:dowami/constant/text_style/text_style.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../constant/shared_function/navigator.dart';
 import '../../../../../constant/shared_widgets/shard_elevated_button.dart';
+import '../../../../../constant/shared_widgets/toast.dart';
+import '../../cubit/register_cubit.dart';
 import 'fill_data_screen.dart';
 
 class AddPasswordScreen extends StatelessWidget {
   String phoneNumber;
 
   AddPasswordScreen({super.key, required this.phoneNumber});
-
+  TextEditingController passController = TextEditingController();
+  TextEditingController rePassController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    var passController = TextEditingController();
-    var rePassController = TextEditingController();
+
     return Scaffold(
       appBar: sharedAppBar(context),
       body: Center(
@@ -32,50 +35,66 @@ class AddPasswordScreen extends StatelessWidget {
         ),
       ),
     );
+
+
+
+
   }
 
-  Column _buildInputPassField(
+  Widget _buildInputPassField(
       BuildContext context,
       TextEditingController passController,
       TextEditingController rePassController) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        sharedCardInput(context,
-                controller: passController,
-                isPassword: true,
-                hintText: "enterPass".tr(context),
-                hintStyle: taj14MedGree(),
-                keyboardType: TextInputType.visiblePassword,
-                suffix: IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.remove_red_eye,
-                      color: Recolor.rowColor,
-                    )))
-            .roundWidget(
-                width: .9.widthX(context), height: 0.070.heightX(context))
-            .cardAll(
-                elevation: 12, radius: 7, shadowColor: const Color(0xffF6F6F6))
-            .paddingB(context, 0.02),
-        sharedCardInput(context,
-                controller: rePassController,
-                isPassword: true,
-                hintText: "erEnterPass".tr(context),
-                hintStyle: taj14MedGree(),
-                keyboardType: TextInputType.visiblePassword,
-                suffix: IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.remove_red_eye,
-                      color: Recolor.rowColor,
-                    )))
-            .roundWidget(
-                width: .9.widthX(context), height: 0.070.heightX(context))
-            .cardAll(
-                elevation: 12, radius: 7, shadowColor: const Color(0xffF6F6F6))
-            .paddingB(context, 0.04),
-      ],
+    bool showPass=false;
+    return StatefulBuilder(
+      builder: (context, setState)  {
+
+        return
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              sharedCardInput(context,
+                  controller: passController,
+                  isPassword: showPass,
+                  hintText: "enterPass".tr(context),
+                  hintStyle: taj14MedGree(),
+                  keyboardType: TextInputType.visiblePassword,
+                  suffix: IconButton(
+                      onPressed: () {
+                       setState((){showPass=!showPass;});
+                       print(showPass);
+                      },
+                      icon: Icon(
+                        Icons.remove_red_eye,
+                        color: Recolor.rowColor,
+                      )))
+                  .roundWidget(
+                  width: .9.widthX(context), height: 0.070.heightX(context))
+                  .cardAll(
+                  elevation: 12, radius: 7, shadowColor: const Color(0xffF6F6F6))
+                  .paddingB(context, 0.02),
+              sharedCardInput(context,
+                  controller: rePassController,
+                  isPassword: showPass,
+                  hintText: "erEnterPass".tr(context),
+                  hintStyle: taj14MedGree(),
+                  keyboardType:  TextInputType.visiblePassword,
+                  suffix: IconButton(
+                      onPressed: () {
+                        setState((){showPass=!showPass;});
+                        },
+                      icon: Icon(
+                        Icons.remove_red_eye,
+                        color: Recolor.rowColor,
+                      )))
+                  .roundWidget(
+                  width: .9.widthX(context), height: 0.070.heightX(context))
+                  .cardAll(
+                  elevation: 12, radius: 7, shadowColor: const Color(0xffF6F6F6))
+                  .paddingB(context, 0.04),
+            ],
+          );},
+
     );
   }
 
@@ -99,8 +118,20 @@ class AddPasswordScreen extends StatelessWidget {
       horizontalPadding: 0.15.widthX(context),
       textStyle: taj16BoldBlue().copyWith(color: Recolor.amberColor),
       onPressed: () {
-        navigateTo(
-            context, FillUserRegisterDataScreen(phoneNumber: phoneNumber));
+
+        if( passController.text==rePassController.text){
+          if( passController.text.isEmpty||rePassController.text.isEmpty){ showErrorToast(message:'enter passwords');return;}
+          BlocProvider.of<RegisterCubit>(context,listen: false).userPassword=passController.text;
+
+    navigateTo(context, FillUserRegisterDataScreen(phoneNumber: phoneNumber));
+        }
+
+
+        else {
+          showErrorToast(message:'passwords are no identical');return;
+
+        }
+
       },
     );
   }

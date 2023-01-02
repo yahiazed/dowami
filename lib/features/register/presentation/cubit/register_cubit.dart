@@ -1,12 +1,16 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:dowami/core/errors/failure.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../../constant/strings/failuer_string.dart';
+import '../../data/models/user_model.dart';
 import '../../data/repositories/repository.dart';
 
 part 'register_state.dart';
@@ -27,14 +31,21 @@ class RegisterCubit extends Cubit<RegisterState> {
   bool isCaptain = false;
   int second = 50;
   late Timer timer;
+  int userId=0;
 
 //step one
   sendOtp({required String phoneNum}) async {
     timerCutDown();
-    second = 60;
+    second = 6;
     final failureOrSmsCode = await repo.sendOtp(phone: phoneNum);
 
     emit(_mapFailureOrSmsCodeToState(failureOrSmsCode));
+  }
+  RegisterState _mapFailureOrSmsCodeToState(Either<Failure, int> either) {
+    return either.fold(
+          (failure) => ErrorSendOtpState(errorMsg: _mapFailureToMessage(failure)),
+          (code) => SuccessSendOtpState(smsCode: code),
+    );
   }
 
   //step two
@@ -44,19 +55,30 @@ class RegisterCubit extends Cubit<RegisterState> {
     emit(_mapFailureOrCodeTrueState(checkCode));
   }
 
-  RegisterState _mapFailureOrCodeTrueState(Either<Failure, Unit> either) {
+  RegisterState _mapFailureOrCodeTrueState(Either<Failure, int> either) {
     return either.fold(
       (failure) => ErrorCodeState(errorMsg: _mapFailureToMessage(failure)),
-      (unit) => SuccessCodeState(),
+      (userId) => SuccessCodeState(userId: userId),
     );
   }
 
-  RegisterState _mapFailureOrSmsCodeToState(Either<Failure, int> either) {
+  sendCompleteProfileData({required UserModel userModel})async{
+   final profileDataResponse= await repo.sendCompleteProfileData(
+      userModel: userModel,
+       xFile: picked!
+        );
+    emit(_mapFailureOrProfileDataState(profileDataResponse));
+
+  }
+  RegisterState _mapFailureOrProfileDataState(Either<Failure, String> either) {
     return either.fold(
-      (failure) => ErrorSendOtpState(errorMsg: _mapFailureToMessage(failure)),
-      (code) => SuccessSendOtpState(smsCode: code),
+          (failure) => ErrorProfileDataState(errorMsg: _mapFailureToMessage(failure)),
+          (token) => SuccessProfileDataState(token:token  ),
     );
   }
+
+
+
 
   String _mapFailureToMessage(Failure failure) {
     switch (failure.runtimeType) {
@@ -66,6 +88,16 @@ class RegisterCubit extends Cubit<RegisterState> {
         return EMPTY_CACHE_FAILURE_MESSAGE;
       case OfflineFailure:
         return OFFLINE_FAILURE_MESSAGE;
+      case PhoneNumberAlreadyRegisteredFailure:
+        return ALREADY_REGISTERED_FAILURE_MESSAGE;
+      case PhoneNumberNotValidFailure:
+        return VALID_PHONE_NUMBER_FAILURE_MESSAGE;
+        case InvalidCodeFailure:
+        return INVALID_CODE_FAILURE_MESSAGE;
+      case InvalidNationalIdFailure:
+        return INVALID_National_Id_MESSAGE;
+      case NationalIdAlreadyRegisteredFailure:
+        return National_Id_Already_Registered_MESSAGE;
       default:
         return "Unexpected Error , Please try again later .";
     }
@@ -97,14 +129,127 @@ class RegisterCubit extends Cubit<RegisterState> {
 
   void timerCutDown() {
     timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      emit(StartTimeDownState());
-      second--;
-      emit(EndTimeDownState());
-      if (second == 0) {
+    //  emit(StartTimeDownState());
+    //  second--;
+     // emit(EndTimeDownState());
+      if (second <= 0) {
         timer.cancel();
 
         emit(TimeOutSendSmsCodeState());
+      }else{
+        emit(StartTimeDownState());
+        second--;
+        emit(EndTimeDownState());
       }
     });
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+  List? images;
+
+  ImagePicker picker=ImagePicker();
+ // String? _imageUrl;
+  //String? get imageUrl=> _imageUrl;
+  File? imageFile;
+  XFile? picked;
+
+  bool uploading=false;
+
+  MultipartFile? imageMultipartFile;
+
+
+  Future<void>pickImageFromGallery()async{
+    emit(StartPickImageState());
+    try{
+      picked=await picker.pickImage(source: ImageSource.gallery);
+      imageFile=File(picked!.path);
+
+      debugPrint('image got');
+
+
+      imageMultipartFile=   MultipartFile.fromFileSync(imageFile!.path, filename:imageFile!.path.split('/').last);
+     // FormData formData = FormData.fromMap({"img": await MultipartFile.fromFile(imageFile!.path, filename:fileName)});
+      print(imageFile);
+      print(imageMultipartFile);
+      emit(SuccessPickImageState(imageFile: imageFile!));
+    }on Exception catch(e){
+      emit(const ErrorPickImageState(errorMsg: 'image not selected'));
+      debugPrint(e.toString());}
+
+
+  }
+
+
+  final _dio = Dio();
+
+
+/*  Future<bool>uploadImage({required String token, })async{
+
+    // photoLoc=Uri.file(picked!.path).pathSegments.last;
+
+     await pickImageFromGallery();
+
+    uploading=true;
+    if(imageFile==null){ uploading=false; return false;}
+
+    String fileName = imageFile!.path.split('/').last;
+    _dio.options.headers["Authorization"] = "Bearer $token";
+    MultipartFile i= await MultipartFile.fromFile(imageFile!.path, filename:fileName);
+    FormData formData = FormData.fromMap({"img": await MultipartFile.fromFile(imageFile!.path, filename:fileName)});
+
+
+    try{
+      Response response = await _dio.post(ApiData.uploadImage, data: formData);
+      debugPrint('image has been uploaded');
+      imageFile=null;
+      uploading=false;
+      await getImages(token: token);
+
+      return true;
+    }on Exception catch(e){
+      debugPrint('image upload error ');
+      debugPrint(e.toString());
+
+
+      imageFile=null;
+      uploading=false;
+      return false;
+    }
+
+
+  }*/
+
+  getImages({required String token})async{
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
