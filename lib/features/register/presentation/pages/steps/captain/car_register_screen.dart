@@ -17,7 +17,10 @@ import 'car_paper_screen.dart';
 
 class CarRegisterScreen extends StatelessWidget {
   CarRegisterScreen({super.key});
-  var companyController = TextEditingController();
+  var manufactureController = TextEditingController();
+  var vehicleNameController = TextEditingController();
+  var yearOfReleaseController = TextEditingController();
+  var plateNumberController = TextEditingController();
   var carRegisterFormKey = GlobalKey<FormState>();
 
   @override
@@ -39,16 +42,16 @@ class CarRegisterScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       sharedUnderLineInput(context,
-                          controller: companyController,
+                          controller: manufactureController,
                           labelText: 'Manufacture'.tr(context)),
                       sharedUnderLineInput(context,
-                          controller: companyController,
+                          controller: vehicleNameController,
                           labelText: 'Vehicle name'.tr(context)),
                       sharedUnderLineInput(context,
-                          controller: companyController,
+                          controller: yearOfReleaseController,
                           labelText: 'year of release'.tr(context)),
                       sharedUnderLineInput(context,
-                          controller: companyController,
+                          controller: plateNumberController,
                           labelText: 'Plate Number'.tr(context)),
                       _buildRowRentRadio(context, cubit),
                       _buildButtonAttach3CarPhoto(context),
@@ -63,6 +66,18 @@ class CarRegisterScreen extends StatelessWidget {
       },
     );
   }
+  Widget _buildTopTextColumn(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text("To Finish".tr(context), style: taj12MedBlue()),
+        Text("Enter car".tr(context), style: taj25BoldBlue()),
+        Text("desc Car".tr(context),
+            textAlign: TextAlign.center, style: taj11MedBlue()),
+      ],
+    ).paddingS(context, 0.1, 0.06);
+  }
+
 
   Widget _buildButtonNext(BuildContext context) {
     return sharedElevatedButton(
@@ -70,16 +85,10 @@ class CarRegisterScreen extends StatelessWidget {
           if (carRegisterFormKey.currentState!.validate()) {
             switch (RegisterCubit.get(context).isRent) {
               case true:
-                navigateTo(
-                    context,
-                    RegisterCarPaperScreen(
-                        isRent: RegisterCubit.get(context).isRent));
+                navigateTo(context,const RegisterCarPaperScreen());
                 break;
               case false:
-                navigateTo(
-                    context,
-                    RegisterCarPaperScreen(
-                        isRent: RegisterCubit.get(context).isRent));
+                navigateTo(context,const RegisterCarPaperScreen());
                 break;
             }
           }
@@ -92,20 +101,49 @@ class CarRegisterScreen extends StatelessWidget {
   }
 
   Widget _buildButtonAttach3CarPhoto(BuildContext context) {
-    return TextButton(
-        onPressed: () {},
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.camera_alt_outlined,
-              color: Recolor.mainColor,
-            ),
-            Text("Attach at least 3 photos, one of the inside".tr(context),
-                style: taj11MedBlue())
-          ],
-        )).paddingSV(context, 0.05);
+    return Column(
+      children: [
+        TextButton(
+            onPressed: ()async {
+
+             await BlocProvider.of<RegisterCubit>(context,listen: false).pickImageFromGallery(photoType: '');
+            },
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.camera_alt_outlined,
+                  color: Recolor.mainColor,
+                ),
+                Text("Attach at least 3 photos, one of the inside".tr(context),
+                    style: taj11MedBlue())
+              ],
+            )).paddingSV(context, 0.03),
+
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: BlocProvider.of<RegisterCubit>(context,listen: false).carImagesFiles.map((e) =>
+                Container(
+                  width: 0.90.widthX(context) * .15,
+                  height: .05.heightX(context),
+                  decoration: BoxDecoration(
+                    color: Recolor.txtGreyColor.withOpacity(.2),
+                    image: DecorationImage(
+                      image: FileImage(e),
+                      fit: BoxFit.fill
+                    )
+                  ),
+                ).paddingSH(context,.01)
+
+
+            ).toList(),
+          ),
+        )
+      ],
+    ).paddingB(context, 0.05);
   }
 
   Widget _buildRowRentRadio(BuildContext context, RegisterCubit cubit) {
@@ -139,15 +177,5 @@ class CarRegisterScreen extends StatelessWidget {
         onChanged: (value) => cubit.onChangedRadioRent(value));
   }
 
-  Widget _buildTopTextColumn(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text("To Finish".tr(context), style: taj12MedBlue()),
-        Text("Enter car".tr(context), style: taj25BoldBlue()),
-        Text("desc Car".tr(context),
-            textAlign: TextAlign.center, style: taj11MedBlue()),
-      ],
-    ).paddingS(context, 0.1, 0.06);
-  }
+
 }

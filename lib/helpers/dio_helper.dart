@@ -12,8 +12,8 @@ abstract class DioHelper {
   Future<Response> postDataWithFile({
     required String url,
     required dynamic data,
-    String token,
-    required XFile xFile
+    required XFile xFile,
+  required String name
   });
 
 
@@ -81,18 +81,28 @@ class DioHelperImpl implements DioHelper {
 
 
   @override
-  Future<Response> postDataWithFile({required String url, required  data, String? token,required XFile xFile })async {
+  Future<Response> postDataWithFile({required String url, required  data,required XFile xFile ,required String name })async {
 var formData= FormData.fromMap(data);
-formData .files.add(MapEntry('avatar',MultipartFile .fromFileSync(xFile.path, filename: xFile.path.split('/').last)));
+formData .files.add(MapEntry(name,MultipartFile .fromFileSync(xFile.path, filename: xFile.path.split('/').last)));
 
-    return await dio.post (
-        url,
-        data: formData,
-        options:Options(
-            contentType: 'multipart/form-data',
-            followRedirects: false,
-            //validateStatus: (status) {return status! < 500;}
-    )
-    );
+    return
+      await dio.post (url, data: formData, options:Options(contentType: 'multipart/form-data', followRedirects: false, //validateStatus: (status) {return status! < 500;}
+      ));
   }
 }
+
+
+
+
+
+/// to post data with file
+/// you must add file to formData
+/// the file must be in Xfile object
+/// name = the name of file variable
+/// formData .files.add(MapEntry(name,MultipartFile .fromFileSync(xFile.path, filename: xFile.path.split('/').last)));
+///await dio.post (url, data: formData, options:Options(contentType: 'multipart/form-data', followRedirects: false, //validateStatus: (status) {return status! < 500;}));
+
+
+
+
+

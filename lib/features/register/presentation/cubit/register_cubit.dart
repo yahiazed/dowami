@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:dowami/constant/shared_function/navigator.dart';
+import 'package:dowami/core/error_model.dart';
 import 'package:dowami/core/errors/failure.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -79,15 +80,15 @@ class RegisterCubit extends Cubit<RegisterState> {
 
    final profileDataResponse= await repo.sendCompleteProfileData(
       userModel: userModel,
-       xFile: picked!
+       xFile: avatarPicked!
         );
     emit(_mapFailureOrProfileDataState(profileDataResponse));
 
   }
   RegisterState _mapFailureOrProfileDataState(Either<Failure, String> either) {
     return either.fold(
-          (failure) => ErrorProfileDataState(errorMsg: _mapFailureToMessage(failure)),
-          (token) => SuccessProfileDataState(token:token  ),
+          (failure) => ErrorProfileDataState(errorMsg: _mapFailureToMessage(failure),errorModel: (failure as DioResponseFailure).errorModel!),
+          (token) {avatarImageFile=null;avatarPicked=null;return SuccessProfileDataState(token:token  );},
     );
   }
 
@@ -135,12 +136,8 @@ class RegisterCubit extends Cubit<RegisterState> {
 
   void timerCutDown() {
     timer = Timer.periodic(const Duration(seconds: 1), (_) {
-    //  emit(StartTimeDownState());
-    //  second--;
-     // emit(EndTimeDownState());
       if (second <= 0) {
         timer.cancel();
-
         emit(TimeOutSendSmsCodeState());
       }else{
         emit(StartTimeDownState());
@@ -151,28 +148,34 @@ class RegisterCubit extends Cubit<RegisterState> {
   }
 
 
-  getPermissions(context)async{
+    getPermissions(context)async{
+    ///emit start [1]
     emit(StartPermissionsLocationState());
     bool serviceEnabled;
     LocationPermission permission;
-
-
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {return Future.error('Location services are disabled.');}
+    if (!serviceEnabled) {
+                            emit( const ErrorPermissionsLocationState(errorMsg:'Location services are disabled.' ));
+                           // return Future.error('Location services are disabled.');
+      }
 
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {return Future.error('Location permissions are denied');}
+              permission = await Geolocator.requestPermission();
+                    if (permission == LocationPermission.denied) {
+                                                          emit( const ErrorPermissionsLocationState(errorMsg:'Location permissions are denied' ));
+                                                          return Future.error('Location permissions are denied');}
     }
 
-    if (permission == LocationPermission.deniedForever) {return Future.error('Location permissions are permanently denied, we cannot request permissions.');}
+    if (permission == LocationPermission.deniedForever) {
+                                                          emit( const ErrorPermissionsLocationState(errorMsg:'Location permissions are permanently denied, we cannot request permissions.' ));
+                                                          return Future.error('Location permissions are permanently denied, we cannot request permissions.');}
 
 
 
 
 
-    emit(const SuccessPermissionsLocationState());
+    emit( SuccessPermissionsLocationState());
 
   }
 
@@ -190,25 +193,77 @@ class RegisterCubit extends Cubit<RegisterState> {
 
 
   ImagePicker picker=ImagePicker();
-  File? imageFile;
-  XFile? picked;
-  MultipartFile? imageMultipartFile;
 
-  Future<void>pickImageFromGallery()async{
+ // MultipartFile? imageMultipartFile;
+
+  File? avatarImageFile;
+  XFile? avatarPicked;
+
+  List<File>carImagesFiles=[];
+  List<XFile>carPicked=[];
+
+  File? personalLicenseImageFile;
+  XFile? personalLicensePicked;
+
+  File? driveLicenseImageFile;
+  XFile? driveLicensePicked;
+
+  File? carLicenseOrDocImageFile;
+  XFile? carLicenseOrDocPicked;
+
+  Future<void>pickImageFromGallery({required String photoType})async{
     emit(StartPickImageState());
     try{
-      picked=await picker.pickImage(source: ImageSource.gallery);
-      imageFile=File(picked!.path);
-      debugPrint('image got');
-      imageMultipartFile=   MultipartFile.fromFileSync(imageFile!.path, filename:imageFile!.path.split('/').last);
+
+      switch(photoType){
+
+        case 'avatar':
+          avatarPicked=await picker.pickImage(source: ImageSource.gallery);
+          avatarImageFile=File(avatarPicked!.path);
+          emit(SuccessPickImageState(imageFile: avatarImageFile!,imagesFiles: carImagesFiles));
+          break;
+
+        case 'personalLicense':
+          personalLicensePicked=await picker.pickImage(source: ImageSource.gallery);
+          personalLicenseImageFile=File(personalLicensePicked!.path);
+          emit(SuccessPickImageState(imageFile: personalLicenseImageFile!,imagesFiles: carImagesFiles));
+          break;
+
+        case 'driveLicense':
+          driveLicensePicked=await picker.pickImage(source: ImageSource.gallery);
+          driveLicenseImageFile=File(driveLicensePicked!.path);
+          emit(SuccessPickImageState(imageFile: driveLicenseImageFile!,imagesFiles: carImagesFiles));
+          break;
+
+        case 'carLicenseOrDoc':
+          carLicenseOrDocPicked=await picker.pickImage(source: ImageSource.gallery);
+          carLicenseOrDocImageFile=File(carLicenseOrDocPicked!.path);
+          emit(SuccessPickImageState(imageFile: carLicenseOrDocImageFile!,imagesFiles: carImagesFiles,));
+          break;
+
+        default:
+          carPicked=await picker.pickMultiImage();
+          carImagesFiles=carPicked.map((e) =>File(e.path) ).toList();
+          emit(SuccessPickImageState(imageFile: carImagesFiles.first,imagesFiles: carImagesFiles));
+
+
+      }
+       debugPrint('image got');
+      //imageMultipartFile=   MultipartFile.fromFileSync(imageFile!.path, filename:imageFile!.path.split('/').last);
      // FormData formData = FormData.fromMap({"img": await MultipartFile.fromFile(imageFile!.path, filename:fileName)});
-      emit(SuccessPickImageState(imageFile: imageFile!));
     }on Exception catch(e){
       emit(const ErrorPickImageState(errorMsg: 'image not selected'));
       debugPrint(e.toString());}
 
 
   }
+
+
+
+
+
+
+
 
 
 

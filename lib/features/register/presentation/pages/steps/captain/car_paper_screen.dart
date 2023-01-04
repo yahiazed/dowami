@@ -17,42 +17,29 @@ import '../../../../../terms/presentation/pages/privacy_policy_screen.dart';
 import '../../../../../terms/presentation/pages/terms_screen.dart';
 
 class RegisterCarPaperScreen extends StatelessWidget {
-  final bool isRent;
-  const RegisterCarPaperScreen({super.key, required this.isRent});
+
+  const RegisterCarPaperScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<RegisterCubit, RegisterState>(
       listener: (context, state) {},
       builder: (context, state) {
+        var cubit=RegisterCubit.get(context);
         return Scaffold(
           appBar: sharedAppBar(context),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               _buildTopTextColumn(context),
-              _buildUploadCarImageInkwell(
-                  onTap: () {},
-                  context: context,
-                  hint: "IdCardCopy",
-                  color: Recolor.onlineColor),
-              _buildUploadCarImageInkwell(
-                  onTap: () {},
-                  context: context,
-                  hint: "DriverLicense",
-                  color: Recolor.amberColor),
-              if (!isRent)
-                _buildUploadCarImageInkwell(
-                    onTap: () {},
-                    context: context,
-                    hint: "car registration form",
-                    color: Recolor.txtRefuseColor),
-              if (isRent)
-                _buildUploadCarImageInkwell(
-                    onTap: () {},
-                    context: context,
-                    hint: "A copy of the authorization",
-                    color: Recolor.txtRefuseColor),
+
+              _buildIdLicenseInkwell(context: context,cubit:cubit),
+              _buildDriveLicenseInkwell(context: context,cubit:cubit),
+
+              cubit.isRent?
+              _buildAuthLicenseInkwell(context: context,cubit:cubit)
+              : _buildCarLicenseInkwell(context: context,cubit:cubit),
+
               _buildTotalRowOperationColor(context),
               buildAcceptsTermsRow(
                   RegisterCubit.get(context).isAcceptTerms, context),
@@ -73,24 +60,193 @@ class RegisterCarPaperScreen extends StatelessWidget {
     );
   }
 
+
+  Widget _buildTopTextColumn(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text("To Finish".tr(context), style: taj12MedBlue()),
+        Text("Attach Paper".tr(context), style: taj25BoldBlue()),
+        Text("BeSurePaper".tr(context), textAlign: TextAlign.center, style: taj11MedBlue()),
+      ],
+    ).paddingS(context, 0.1, 0.06);
+  }
+
+
+
+
+
+  InkWell _buildIdLicenseInkwell({required BuildContext context,required RegisterCubit cubit}) {
+    return InkWell(
+      onTap: ()async{
+        await cubit.pickImageFromGallery(photoType: 'personalLicense');
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Padding(
+            padding:
+            EdgeInsetsDirectional.only(start: 0.90.widthX(context) * .1),
+            child: Text("IdCardCopy".tr(context), style: taj12RegGree()),
+          ),
+          Container(
+            width: 0.90.widthX(context) * .2,
+            height: .05.heightX(context),
+
+            decoration:
+            cubit.personalLicenseImageFile==null
+                ? const BoxDecoration()
+                :BoxDecoration(
+              image:  DecorationImage(image:   FileImage(cubit.personalLicenseImageFile!),fit: BoxFit.contain,)
+            )
+            ,
+          ),
+          Container(
+            width: 0.90.widthX(context) * .1,
+            height: .08.heightX(context),
+            color: Recolor.onlineColor,
+          )
+        ],
+      )
+          .roundWidget(
+          width: 0.90.widthX(context), height: 0.08.heightX(context))
+          .cardAll(cardColor: Recolor.whiteColor, elevation: 9, radius: 9)
+          .paddingB(context, 0.02),
+    );
+  }
+  InkWell _buildDriveLicenseInkwell({required BuildContext context,required RegisterCubit cubit}) {
+    return InkWell(
+      onTap: ()async{
+        await cubit.pickImageFromGallery(photoType: 'driveLicense');
+
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Padding(
+            padding:
+            EdgeInsetsDirectional.only(start: 0.90.widthX(context) * .1),
+            child: Text("DriverLicense".tr(context), style: taj12RegGree()),
+          ),
+          Container(
+            width: 0.90.widthX(context) * .2,
+            height: .05.heightX(context),
+
+            decoration:
+            cubit.driveLicenseImageFile==null
+                ? const BoxDecoration()
+                :BoxDecoration(
+                image:  DecorationImage(image:   FileImage(cubit.driveLicenseImageFile!),fit: BoxFit.contain,)
+            )
+            ,
+          ),
+          Container(
+            width: 0.90.widthX(context) * .1,
+            height: .08.heightX(context),
+            color: Recolor.amberColor,
+          )
+        ],
+      )
+          .roundWidget(
+          width: 0.90.widthX(context), height: 0.08.heightX(context))
+          .cardAll(cardColor: Recolor.whiteColor, elevation: 9, radius: 9)
+          .paddingB(context, 0.02),
+    );
+  }
+  InkWell _buildCarLicenseInkwell({required BuildContext context,required RegisterCubit cubit}) {
+    return InkWell(
+      onTap: ()async{
+        await cubit.pickImageFromGallery(photoType: 'carLicenseOrDoc');
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Padding(
+            padding:
+            EdgeInsetsDirectional.only(start: 0.90.widthX(context) * .1),
+            child: Text("car registration form".tr(context), style: taj12RegGree()),
+          ),
+          Container(
+            width: 0.90.widthX(context) * .2,
+            height: .05.heightX(context),
+
+            decoration:
+            cubit.carLicenseOrDocImageFile==null
+                ? const BoxDecoration()
+                :BoxDecoration(
+                image:  DecorationImage(image:   FileImage(cubit.carLicenseOrDocImageFile!),fit: BoxFit.contain,)
+            )
+            ,
+          ),
+          Container(
+            width: 0.90.widthX(context) * .1,
+            height: .08.heightX(context),
+            color: Recolor.txtRefuseColor,
+          )
+        ],
+      )
+          .roundWidget(
+          width: 0.90.widthX(context), height: 0.08.heightX(context))
+          .cardAll(cardColor: Recolor.whiteColor, elevation: 9, radius: 9)
+          .paddingB(context, 0.02),
+    );
+  }
+  InkWell _buildAuthLicenseInkwell({required BuildContext context,required RegisterCubit cubit}) {
+    return InkWell(
+      onTap: ()async{
+        await cubit.pickImageFromGallery(photoType: 'carLicenseOrDoc');
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Padding(
+            padding:
+            EdgeInsetsDirectional.only(start: 0.90.widthX(context) * .1),
+            child: Text("A copy of the authorization".tr(context), style: taj12RegGree()),
+          ),
+          Container(
+            width: 0.90.widthX(context) * .2,
+            height: .05.heightX(context),
+
+            decoration:
+            cubit.carLicenseOrDocImageFile==null
+                ? const BoxDecoration()
+                :BoxDecoration(
+                image:  DecorationImage(image:   FileImage(cubit.carLicenseOrDocImageFile!),fit: BoxFit.contain,)
+            )
+            ,
+          ),
+          Container(
+            width: 0.90.widthX(context) * .1,
+            height: .08.heightX(context),
+            color: Recolor.txtRefuseColor,
+          )
+        ],
+      )
+          .roundWidget(
+          width: 0.90.widthX(context), height: 0.08.heightX(context))
+          .cardAll(cardColor: Recolor.whiteColor, elevation: 9, radius: 9)
+          .paddingB(context, 0.02),
+    );
+  }
+
+
+
   Widget _buildTotalRowOperationColor(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        _buildRowOperationColor(
+        _buildRowOperationColorItem(
             context: context, txt: "confirmed", color: Recolor.onlineColor),
-        _buildRowOperationColor(
+        _buildRowOperationColorItem(
             context: context, txt: "waiting", color: Recolor.amberColor),
-        _buildRowOperationColor(
+        _buildRowOperationColorItem(
             context: context, txt: "refused", color: Recolor.txtRefuseColor),
       ],
     ).paddingT(context, 0.02);
   }
 
-  Row _buildRowOperationColor(
-      {required BuildContext context,
-      required String txt,
-      required Color color}) {
+  Row _buildRowOperationColorItem({required BuildContext context, required String txt, required Color color}) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -105,46 +261,9 @@ class RegisterCarPaperScreen extends StatelessWidget {
     return CircleAvatar(radius: 10, backgroundColor: color);
   }
 
-  InkWell _buildUploadCarImageInkwell(
-      {required BuildContext context,
-      void Function()? onTap,
-      required String hint,
-      required Color color}) {
-    return InkWell(
-      onTap: onTap,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Padding(
-            padding:
-                EdgeInsetsDirectional.only(start: 0.90.widthX(context) * .1),
-            child: Text(hint.tr(context), style: taj12RegGree()),
-          ),
-          Container(
-            width: 0.90.widthX(context) * .1,
-            height: .08.heightX(context),
-            color: color,
-          )
-        ],
-      )
-          .roundWidget(
-              width: 0.90.widthX(context), height: 0.08.heightX(context))
-          .cardAll(cardColor: Recolor.whiteColor, elevation: 9, radius: 9)
-          .paddingB(context, 0.02),
-    );
-  }
 
-  Widget _buildTopTextColumn(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text("To Finish".tr(context), style: taj12MedBlue()),
-        Text("Attach Paper".tr(context), style: taj25BoldBlue()),
-        Text("BeSurePaper".tr(context),
-            textAlign: TextAlign.center, style: taj11MedBlue()),
-      ],
-    ).paddingS(context, 0.1, 0.06);
-  }
+
+
 
   // Widget _buildAcceptsTermsRow(bool isAcceptTerms, BuildContext context) {
   //   return Row(

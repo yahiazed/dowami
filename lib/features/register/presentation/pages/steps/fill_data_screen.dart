@@ -10,16 +10,15 @@ import 'package:dowami/constant/shared_widgets/shared_card_input.dart';
 import 'package:dowami/constant/shared_widgets/toast.dart';
 import 'package:dowami/constant/text_style/text_style.dart';
 import 'package:dowami/features/register/presentation/cubit/register_cubit.dart';
-import 'package:dowami/features/terms/presentation/pages/privacy_policy_screen.dart';
-import 'package:dowami/features/terms/presentation/pages/terms_screen.dart';
+
 import 'package:dowami/helpers/localization/app_localization.dart';
-import 'package:flutter/gestures.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
-import '../../../../../constant/shared_widgets/shared_accept_terms.dart';
+ import '../../../../../constant/shared_widgets/shared_accept_terms.dart';
 import '../../../data/models/user_model.dart';
 import 'captain/car_register_screen.dart';
 import 'get_location_dialog.dart';
@@ -32,28 +31,19 @@ class FillUserRegisterDataScreen extends StatelessWidget {
   FillUserRegisterDataScreen({super.key,});
 
  final GlobalKey<FormState> registerDataFormKey = GlobalKey<FormState>();
-
   final TextEditingController nameController = TextEditingController();
-
   final TextEditingController fNameController = TextEditingController();
-
   final TextEditingController surNameController = TextEditingController();
-
   final TextEditingController emailController = TextEditingController();
-
   final TextEditingController nNumController = TextEditingController();
-
   final TextEditingController cityController = TextEditingController();
-
   final TextEditingController regionController = TextEditingController();
-
   final TextEditingController neighborhoodController = TextEditingController();
-
   final TextEditingController dateController = TextEditingController();
+  final TextEditingController captainController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    bool isAcceptTerms = false;
     return BlocConsumer<RegisterCubit, RegisterState>(
       listener: (context, state) {
 
@@ -65,6 +55,14 @@ class FillUserRegisterDataScreen extends StatelessWidget {
         }
         if(state is ErrorProfileDataState){
           showErrorToast(message: state.errorMsg);
+         // errors=(state.errorModel.errors!.values).toList() ;
+          errors=List<String> .from(state.errorModel.errors!.values.map((e) => e[0])).toList();
+
+
+
+        }
+        if(state is ErrorPermissionsLocationState){
+          showErrorToast(message: state.errorMsg);
 
         }
 
@@ -72,8 +70,6 @@ class FillUserRegisterDataScreen extends StatelessWidget {
       },
       builder: (context, state) {
         var cubit = RegisterCubit.get(context);
-
-
         return Scaffold(
           appBar: sharedAppBar(context),
           body: SingleChildScrollView(
@@ -86,17 +82,18 @@ class FillUserRegisterDataScreen extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      _buildFirstNameAndPhotoRow(context, nameController,cubit),
-                      _buildFatherAndNickNameRow(context, fNameController, surNameController),
-                      _buildEmailRow(context, emailController),
-                      _buildNationalNumRow(context, nNumController),
-                      _buildBirthDateAndGenderRow(context, dateController),
+                      _buildFirstNameAndPhotoRow(context,  cubit),
+                      _buildFatherAndNickNameRow(context,  ),
+                      _buildEmailRow(context, ),
+                      _buildNationalNumRow(context ),
+                      _buildBirthDateAndGenderRow(context, ),
                       _buildAddressAndLocation(context,cubit),
-
                       //  isCaptain
-                      if (!cubit.isCaptain) _buildIBANCaptain(context, nameController),
-
-                      buildAcceptsTermsRow(cubit.isAcceptTerms, context),
+                      if (!cubit.isCaptain) _buildIBANCaptain(context,  ),
+                      _buildAcceptTermsRow( context,cubit,),
+                      _buildErrorsMessages()
+                          .cardAll(elevation: 1, radius: 0)
+                          .paddingSV(context,0.01),
                       _buildOnSubmitButton(context)
                     ],
                   ).paddingSH(context, 0.04),
@@ -109,62 +106,182 @@ class FillUserRegisterDataScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildOnSubmitButton(BuildContext context) {
-    return sharedElevatedButton(
-      onPressed: ()async {
-        if (registerDataFormKey.currentState!.validate()) {
-          switch (RegisterCubit.get(context).userType) {
-            case 'captain':
-              navigateTo(context, CarRegisterScreen());
-              break;
-            case 'client':
-              var userModel=UserModel(
-                userId: RegisterCubit.get(context).userId,
-                birthDate: dateController.text,
-                nickName: surNameController.text,
-                fatherName: fNameController.text,
-                firstName: nameController.text,
-                 city: cityController.text,
-                area: regionController.text,
-                district: neighborhoodController.text,
-                gender: RegisterCubit.get(context).isMale?'Male':'Female',
-                nationalId: nNumController.text,
-               // avatar:  RegisterCubit.get(context).picked
 
-              );
-
-              try{
-                await RegisterCubit.get(context).sendCompleteProfileData(userModel: userModel);
-
-              }catch(e){print('error');}
+  ///-(1)  title texts           [_buildTopTextColumn]
+  ///-(2)  first name & avatar   [_buildFirstNameAndPhotoRow]
+  ///-(3)  father & nick         [_buildFatherAndNickNameRow]
+  ///-(4)  email                 [_buildEmailRow]
+  ///-(5)  national number       [_buildNationalNumRow]
+  ///-(6)  Birth Date & gender   [_buildBirthDateAndGenderRow]
+  ///-(7)  address & location    [_buildAddressAndLocation]
+  ///-(8)  IBAN Number (captain) [_buildIBANCaptain]
+  ///-(9)  Accept terms          [_buildAcceptTermsRow]
+  ///-(10)  errors          [_buildErrorsMessages]
+  ///-(11)  on submit             [_buildOnSubmitButton]
 
 
+  Widget _buildTopTextColumn(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text("Few steps left".tr(context), style: taj12MedBlue()),
+        Text("Let's get to know you".tr(context), style: taj25BoldBlue()),
+        Text("informationProvided".tr(context),
+            textAlign: TextAlign.center, style: taj11MedBlue()),
+      ],
+    ).paddingS(context, 0.1, 0.06);
+  }
+  Row    _buildFirstNameAndPhotoRow(BuildContext context,RegisterCubit cubit) {
+    return Row(
+      children: [
+        Expanded(
+          child: sharedUnderLineInput(context,
+              controller: nameController,
+              labelText: 'name'.tr(context),
+              keyboardType: TextInputType.text),
+        ),
+        InkWell(
+          onTap: ()async{
+            await cubit.pickImageFromGallery(photoType: 'avatar');
+
+          },
+          child:  cubit.avatarImageFile ==null ? Container(
+              width: 0.35.widthX(context),
+              height: 0.1.heightX(context),
+              decoration: BoxDecoration(
+                border: Border.all(color: Recolor.mainColor, width: 2),
+                color: Recolor.underLineColor,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.camera_alt_outlined,
+                color: Recolor.mainColor,)
+          )
 
 
-              print('Client+++');
-              break;
-          }
-        }
-      },
-      txt: 'Confirm'.tr(context),
-      textStyle: taj19BoldWhite(),
-      radius: 9,
-      color: Recolor.amberColor,
-      horizontalPadding: 0.25.widthX(context),
-      verticalPadding: 0.025.heightX(context),
+              :
+          Container(
+            width: 0.35.widthX(context),
+            height: 0.1.heightX(context),
+            decoration: BoxDecoration(
+                border: Border.all(color: Recolor.mainColor, width: 2),
+                color: Recolor.underLineColor,
+                shape: BoxShape.circle,
+                image: DecorationImage(image:   FileImage(cubit.avatarImageFile!),fit: BoxFit.contain,)
+            ),
+          )
+
+          ,
+        )
+      ],
     );
   }
-
-  Widget _buildIBANCaptain(
-      BuildContext context, TextEditingController nameController) {
-    return sharedUnderLineInput(context,
-        controller: nameController,
-        labelText: 'IBAN'.tr(context),
-        keyboardType: TextInputType.text);
+  Row     _buildFatherAndNickNameRow(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: sharedUnderLineInput(context,
+              controller: fNameController,
+              labelText: 'fName'.tr(context),
+              keyboardType: TextInputType.text),
+        ),
+        const SizedBox(
+          width: 8,
+        ),
+        Expanded(
+          child: sharedUnderLineInput(context,
+              controller: surNameController,
+              labelText: 'Surname'.tr(context),
+              keyboardType: TextInputType.text),
+        ),
+      ],
+    );
   }
+  Widget _buildEmailRow(BuildContext context) {
+    return sharedUnderLineInput(context,
+        controller: emailController,
+        labelText: 'email'.tr(context),
+        keyboardType: TextInputType.emailAddress);
+  }
+  Widget _buildNationalNumRow(BuildContext context) {
+    return sharedUnderLineInput(context,
+        controller: nNumController,
+        labelText: 'National number'.tr(context))
+        .paddingB(context, 0.019);
+  }
+  Row     _buildBirthDateAndGenderRow (BuildContext context,) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text("Date of Birth".tr(context), style: taj12RegGreeHint()),
+        sharedCardInput(
+          context,
+          controller: dateController,
+          hintText: '?',
+          keyboardType: TextInputType.none,
+          txtStyle: taj12RegGree(),
+          onTap: () async {
+            DateTime? pickedDate = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime(1950),
+                //DateTime.now() - not to allow to choose before today.
+                lastDate: DateTime(2100));
 
+            if (pickedDate != null) {
+              print(
+                  pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+              String formattedDate =
+              DateFormat('yyyy-MM-dd').format(pickedDate);
+              print(
+                  formattedDate); //formatted date output using intl package =>  2021-03-16
 
+              dateController.text =
+                  formattedDate; //set output date to TextField value.
+              RegisterCubit.get(context).birthDate =
+                  formattedDate; //set output date to TextField value.
+            } else {debugPrint('null in date');}
+          },
+        )
+            .roundWidget(
+            width: 0.3.widthX(context),
+            height: 0.035.heightX(context),
+            radius: 9)
+            .cardAll(elevation: 7, radius: 10)
+            .paddingSH(context, 0.02),
 
+        Text("Gender".tr(context), style: taj12RegGreeHint())
+            .paddingSH(context, 0.015),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('male'.tr(context), style: taj12RegGree()),
+            Radio(
+              fillColor: MaterialStatePropertyAll(Recolor.amberColor),
+              value: true,
+              groupValue: RegisterCubit.get(context).isMale,
+              onChanged: (value) =>
+                  RegisterCubit.get(context).onChangedGenderRadio(value),
+            )
+          ],
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('female'.tr(context), style: taj12RegGree()),
+            Radio(
+              fillColor: MaterialStatePropertyAll(Recolor.amberColor),
+              value: false,
+              groupValue: RegisterCubit.get(context).isMale,
+              onChanged: (value) =>
+                  RegisterCubit.get(context).onChangedGenderRadio(value),
+            )
+          ],
+        )
+      ],
+    );
+  }
   Column _buildAddressAndLocation( BuildContext context,RegisterCubit cubit){
 
     return Column(
@@ -231,180 +348,92 @@ class FillUserRegisterDataScreen extends StatelessWidget {
       ],
     );
   }
-
-
-
-  Row _buildBirthDateAndGenderRow (BuildContext context, TextEditingController dateController) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text("Date of Birth".tr(context), style: taj12RegGreeHint()),
-        sharedCardInput(
-          context,
-          controller: dateController,
-          hintText: '?',
-          keyboardType: TextInputType.none,
-          txtStyle: taj12RegGree(),
-          onTap: () async {
-            DateTime? pickedDate = await showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime(1950),
-                //DateTime.now() - not to allow to choose before today.
-                lastDate: DateTime(2100));
-
-            if (pickedDate != null) {
-              print(
-                  pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
-              String formattedDate =
-                  DateFormat('yyyy-MM-dd').format(pickedDate);
-              print(
-                  formattedDate); //formatted date output using intl package =>  2021-03-16
-
-              dateController.text =
-                  formattedDate; //set output date to TextField value.
-              RegisterCubit.get(context).birthDate =
-                  formattedDate; //set output date to TextField value.
-            } else {debugPrint('null in date');}
-          },
-        )
-            .roundWidget(
-                width: 0.3.widthX(context),
-                height: 0.035.heightX(context),
-                radius: 9)
-            .cardAll(elevation: 7, radius: 10)
-            .paddingSH(context, 0.02),
-
-        Text("Gender".tr(context), style: taj12RegGreeHint())
-            .paddingSH(context, 0.015),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('male'.tr(context), style: taj12RegGree()),
-            Radio(
-              fillColor: MaterialStatePropertyAll(Recolor.amberColor),
-              value: true,
-              groupValue: RegisterCubit.get(context).isMale,
-              onChanged: (value) =>
-                  RegisterCubit.get(context).onChangedGenderRadio(value),
-            )
-          ],
-        ),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('female'.tr(context), style: taj12RegGree()),
-            Radio(
-              fillColor: MaterialStatePropertyAll(Recolor.amberColor),
-              value: false,
-              groupValue: RegisterCubit.get(context).isMale,
-              onChanged: (value) =>
-                  RegisterCubit.get(context).onChangedGenderRadio(value),
-            )
-          ],
-        )
-      ],
-    );
-  }
-
-  Widget _buildNationalNumRow(
-      BuildContext context, TextEditingController nNumController) {
+  Widget _buildIBANCaptain(BuildContext context, ) {
     return sharedUnderLineInput(context,
-            controller: nNumController,
-            labelText: 'National number'.tr(context))
-        .paddingB(context, 0.019);
+        controller: captainController,
+        labelText: 'IBAN'.tr(context),
+        keyboardType: TextInputType.text);
   }
-
-  Widget _buildEmailRow(
-      BuildContext context, TextEditingController emailController) {
-    return sharedUnderLineInput(context,
-        controller: emailController,
-        labelText: 'email'.tr(context),
-        keyboardType: TextInputType.emailAddress);
+  Widget _buildAcceptTermsRow(BuildContext context,RegisterCubit cubit){
+    return
+      buildAcceptsTermsRow(cubit.isAcceptTerms, context)
+    ;
   }
-
-  Row _buildFatherAndNickNameRow(BuildContext context, TextEditingController fNameController,
-      TextEditingController surNameController) {
-    return Row(
-      children: [
-        Expanded(
-          child: sharedUnderLineInput(context,
-              controller: fNameController,
-              labelText: 'fName'.tr(context),
-              keyboardType: TextInputType.text),
-        ),
-        const SizedBox(
-          width: 8,
-        ),
-        Expanded(
-          child: sharedUnderLineInput(context,
-              controller: surNameController,
-              labelText: 'Surname'.tr(context),
-              keyboardType: TextInputType.text),
-        ),
-      ],
-    );
-  }
-
-  Row _buildFirstNameAndPhotoRow(BuildContext context, TextEditingController nameController,RegisterCubit cubit) {
-    return Row(
-      children: [
-        Expanded(
-          child: sharedUnderLineInput(context,
-              controller: nameController,
-              labelText: 'name'.tr(context),
-              keyboardType: TextInputType.text),
-        ),
-        InkWell(
-          onTap: ()async{
-            await cubit.pickImageFromGallery();
-
-          },
-          child:  cubit.imageFile==null ? Container(
-            width: 0.35.widthX(context),
-            height: 0.1.heightX(context),
-            decoration: BoxDecoration(
-                border: Border.all(color: Recolor.mainColor, width: 2),
-                color: Recolor.underLineColor,
-                shape: BoxShape.circle,
-            ),
-              child: Icon(
-              Icons.camera_alt_outlined,
-              color: Recolor.mainColor,)
-          )
-
-
-          :
-          Container(
-            width: 0.35.widthX(context),
-            height: 0.1.heightX(context),
-            decoration: BoxDecoration(
-                border: Border.all(color: Recolor.mainColor, width: 2),
-                color: Recolor.underLineColor,
-                shape: BoxShape.circle,
-                image: DecorationImage(image:   FileImage(cubit.imageFile!),fit: BoxFit.contain,)
-            ),
-          )
-
-          ,
-        )
-      ],
-    );
-  }
-
-  // Row _buildAcceptsTermsRow(bool isAcceptTerms, BuildContext context) {
-  Widget _buildTopTextColumn(BuildContext context) {
+   List<dynamic> errors=[];
+  Widget _buildErrorsMessages(){
     return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text("Few steps left".tr(context), style: taj12MedBlue()),
-        Text("Let's get to know you".tr(context), style: taj25BoldBlue()),
-        Text("informationProvided".tr(context),
-            textAlign: TextAlign.center, style: taj11MedBlue()),
-      ],
-    ).paddingS(context, 0.1, 0.06);
+
+
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children:errors.map((e) =>
+          Text('$e  * ',style: taj11MedGreeHint().copyWith(color: Colors.red) ,)
+      ).toList() ,
+    );
   }
+  Widget _buildOnSubmitButton(BuildContext context) {
+    return sharedElevatedButton(
+      onPressed: ()async {
+        if (registerDataFormKey.currentState!.validate()) {
+          if(RegisterCubit.get(context).avatarImageFile==null){
+            showErrorToast(message:' select image');
+            return;
+
+          }
+
+          switch (RegisterCubit.get(context).userType) {
+            case 'captain':
+              navigateTo(context, CarRegisterScreen());
+              break;
+            case 'client':
+              var userModel=UserModel(
+                userId: RegisterCubit.get(context).userId,
+                birthDate: dateController.text,
+                nickName: surNameController.text,
+                fatherName: fNameController.text,
+                firstName: nameController.text,
+                 city: cityController.text,
+                area: regionController.text,
+                district: neighborhoodController.text,
+                gender: RegisterCubit.get(context).isMale?'Male':'Female',
+                nationalId: nNumController.text,
+               // avatar:  RegisterCubit.get(context).picked
+
+              );
+
+              try{
+                await RegisterCubit.get(context).sendCompleteProfileData(userModel: userModel);
+
+              }catch(e){print('error');}
+
+
+
+
+              print('Client+++');
+              break;
+          }
+        }
+      },
+      txt: 'Confirm'.tr(context),
+      textStyle: taj19BoldWhite(),
+      radius: 9,
+      color: Recolor.amberColor,
+      horizontalPadding: 0.25.widthX(context),
+      verticalPadding: 0.025.heightX(context),
+    );
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 

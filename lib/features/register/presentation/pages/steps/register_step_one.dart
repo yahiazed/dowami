@@ -23,7 +23,7 @@ import '../../../../terms/presentation/pages/terms_screen.dart';
 class RegisterStepOneScreen extends StatelessWidget {
   // bool isCaptain;
   String phoneCode = '+966';
-  var phoneController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
   RegisterStepOneScreen({super.key});
 
   @override
