@@ -19,7 +19,7 @@ import '../../../../../constant/text_style/text_style.dart';
 import 'add_pass_screen.dart';
 
 class RegisterStepTwoScreen extends StatelessWidget {
-  String phoneNumber;
+ // String phoneNumber;
   var digitController1 = TextEditingController();
   var digitController2 = TextEditingController();
   var digitController3 = TextEditingController();
@@ -32,7 +32,8 @@ class RegisterStepTwoScreen extends StatelessWidget {
   final nod4 = FocusNode();
   final nod5 = FocusNode();
   final nod6 = FocusNode();
-  RegisterStepTwoScreen({super.key, required this.phoneNumber});
+  RegisterStepTwoScreen({super.key, //required this.phoneNumber
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +42,8 @@ class RegisterStepTwoScreen extends StatelessWidget {
         if (state is SuccessCodeState) {
           RegisterCubit.get(context).userId=state.userId;
           print( RegisterCubit.get(context).userId);
-          navigateTo(context, AddPasswordScreen(phoneNumber: phoneNumber));
+          navigateTo(context, AddPasswordScreen(//phoneNumber: phoneNumber
+          ));
         }
         if (state is ErrorCodeState) {
           showErrorToast(message:state.errorMsg);
@@ -55,7 +57,7 @@ class RegisterStepTwoScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _build4LineText(context),
+                _build4LineText(context,RegisterCubit.get(context)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -105,7 +107,7 @@ class RegisterStepTwoScreen extends StatelessWidget {
     );
   }
 
-  Column _build4LineText(BuildContext context) {
+  Column _build4LineText(BuildContext context,RegisterCubit cubit) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -113,7 +115,7 @@ class RegisterStepTwoScreen extends StatelessWidget {
         Text("Enter Verification Code".tr(context), style: taj25BoldBlue2()),
         Text('Enter the quad code sent to the number'.tr(context),
             style: taj14Blue()),
-        Text(phoneNumber, style: taj14Blue()),
+        Text(cubit.phoneNumber, style: taj14Blue()),
         _buildButtonEditPhoneNumber(context),
       ],
     );

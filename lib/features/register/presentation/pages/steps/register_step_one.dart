@@ -36,6 +36,9 @@ class RegisterStepOneScreen extends StatelessWidget {
         if (state is SuccessSendOtpState) {
           RegisterCubit.get(context).smsCode = state.smsCode;
           print('smscode======================${state.smsCode}');
+          navigateTo(context, RegisterStepTwoScreen(
+            //  phoneNumber: phoneCode + phoneController.text
+          ));
         }
       },
       builder: (context, state) {
@@ -74,12 +77,8 @@ class RegisterStepOneScreen extends StatelessWidget {
       onPressed: () {
         RegisterCubit.get(context).phoneCode = phoneCode;
         RegisterCubit.get(context).phoneNumber = phoneController.text;
-        navigateTo(
-            context,
-            RegisterStepTwoScreen(
-                phoneNumber: phoneCode + phoneController.text));
-        RegisterCubit.get(context)
-            .sendOtp(phoneNum: phoneCode + phoneController.text);
+
+        RegisterCubit.get(context).sendOtp(phoneNum: phoneCode + phoneController.text);
       },
     );
   }

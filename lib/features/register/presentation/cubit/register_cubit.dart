@@ -3,15 +3,19 @@ import 'dart:io';
 
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:dowami/constant/shared_function/navigator.dart';
 import 'package:dowami/core/errors/failure.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../constant/strings/failuer_string.dart';
 import '../../data/models/user_model.dart';
 import '../../data/repositories/repository.dart';
+import '../pages/steps/get_location_dialog.dart';
 
 part 'register_state.dart';
 
@@ -32,9 +36,16 @@ class RegisterCubit extends Cubit<RegisterState> {
   int second = 50;
   late Timer timer;
   int userId=0;
+  String token='';
+
+  LatLng? latLng;
+  String city='';
+  String area='';
+  String district='';
 
 //step one
   sendOtp({required String phoneNum}) async {
+    emit(StartSendOtpState());
     timerCutDown();
     second = 6;
     final failureOrSmsCode = await repo.sendOtp(phone: phoneNum);
@@ -50,6 +61,7 @@ class RegisterCubit extends Cubit<RegisterState> {
 
   //step two
   verifyCode(int code) async {
+    emit(StartVerifyCodeState());
     final checkCode = await repo.verifyCode(
         code: code, phoneNum: phoneCode + phoneNumber, type: userType);
     emit(_mapFailureOrCodeTrueState(checkCode));
@@ -63,6 +75,8 @@ class RegisterCubit extends Cubit<RegisterState> {
   }
 
   sendCompleteProfileData({required UserModel userModel})async{
+    emit(StartSendProfileDataState());
+
    final profileDataResponse= await repo.sendCompleteProfileData(
       userModel: userModel,
        xFile: picked!
@@ -88,16 +102,8 @@ class RegisterCubit extends Cubit<RegisterState> {
         return EMPTY_CACHE_FAILURE_MESSAGE;
       case OfflineFailure:
         return OFFLINE_FAILURE_MESSAGE;
-      case PhoneNumberAlreadyRegisteredFailure:
-        return ALREADY_REGISTERED_FAILURE_MESSAGE;
-      case PhoneNumberNotValidFailure:
-        return VALID_PHONE_NUMBER_FAILURE_MESSAGE;
-        case InvalidCodeFailure:
-        return INVALID_CODE_FAILURE_MESSAGE;
-      case InvalidNationalIdFailure:
-        return INVALID_National_Id_MESSAGE;
-      case NationalIdAlreadyRegisteredFailure:
-        return National_Id_Already_Registered_MESSAGE;
+      case DioResponseFailure:
+        return (failure as DioResponseFailure).errorModel!.errors!.values.toString() ;
       default:
         return "Unexpected Error , Please try again later .";
     }
@@ -145,6 +151,30 @@ class RegisterCubit extends Cubit<RegisterState> {
   }
 
 
+  getPermissions(context)async{
+    emit(StartPermissionsLocationState());
+    bool serviceEnabled;
+    LocationPermission permission;
+
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {return Future.error('Location services are disabled.');}
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {return Future.error('Location permissions are denied');}
+    }
+
+    if (permission == LocationPermission.deniedForever) {return Future.error('Location permissions are permanently denied, we cannot request permissions.');}
+
+
+
+
+
+    emit(const SuccessPermissionsLocationState());
+
+  }
 
 
 
@@ -156,32 +186,22 @@ class RegisterCubit extends Cubit<RegisterState> {
 
 
 
-  List? images;
+
+
 
   ImagePicker picker=ImagePicker();
- // String? _imageUrl;
-  //String? get imageUrl=> _imageUrl;
   File? imageFile;
   XFile? picked;
-
-  bool uploading=false;
-
   MultipartFile? imageMultipartFile;
-
 
   Future<void>pickImageFromGallery()async{
     emit(StartPickImageState());
     try{
       picked=await picker.pickImage(source: ImageSource.gallery);
       imageFile=File(picked!.path);
-
       debugPrint('image got');
-
-
       imageMultipartFile=   MultipartFile.fromFileSync(imageFile!.path, filename:imageFile!.path.split('/').last);
      // FormData formData = FormData.fromMap({"img": await MultipartFile.fromFile(imageFile!.path, filename:fileName)});
-      print(imageFile);
-      print(imageMultipartFile);
       emit(SuccessPickImageState(imageFile: imageFile!));
     }on Exception catch(e){
       emit(const ErrorPickImageState(errorMsg: 'image not selected'));
@@ -191,51 +211,12 @@ class RegisterCubit extends Cubit<RegisterState> {
   }
 
 
-  final _dio = Dio();
-
-
-/*  Future<bool>uploadImage({required String token, })async{
-
-    // photoLoc=Uri.file(picked!.path).pathSegments.last;
-
-     await pickImageFromGallery();
-
-    uploading=true;
-    if(imageFile==null){ uploading=false; return false;}
-
-    String fileName = imageFile!.path.split('/').last;
-    _dio.options.headers["Authorization"] = "Bearer $token";
-    MultipartFile i= await MultipartFile.fromFile(imageFile!.path, filename:fileName);
-    FormData formData = FormData.fromMap({"img": await MultipartFile.fromFile(imageFile!.path, filename:fileName)});
-
-
-    try{
-      Response response = await _dio.post(ApiData.uploadImage, data: formData);
-      debugPrint('image has been uploaded');
-      imageFile=null;
-      uploading=false;
-      await getImages(token: token);
-
-      return true;
-    }on Exception catch(e){
-      debugPrint('image upload error ');
-      debugPrint(e.toString());
-
-
-      imageFile=null;
-      uploading=false;
-      return false;
-    }
-
-
-  }*/
-
-  getImages({required String token})async{
 
 
 
 
-  }
+
+
 
 
 

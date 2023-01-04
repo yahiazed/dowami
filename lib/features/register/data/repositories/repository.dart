@@ -1,7 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:dowami/core/error_model.dart';
 import 'package:dowami/core/errors/exceptions.dart';
 import 'package:dowami/helpers/dio_helper.dart';
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/errors/failure.dart';
@@ -27,15 +29,9 @@ class RegisterRepoImpel implements RegisterRepo {
 
       return Right(_r.data['code']);
     }on DioError catch (e) {
-     // try{}on DioError catch(e){print(e.toString());}
       print(e.response.toString());
-      switch(e.response!.data['errors']!['mobile'][0]){
-        case 'mobile is not valid':return Left(PhoneNumberNotValidFailure());
-        case 'mobile is already registered':return Left(PhoneNumberAlreadyRegisteredFailure());
-        default:
-          return Left(ServerFailure());
-      }
-     // return Left(ServerFailure());
+      return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data! as Map<String,dynamic>  )));
+
     }
   }
 
@@ -50,40 +46,26 @@ class RegisterRepoImpel implements RegisterRepo {
           data: {'mobile': phoneNum, "code": code, 'type': type});
       return   Right(_r.data['user_id']);
     }on DioError catch (e) {
-      switch(e.response!.data['errors']!['code'][0]){
-        case 'code is wrong':return Left(InvalidCodeFailure());
-        default:return Left(ServerFailure());
-      }
-
-     // return Left(ServerFailure());
+      debugPrint(e.response.toString());
+      return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data! as Map<String,dynamic>  )));
     }
   }
 
   @override
   Future<Either<Failure, String>> sendCompleteProfileData( {required UserModel userModel,required XFile xFile}) async{
     try {
-      //print( FormData.fromMap( userModel.toMap(userModel: userModel)).files.first.value.filename );
-      print(userModel);
+      debugPrint(userModel.toString());
       Response res = await dio.postDataWithFile
-        (
-          url: '/register/user-data',
+        (url: '/register/user-data',
           data:   userModel.toMap(userModel: userModel) ,
-          xFile: xFile
-
-      );
-      print(res);
+          xFile: xFile);
+debugPrint('success');
       return   Right(res.data['token']??'no token');
     }on DioError catch (e) {
-      print(e);
-      switch(e.response!.data['errors']!['national_id'][0]){
-        case 'national id is already registered':return Left(NationalIdAlreadyRegisteredFailure());
-        case 'national id is not valid':return Left(InvalidNationalIdFailure());
-        default:return Left(ServerFailure());
-      }
-
-
-         return Left(ServerFailure() );
-      }
+      debugPrint('failure');
+      debugPrint(e.response.toString());
+      return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data! as Map<String,dynamic>  )));
+    }
 
 
     }

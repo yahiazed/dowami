@@ -26,11 +26,10 @@ class StartSelectDateState extends RegisterState {}
 
 class EndSelectDateState extends RegisterState {}
 
+class StartSendOtpState extends RegisterState {}
 class SuccessSendOtpState extends RegisterState {
-  int smsCode;
-  SuccessSendOtpState({
-    required this.smsCode,
-  });
+ final int smsCode;
+ const SuccessSendOtpState({required this.smsCode,});
 }
 
 class ErrorSendOtpState extends RegisterState {
@@ -43,15 +42,15 @@ class TimeOutSendSmsCodeState extends RegisterState {}
 
 class StartTimeDownState extends RegisterState {}
 
-
+class StartVerifyCodeState extends RegisterState {}
 class SuccessCodeState extends RegisterState {
-  int userId;
-  SuccessCodeState({required this.userId});
+ final int userId;
+ const SuccessCodeState({required this.userId});
 }
 
 class ErrorCodeState extends RegisterState {
-  String errorMsg;
-  ErrorCodeState({
+  final String errorMsg;
+  const ErrorCodeState({
     required this.errorMsg,
   });
 }
@@ -63,7 +62,6 @@ class SuccessPickImageState extends RegisterState {
   final File imageFile;
    const SuccessPickImageState({required this.imageFile});
 }
-
 class ErrorPickImageState extends RegisterState {
   final String errorMsg;
 
@@ -71,6 +69,7 @@ class ErrorPickImageState extends RegisterState {
 }
 
 
+class StartSendProfileDataState extends RegisterState {}
 class SuccessProfileDataState extends RegisterState {
   final String token;
   const SuccessProfileDataState({required this.token});
@@ -80,3 +79,13 @@ class ErrorProfileDataState extends RegisterState {
 
   const ErrorProfileDataState({required this.errorMsg});
 }
+
+
+
+
+class StartPermissionsLocationState extends RegisterState {}
+class SuccessPermissionsLocationState extends RegisterState {
+
+  const SuccessPermissionsLocationState( );
+}
+

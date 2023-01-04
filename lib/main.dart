@@ -10,6 +10,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'dependency_injection.dart' as di;
 import 'features/register/data/repositories/repository.dart';
+import 'features/register/presentation/pages/steps/fill_data_screen.dart';
+import 'features/register/presentation/pages/steps/get_location_dialog.dart';
 import 'helpers/localization/app_localization.dart';
 import 'features/register/presentation/pages/select_register_screen.dart';
 
@@ -63,21 +65,12 @@ class MyApp extends StatelessWidget {
 
             return supportedLocales.first;
           },
-          // theme: ThemeData(
-          //   // This is the theme of your application.
-          //   //
-          //   // Try running your application with "flutter run". You'll see the
-          //   // application has a blue toolbar. Then, without quitting the app, try
-          //   // changing the primarySwatch below to Colors.green and then invoke
-          //   // "hot reload" (press "r" in the console where you ran "flutter run",
-          //   // or simply save your changes to "hot reload" in a Flutter IDE).
-          //   // Notice that the counter didn't reset back to zero; the application
-          //   // is not restarted.
-          //   primarySwatch: Colors.blue,
-          // ),
+
           home:
               //HomeScreen()
               SelectLog(),
+
+            //FillUserRegisterDataScreen(phoneNumber: '',),
         ));
   }
 }

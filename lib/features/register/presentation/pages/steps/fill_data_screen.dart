@@ -1,3 +1,5 @@
+
+
 import 'package:dowami/constant/extensions/media_extension.dart';
 import 'package:dowami/constant/extensions/round_extension.dart';
 import 'package:dowami/constant/shared_colors/shared_colors.dart';
@@ -14,27 +16,40 @@ import 'package:dowami/helpers/localization/app_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
-
 import '../../../../../constant/shared_widgets/shared_accept_terms.dart';
 import '../../../data/models/user_model.dart';
 import 'captain/car_register_screen.dart';
+import 'get_location_dialog.dart';
 import 'register_final_screen.dart';
 
 class FillUserRegisterDataScreen extends StatelessWidget {
-  String phoneNumber;
 
-  var registerDataFormKey = GlobalKey<FormState>();
-  var nameController = TextEditingController();
-  var fNameController = TextEditingController();
-  var surNameController = TextEditingController();
-  var emailController = TextEditingController();
-  var nNumController = TextEditingController();
-  var cityController = TextEditingController();
-  var regionController = TextEditingController();
-  var neighborhoodController = TextEditingController();
-  var dateController = TextEditingController();
-  FillUserRegisterDataScreen({super.key, required this.phoneNumber});
+
+
+  FillUserRegisterDataScreen({super.key,});
+
+ final GlobalKey<FormState> registerDataFormKey = GlobalKey<FormState>();
+
+  final TextEditingController nameController = TextEditingController();
+
+  final TextEditingController fNameController = TextEditingController();
+
+  final TextEditingController surNameController = TextEditingController();
+
+  final TextEditingController emailController = TextEditingController();
+
+  final TextEditingController nNumController = TextEditingController();
+
+  final TextEditingController cityController = TextEditingController();
+
+  final TextEditingController regionController = TextEditingController();
+
+  final TextEditingController neighborhoodController = TextEditingController();
+
+  final TextEditingController dateController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -43,16 +58,22 @@ class FillUserRegisterDataScreen extends StatelessWidget {
       listener: (context, state) {
 
         if(state is SuccessProfileDataState ){
+          print('success state');
           print(state.token);
+          RegisterCubit.get(context).token=state.token;
           navigateTo(context,const RegisterFinalScreen());
         }
         if(state is ErrorProfileDataState){
           showErrorToast(message: state.errorMsg);
+
         }
+
 
       },
       builder: (context, state) {
         var cubit = RegisterCubit.get(context);
+
+
         return Scaffold(
           appBar: sharedAppBar(context),
           body: SingleChildScrollView(
@@ -65,18 +86,18 @@ class FillUserRegisterDataScreen extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      _buildRow1(context, nameController,cubit),
-                      _buildRow2(context, fNameController, surNameController),
-                      _buildRow3(context, emailController),
-                      _buildRow4(context, nNumController),
-                      _buildRow5(context, dateController),
-                      _buildRow6(context, cityController, regionController,
-                          neighborhoodController),
-                      _buildRow7(context),
+                      _buildFirstNameAndPhotoRow(context, nameController,cubit),
+                      _buildFatherAndNickNameRow(context, fNameController, surNameController),
+                      _buildEmailRow(context, emailController),
+                      _buildNationalNumRow(context, nNumController),
+                      _buildBirthDateAndGenderRow(context, dateController),
+                      _buildAddressAndLocation(context,cubit),
+
                       //  isCaptain
-                      if (true) _buildRowIbanCaptain(context, nameController),
+                      if (!cubit.isCaptain) _buildIBANCaptain(context, nameController),
+
                       buildAcceptsTermsRow(cubit.isAcceptTerms, context),
-                      _buildButton(context)
+                      _buildOnSubmitButton(context)
                     ],
                   ).paddingSH(context, 0.04),
                 ),
@@ -88,7 +109,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildButton(BuildContext context) {
+  Widget _buildOnSubmitButton(BuildContext context) {
     return sharedElevatedButton(
       onPressed: ()async {
         if (registerDataFormKey.currentState!.validate()) {
@@ -115,7 +136,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
               try{
                 await RegisterCubit.get(context).sendCompleteProfileData(userModel: userModel);
 
-              }catch(e){}
+              }catch(e){print('error');}
 
 
 
@@ -134,7 +155,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRowIbanCaptain(
+  Widget _buildIBANCaptain(
       BuildContext context, TextEditingController nameController) {
     return sharedUnderLineInput(context,
         controller: nameController,
@@ -142,57 +163,78 @@ class FillUserRegisterDataScreen extends StatelessWidget {
         keyboardType: TextInputType.text);
   }
 
-  TextButton _buildRow7(BuildContext context) {
-    return TextButton(
-        onPressed: () {},
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Or select on the map'.tr(context),
-                style: taj11RegGreeHintUnderLine()),
-            Icon(Icons.place_outlined, color: Recolor.hintColor, size: 15),
-          ],
-        ));
-  }
 
-  Row _buildRow6(
-      BuildContext context,
-      TextEditingController cityController,
-      TextEditingController regionController,
-      TextEditingController neighborhoodController) {
-    return Row(
+
+  Column _buildAddressAndLocation( BuildContext context,RegisterCubit cubit){
+
+    return Column(
       children: [
-        Expanded(
-          child: sharedUnderLineInput(context,
-              controller: cityController,
-              labelText: 'City'.tr(context),
-              keyboardType: TextInputType.text),
+        Row(
+          children: [
+            Expanded(
+              child: sharedUnderLineInput(context,
+                  controller: cityController,
+                  labelText: 'City'.tr(context),
+                  keyboardType: TextInputType.text),
+            ),
+            const SizedBox(
+              width: 8,
+            ),
+            Expanded(
+              child: sharedUnderLineInput(context,
+                  controller: regionController,
+                  labelText: 'Region'.tr(context),
+                  keyboardType: TextInputType.text),
+            ),
+            const SizedBox(
+              width: 8,
+            ),
+            Expanded(
+              child: sharedUnderLineInput(context,
+                  controller: neighborhoodController,
+                  labelText: 'Neighborhood'.tr(context),
+                  keyboardType: TextInputType.text),
+            ),
+          ],
         ),
-        const SizedBox(
-          width: 8,
-        ),
-        Expanded(
-          child: sharedUnderLineInput(context,
-              controller: regionController,
-              labelText: 'Region'.tr(context),
-              keyboardType: TextInputType.text),
-        ),
-        const SizedBox(
-          width: 8,
-        ),
-        Expanded(
-          child: sharedUnderLineInput(context,
-              controller: neighborhoodController,
-              labelText: 'Neighborhood'.tr(context),
-              keyboardType: TextInputType.text),
-        ),
+        TextButton(
+            onPressed: () async{
+
+
+              await cubit.getPermissions(context) ;
+
+              await Geolocator.getCurrentPosition().then((value) =>  cubit.latLng=LatLng(value.latitude,value.longitude) );
+
+              await  showDialog(context: context, builder: (context) =>Dialog(
+                child: GetLocationDialog(),
+              ) ,).then((value) {
+                if( RegisterCubit.get(context).city.isNotEmpty){cityController.text=RegisterCubit.get(context).city;}
+                if( RegisterCubit.get(context).area.isNotEmpty){regionController.text=RegisterCubit.get(context).area;}
+                if( RegisterCubit.get(context).district.isNotEmpty){neighborhoodController.text=RegisterCubit.get(context).district;}
+              } );
+
+
+
+
+
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Or select on the map'.tr(context),
+                    style: taj11RegGreeHintUnderLine()),
+                Icon(Icons.place_outlined, color: Recolor.hintColor, size: 15),
+              ],
+            ))
       ],
     );
   }
 
-  Row _buildRow5(BuildContext context, TextEditingController dateController) {
+
+
+  Row _buildBirthDateAndGenderRow (BuildContext context, TextEditingController dateController) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -266,7 +308,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRow4(
+  Widget _buildNationalNumRow(
       BuildContext context, TextEditingController nNumController) {
     return sharedUnderLineInput(context,
             controller: nNumController,
@@ -274,7 +316,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
         .paddingB(context, 0.019);
   }
 
-  Widget _buildRow3(
+  Widget _buildEmailRow(
       BuildContext context, TextEditingController emailController) {
     return sharedUnderLineInput(context,
         controller: emailController,
@@ -282,7 +324,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
         keyboardType: TextInputType.emailAddress);
   }
 
-  Row _buildRow2(BuildContext context, TextEditingController fNameController,
+  Row _buildFatherAndNickNameRow(BuildContext context, TextEditingController fNameController,
       TextEditingController surNameController) {
     return Row(
       children: [
@@ -305,7 +347,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
     );
   }
 
-  Row _buildRow1(BuildContext context, TextEditingController nameController,RegisterCubit cubit) {
+  Row _buildFirstNameAndPhotoRow(BuildContext context, TextEditingController nameController,RegisterCubit cubit) {
     return Row(
       children: [
         Expanded(
@@ -352,38 +394,6 @@ class FillUserRegisterDataScreen extends StatelessWidget {
   }
 
   // Row _buildAcceptsTermsRow(bool isAcceptTerms, BuildContext context) {
-  //   return Row(
-  //     children: [
-  //       Checkbox(
-  //         shape: RoundedRectangleBorder(
-  //             side: BorderSide(color: Recolor.mainColor, width: 1),
-  //             borderRadius: BorderRadius.circular(5)),
-  //         value: isAcceptTerms,
-  //         onChanged: (value) {
-  //           isAcceptTerms = value!;
-  //         },
-  //       ),
-  //       RichText(
-  //           text: TextSpan(children: [
-  //         TextSpan(text: "I Accept".tr(context), style: taj12RegBlue()),
-  //         TextSpan(
-  //             text: "Privacy Policy".tr(context),
-  //             style: taj12MedBlue(),
-  //             recognizer: TapGestureRecognizer()
-  //               ..onTap = () {
-  //                 navigateTo(context, const PrivacyPolicyScreen());
-  //               }),
-  //         TextSpan(text: "and".tr(context), style: taj11MedBlue()),
-  //         TextSpan(
-  //             text: "Terms of Service".tr(context),
-  //             style: taj12MedBlue(),
-  //             recognizer: TapGestureRecognizer()
-  //               ..onTap = () => navigateTo(context, const ServiceTerms())),
-  //       ]))
-  //     ],
-  //   );
-  // }
-
   Widget _buildTopTextColumn(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -396,3 +406,31 @@ class FillUserRegisterDataScreen extends StatelessWidget {
     ).paddingS(context, 0.1, 0.06);
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

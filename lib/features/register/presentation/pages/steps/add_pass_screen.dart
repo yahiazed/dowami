@@ -15,9 +15,10 @@ import '../../cubit/register_cubit.dart';
 import 'fill_data_screen.dart';
 
 class AddPasswordScreen extends StatelessWidget {
-  String phoneNumber;
+ // String phoneNumber;
 
-  AddPasswordScreen({super.key, required this.phoneNumber});
+  AddPasswordScreen({super.key,// required this.phoneNumber
+  });
   TextEditingController passController = TextEditingController();
   TextEditingController rePassController = TextEditingController();
   @override
@@ -123,7 +124,8 @@ class AddPasswordScreen extends StatelessWidget {
           if( passController.text.isEmpty||rePassController.text.isEmpty){ showErrorToast(message:'enter passwords');return;}
           BlocProvider.of<RegisterCubit>(context,listen: false).userPassword=passController.text;
 
-    navigateTo(context, FillUserRegisterDataScreen(phoneNumber: phoneNumber));
+    navigateTo(context, FillUserRegisterDataScreen(//phoneNumber: phoneNumber
+    ));
         }
 
 

@@ -15,3 +15,4 @@ const String wadeny2Svg = 'assets/svg/wadeny2.svg';
 const String activeDowamSvg = 'assets/svg/activeDowam.svg';
 const String dawamiSvg = 'assets/svg/dawami.svg';
 const String drawerSvg = 'assets/svg/drawer.svg';
+const String mapApiKey = 'AIzaSyAk2_rLoy5XxVj4UZmSNmUP8fTnTFS7tF0';

@@ -74,18 +74,16 @@ class DioHelperImpl implements DioHelper {
     return await dio.put(url, data: data);
   }
 
+
+
+
+
+
+
   @override
   Future<Response> postDataWithFile({required String url, required  data, String? token,required XFile xFile })async {
-
-  /*  dio.options.headers = {
-      //'lang': appLanguage,
-      'Content-Type': 'multipart/form-data',
-      'Authorization': token ?? '',
-
-    };*/
 var formData= FormData.fromMap(data);
-formData .files.add(MapEntry('avatar',MultipartFile .fromFileSync(xFile.path, filename: xFile.path.split('/').last)
-));
+formData .files.add(MapEntry('avatar',MultipartFile .fromFileSync(xFile.path, filename: xFile.path.split('/').last)));
 
     return await dio.post (
         url,
@@ -93,9 +91,8 @@ formData .files.add(MapEntry('avatar',MultipartFile .fromFileSync(xFile.path, fi
         options:Options(
             contentType: 'multipart/form-data',
             followRedirects: false,
-            validateStatus: (status) {
-              return status! < 500;
-            })
+            //validateStatus: (status) {return status! < 500;}
+    )
     );
   }
 }

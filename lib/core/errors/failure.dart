@@ -1,3 +1,4 @@
+import 'package:dowami/core/error_model.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class Failure extends Equatable {}
@@ -55,6 +56,17 @@ class InvalidNationalIdFailure implements Failure {
   bool? get stringify => true;
 }
 class  NationalIdAlreadyRegisteredFailure implements Failure {
+  @override
+  List<Object?> get props => [];
+
+  @override
+  bool? get stringify => true;
+}
+
+class DioResponseFailure implements Failure{
+  final  ErrorModel? errorModel;
+  const DioResponseFailure({required this.errorModel});
+
   @override
   List<Object?> get props => [];
 
