@@ -48,10 +48,28 @@ class FillUserRegisterDataScreen extends StatelessWidget {
       listener: (context, state) {
 
         if(state is SuccessProfileDataState ){
-          print('success state');
-          print(state.token);
+
           RegisterCubit.get(context).token=state.token;
-          navigateTo(context,const RegisterFinalScreen());
+          RegisterCubit.get(context).userId=state.userId;
+          debugPrint(RegisterCubit.get(context).userId.toString());
+          debugPrint(RegisterCubit.get(context).token.toString());
+
+          if(RegisterCubit.get(context).userType=='client')
+          { navigateTo(context,const RegisterFinalScreen()); }
+          else{
+
+            RegisterCubit.get(context). getCarsModels();
+          }
+
+
+
+
+
+
+
+
+
+
         }
         if(state is ErrorProfileDataState){
           showErrorToast(message: state.errorMsg);
@@ -65,11 +83,21 @@ class FillUserRegisterDataScreen extends StatelessWidget {
           showErrorToast(message: state.errorMsg);
 
         }
+        if(state is ErrorGetCarsModelsState){
+          showErrorToast(message: state.errorMsg);
+
+        }
+        if(state is SuccessGetCarsModelsState){
+          navigateTo(context, CarRegisterScreen());
+
+        }
+
 
 
       },
       builder: (context, state) {
         var cubit = RegisterCubit.get(context);
+        print(state);
         return Scaffold(
           appBar: sharedAppBar(context),
           body: SingleChildScrollView(
@@ -209,76 +237,80 @@ class FillUserRegisterDataScreen extends StatelessWidget {
         labelText: 'National number'.tr(context))
         .paddingB(context, 0.019);
   }
-  Row     _buildBirthDateAndGenderRow (BuildContext context,) {
-    return Row(
+  Column     _buildBirthDateAndGenderRow (BuildContext context,) {
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("Date of Birth".tr(context), style: taj12RegGreeHint()),
-        sharedCardInput(
-          context,
-          controller: dateController,
-          hintText: '?',
-          keyboardType: TextInputType.none,
-          txtStyle: taj12RegGree(),
-          onTap: () async {
-            DateTime? pickedDate = await showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime(1950),
-                //DateTime.now() - not to allow to choose before today.
-                lastDate: DateTime(2100));
-
-            if (pickedDate != null) {
-              print(
-                  pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
-              String formattedDate =
-              DateFormat('yyyy-MM-dd').format(pickedDate);
-              print(
-                  formattedDate); //formatted date output using intl package =>  2021-03-16
-
-              dateController.text =
-                  formattedDate; //set output date to TextField value.
-              RegisterCubit.get(context).birthDate =
-                  formattedDate; //set output date to TextField value.
-            } else {debugPrint('null in date');}
-          },
-        )
-            .roundWidget(
-            width: 0.3.widthX(context),
-            height: 0.035.heightX(context),
-            radius: 9)
-            .cardAll(elevation: 7, radius: 10)
-            .paddingSH(context, 0.02),
-
-        Text("Gender".tr(context), style: taj12RegGreeHint())
-            .paddingSH(context, 0.015),
         Row(
-          mainAxisSize: MainAxisSize.min,
           children: [
-            Text('male'.tr(context), style: taj12RegGree()),
-            Radio(
-              fillColor: MaterialStatePropertyAll(Recolor.amberColor),
-              value: true,
-              groupValue: RegisterCubit.get(context).isMale,
-              onChanged: (value) =>
-                  RegisterCubit.get(context).onChangedGenderRadio(value),
+            Text("Date of Birth".tr(context), style: taj12RegGreeHint()),
+            sharedCardInput(
+              context,
+              controller: dateController,
+              hintText: '?',
+              keyboardType: TextInputType.none,
+              txtStyle: taj12RegGree().copyWith( fontSize: 8),
+              onTap: () async {
+                DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now().subtract(const Duration(days: 19*365)),
+                    firstDate:  DateTime(1950),
+                    lastDate:  DateTime.now().subtract(const Duration(days: 19*365)));
+
+                if (pickedDate != null) {
+                  print(pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+                  String formattedDate =
+                  DateFormat('yyyy-MM-dd').format(pickedDate);
+                  print(formattedDate);
+                  dateController.text = formattedDate;
+                  RegisterCubit.get(context).onSelectDate(formattedDate);
+
+                } else {debugPrint('null in date');}
+              },
+            )
+                .roundWidget(
+                width: 0.20.widthX(context),
+                height: 0.045.heightX(context),
+                radius: 9)
+                .cardAll(elevation: 7, radius: 10)
+                .paddingSH(context, 0.01),
+
+          ],
+        ),
+
+        Row(
+          children: [
+            Text("Gender".tr(context), style: taj12RegGreeHint()).paddingSH(context, 0.015),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('male'.tr(context), style: taj12RegGree()),
+                Radio(
+                  fillColor: MaterialStatePropertyAll(Recolor.amberColor),
+                  value: true,
+                  groupValue: RegisterCubit.get(context).isMale,
+                  onChanged: (value) =>
+                      RegisterCubit.get(context).onChangedGenderRadio(value),
+                )
+              ],
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('female'.tr(context), style: taj12RegGree()),
+                Radio(
+                  fillColor: MaterialStatePropertyAll(Recolor.amberColor),
+                  value: false,
+                  groupValue: RegisterCubit.get(context).isMale,
+                  onChanged: (value) =>
+                      RegisterCubit.get(context).onChangedGenderRadio(value),
+                )
+              ],
             )
           ],
         ),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('female'.tr(context), style: taj12RegGree()),
-            Radio(
-              fillColor: MaterialStatePropertyAll(Recolor.amberColor),
-              value: false,
-              groupValue: RegisterCubit.get(context).isMale,
-              onChanged: (value) =>
-                  RegisterCubit.get(context).onChangedGenderRadio(value),
-            )
-          ],
-        )
+
       ],
     );
   }
@@ -292,7 +324,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
               child: sharedUnderLineInput(context,
                   controller: cityController,
                   labelText: 'City'.tr(context),
-                  keyboardType: TextInputType.text),
+                  keyboardType: TextInputType.none),
             ),
             const SizedBox(
               width: 8,
@@ -301,7 +333,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
               child: sharedUnderLineInput(context,
                   controller: regionController,
                   labelText: 'Region'.tr(context),
-                  keyboardType: TextInputType.text),
+                  keyboardType: TextInputType.none),
             ),
             const SizedBox(
               width: 8,
@@ -310,7 +342,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
               child: sharedUnderLineInput(context,
                   controller: neighborhoodController,
                   labelText: 'Neighborhood'.tr(context),
-                  keyboardType: TextInputType.text),
+                  keyboardType: TextInputType.none),
             ),
           ],
         ),
@@ -340,7 +372,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Or select on the map'.tr(context),
+                Text('select on the map'.tr(context),
                     style: taj11RegGreeHintUnderLine()),
                 Icon(Icons.place_outlined, color: Recolor.hintColor, size: 15),
               ],
@@ -373,6 +405,12 @@ class FillUserRegisterDataScreen extends StatelessWidget {
   Widget _buildOnSubmitButton(BuildContext context) {
     return sharedElevatedButton(
       onPressed: ()async {
+        if(!RegisterCubit.get(context).isAcceptTerms){
+          showErrorToast(message:'terms');
+          return;
+
+        }
+
         if (registerDataFormKey.currentState!.validate()) {
           if(RegisterCubit.get(context).avatarImageFile==null){
             showErrorToast(message:' select image');
@@ -380,37 +418,38 @@ class FillUserRegisterDataScreen extends StatelessWidget {
 
           }
 
-          switch (RegisterCubit.get(context).userType) {
-            case 'captain':
-              navigateTo(context, CarRegisterScreen());
-              break;
-            case 'client':
-              var userModel=UserModel(
-                userId: RegisterCubit.get(context).userId,
-                birthDate: dateController.text,
-                nickName: surNameController.text,
-                fatherName: fNameController.text,
-                firstName: nameController.text,
-                 city: cityController.text,
-                area: regionController.text,
-                district: neighborhoodController.text,
-                gender: RegisterCubit.get(context).isMale?'Male':'Female',
-                nationalId: nNumController.text,
-               // avatar:  RegisterCubit.get(context).picked
 
-              );
-
-              try{
-                await RegisterCubit.get(context).sendCompleteProfileData(userModel: userModel);
-
-              }catch(e){print('error');}
-
+          var userModel=UserModel(
+             // userId: 4,
+              birthDate: dateController.text,
+              nickName: surNameController.text,
+              fatherName: fNameController.text,
+              firstName: nameController.text,
+              city: '1'
+            //  cityController.text
+              ,
+              area:'2'
+              //regionController.text
+              ,
+              district:'1'
+             //  neighborhoodController.text
+               ,
+              gender: RegisterCubit.get(context).isMale?'Male':'Female',
+              nationalId: nNumController.text,
+              iBAN: captainController.text,
+              lat: RegisterCubit.get(context).latLng!.latitude.toString(),
+              long: RegisterCubit.get(context).latLng!.longitude.toString(),
+              userType: RegisterCubit.get(context).userType,
+            mobile: RegisterCubit.get(context).phoneCode+RegisterCubit.get(context).phoneNumber
 
 
+          );
 
-              print('Client+++');
-              break;
-          }
+            await RegisterCubit.get(context).sendCompleteProfileData(userModel: userModel);
+
+
+
+
         }
       },
       txt: 'Confirm'.tr(context),

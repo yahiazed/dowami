@@ -15,6 +15,12 @@ abstract class DioHelper {
     required XFile xFile,
   required String name
   });
+  Future<Response> postDataWithFiles({
+    required String url,
+    required Map<String,dynamic> data,
+    required List<XFile> xFiles,
+  required String name
+  });
 
 
   Future<Response> putData({
@@ -37,15 +43,22 @@ class DioHelperImpl implements DioHelper {
       baseUrl: baseUrl,
       receiveTimeout: 20 * 1000,
       connectTimeout: 20 * 1000,
+      headers: {
+        // 'default-lang': 'en',
+        'Content-Type': 'application/json',
+        // 'Authorization': token ?? '',
+      }
     ),
   );
+
+
 
   @override
   Future<Response> getData({required String url, query, String? token}) async {
     dio.options.headers = {
-      // 'lang': deviceLocale.languageCode,
+      // 'default-lang': 'ar',
       'Content-Type': 'application/json',
-      'Authorization': token ?? '',
+     // 'Authorization': token ?? '',
     };
     return await dio.get(url, queryParameters: query);
   }
@@ -86,9 +99,31 @@ var formData= FormData.fromMap(data);
 formData .files.add(MapEntry(name,MultipartFile .fromFileSync(xFile.path, filename: xFile.path.split('/').last)));
 
     return
+      await dio.post (url, data: formData, options:Options(contentType: 'multipart/form-data', followRedirects: false,// validateStatus: (status) {return true;}
+      ));
+  }
+
+
+
+  @override
+  Future<Response> postDataWithFiles({required String url, required Map<String,dynamic> data,required List<XFile> xFiles ,required String name })async {
+
+    FormData formData= FormData.fromMap(data);
+
+    formData.files.addAll(
+        xFiles.map((e) =>MapEntry(name,
+            MultipartFile.fromFileSync(e.path,filename:  e.path.split('/').last) )).toList()
+
+      );
+
+    return
       await dio.post (url, data: formData, options:Options(contentType: 'multipart/form-data', followRedirects: false, //validateStatus: (status) {return status! < 500;}
       ));
   }
+
+
+
+
 }
 
 

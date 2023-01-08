@@ -10,7 +10,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../../constant/strings/strings.dart';
 import '../../../../constant/text_style/text_style.dart';
-import '../../../login/presentation/pages/login_screen.dart';
+import '../../../login/presentation/pages/login_screen1.dart';
 
 class SelectLog extends StatelessWidget {
   const SelectLog({super.key});
@@ -28,7 +28,7 @@ class SelectLog extends StatelessWidget {
             Text('BeReady'.tr(context), style: taj19BoldBlue()).paddingB(context, 0.03),
             sharedElevatedButton(
                     onPressed: () {
-                      navigateRep(context, LogInScreen());
+                      navigateTo(context, LogInScreen1());
                     },
                     txt: "I Have an Account".tr(context),
                     color: Recolor.amberColor,
@@ -41,7 +41,7 @@ class SelectLog extends StatelessWidget {
                 .paddingB(context, .03),
             sharedElevatedButton(
                 onPressed: () {
-                  navigateRep(context, const SelectAccountKind());
+                  navigateTo(context, const SelectAccountKind());
                 },
                 txt: "Create Account".tr(context),
                 radius: 6,

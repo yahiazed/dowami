@@ -15,8 +15,13 @@ class UserModel extends Equatable{
  final String? area;
  final String? district;
  final String? gender;
+ final String? userType;
+ final String? iBAN;
 
  final int? userId;
+ final String? lat;
+ final String? long;
+ final String? mobile;
 
   const UserModel(
       {this.firstName,
@@ -29,6 +34,11 @@ class UserModel extends Equatable{
       this.district,
       this.gender,
       this.userId,
+      this.userType,
+      this.iBAN,
+      this.lat,
+      this.long,
+      this.mobile,
 
       });
 
@@ -46,6 +56,11 @@ class UserModel extends Equatable{
        'district':userModel.district,
        'gender':userModel.gender,
        'user_id':userModel.userId,
+       'type':userModel.userType,
+       'iban':userModel.iBAN,
+       'lat':userModel.lat,
+       'long':userModel.long,
+       'mobile':userModel.mobile,
 
 
 
@@ -66,6 +81,11 @@ class UserModel extends Equatable{
        district :map['district'],
        gender :map['gender'],
        userId :map['user_id'],
+       userType :map['type'],
+       iBAN :map['iban'],
+       lat :map['lat'],
+       long :map['long'],
+       mobile:map['mobile']
 
 
      )

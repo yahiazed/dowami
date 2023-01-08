@@ -5,8 +5,7 @@ import 'package:dowami/constant/shared_widgets/shard_elevated_button.dart';
 import 'package:dowami/constant/shared_widgets/shared_appbar.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+
 
 import '../../../../../constant/text_style/text_style.dart';
 import '../../../../home/presentation/pages/home_screen.dart';

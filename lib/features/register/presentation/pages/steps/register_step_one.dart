@@ -32,12 +32,13 @@ class RegisterStepOneScreen extends StatelessWidget {
       listener: (context, state) {
         if (state is ErrorSendOtpState) {
           showErrorToast(message: state.errorMsg);
+
         }
         if (state is SuccessSendOtpState) {
           RegisterCubit.get(context).smsCode = state.smsCode;
           print('smscode======================${state.smsCode}');
           navigateTo(context, RegisterStepTwoScreen(
-            //  phoneNumber: phoneCode + phoneController.text
+
           ));
         }
       },

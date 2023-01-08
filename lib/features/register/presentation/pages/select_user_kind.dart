@@ -10,8 +10,7 @@ import 'package:dowami/features/terms/presentation/pages/privacy_policy_screen.d
 import 'package:dowami/features/terms/presentation/pages/terms_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../constant/text_style/text_style.dart';

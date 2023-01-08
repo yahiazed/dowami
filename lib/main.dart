@@ -2,7 +2,9 @@ import 'package:dowami/constant/shared_colors/shared_colors.dart';
 import 'package:dowami/constant/text_style/text_style.dart';
 import 'package:dowami/features/home/presentation/cubit/home_cubit.dart';
 import 'package:dowami/features/home/presentation/pages/home_screen.dart';
+import 'package:dowami/features/login/data/cubit/login_cubit.dart';
 import 'package:dowami/features/register/presentation/cubit/register_cubit.dart';
+import 'package:dowami/features/register/presentation/pages/steps/captain/car_paper_screen.dart';
 import 'package:dowami/features/terms/presentation/pages/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'dependency_injection.dart' as di;
 import 'features/register/data/repositories/repository.dart';
+import 'features/register/presentation/pages/steps/captain/car_register_screen.dart';
 import 'features/register/presentation/pages/steps/fill_data_screen.dart';
 import 'features/register/presentation/pages/steps/get_location_dialog.dart';
 import 'helpers/localization/app_localization.dart';
@@ -30,6 +33,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
         providers: [
           BlocProvider(create: (context) => di.sl<RegisterCubit>()),
+          BlocProvider(create: (context) => di.sl<LoginCubit>()),
           BlocProvider(create: (context) => HomeCubit()),
         ],
         child: MaterialApp(
@@ -69,8 +73,9 @@ class MyApp extends StatelessWidget {
           home:
               //HomeScreen()
               SelectLog(),
-
-            //FillUserRegisterDataScreen(phoneNumber: '',),
+           // CarRegisterScreen()
+           // FillUserRegisterDataScreen(),
+              // RegisterCarPaperScreen(),
         ));
   }
 }

@@ -57,10 +57,19 @@ class ErrorSendOtpState extends RegisterState {
 ///[2] Timer     [StartTimeDownState]
 
 
+
+
+
+
+
+
+
+///[1] Verify CODE     [StartVerifyCodeState]
+
 class StartVerifyCodeState extends RegisterState {}
 class SuccessCodeState extends RegisterState {
-  final int userId;
-  const SuccessCodeState({required this.userId});
+
+  const SuccessCodeState();
 }
 class ErrorCodeState extends RegisterState {
   final String errorMsg;
@@ -68,7 +77,7 @@ class ErrorCodeState extends RegisterState {
 }
 
 //-----
-
+///[2] Timer     [StartTimeDownState]
 class TimeOutSendSmsCodeState extends RegisterState {}
 class StartTimeDownState extends RegisterState {}
 class EndTimeDownState extends RegisterState {}
@@ -127,7 +136,8 @@ class EndSelectDateState extends RegisterState {}
 class StartSendProfileDataState extends RegisterState {}
 class SuccessProfileDataState extends RegisterState {
   final String token;
-  const SuccessProfileDataState({required this.token});
+  final int userId;
+  const SuccessProfileDataState({required this.token,required this.userId});
 }
 class ErrorProfileDataState extends RegisterState {
   final String errorMsg;
@@ -140,28 +150,105 @@ class ErrorProfileDataState extends RegisterState {
 
 /// {( Captain )} [fill_data_screen]  {3}
 ///[2] isRent     [StartChangeRadioRentState]
+///[3] get cars models     [StartChangeRadioRentState]
+///[4] get cars data models     [StartChangeRadioRentState]
+///[5] select car model     [StartSelectCarModelState]
+///[6] select car  data model     [StartSelectCarDataModelState]
+///[7] send captain vehicle      [StartSendCaptainVehicleDataState]
+///[8] get Required Documents      [StartGetRequiredDocumentsState]
+///[9] send Documents     [StartGetRequiredDocumentsState]
 
 class StartChangeRadioRentState extends RegisterState {}
 class EndChangeRadioRentState extends RegisterState {}
 
+//------------------------------------------------------------------------------
 
 
+///[3] get cars models
+class StartGetCarsModelsState extends RegisterState {}
+class SuccessGetCarsModelsState extends RegisterState {
+  final List<CarModel>cars;
+ const SuccessGetCarsModelsState({required this.cars});
+}
+class ErrorGetCarsModelsState extends RegisterState {
+  final String errorMsg;
+  final ErrorModel errorModel;
+
+  const ErrorGetCarsModelsState({required this.errorMsg,required this.errorModel});
+}
+
+///[4] get cars Data models
+class StartGetCarsDataModelsState extends RegisterState {}
+class SuccessGetCarsDataModelsState extends RegisterState {
+  final List<CarDataModel>carsData;
+  const SuccessGetCarsDataModelsState({required this.carsData});
+}
+class ErrorGetCarsDataModelsState extends RegisterState {
+  final String errorMsg;
+  final ErrorModel errorModel;
+
+  const ErrorGetCarsDataModelsState({required this.errorMsg,required this.errorModel});
+}
+
+//------------------------------------------------------------------------------
+///[5] select car model
+class StartSelectCarModelState extends RegisterState {}
+class EndSelectCarModelState extends RegisterState {}
+
+//------------------------------------------------------------------------------
+
+///[6] select car  data model
+class StartSelectCarDataModelState extends RegisterState {}
+class EndSelectCarDataModelState extends RegisterState {}
 
 
+///[7] send captain vehicle
+class StartSendCaptainVehicleDataState extends RegisterState {}
+class SuccessSendCaptainVehicleDataState extends RegisterState {
+
+  const SuccessSendCaptainVehicleDataState();
+}
+class ErrorSendCaptainVehicleDataState extends RegisterState {
+  final String errorMsg;
+  final ErrorModel errorModel;
+
+  const ErrorSendCaptainVehicleDataState({required this.errorMsg,required this.errorModel});
+}
+
+///[8] get Required Documents
+
+class StartGetRequiredDocumentsState extends RegisterState {}
+class SuccessGetRequiredDocumentsState extends RegisterState {
+final List<RequiredDocModel> requiredDocs;
+  const SuccessGetRequiredDocumentsState({required this.requiredDocs});
+}
+class ErrorGetRequiredDocumentsState extends RegisterState {
+  final String errorMsg;
+  final ErrorModel errorModel;
+
+  const ErrorGetRequiredDocumentsState({required this.errorMsg,required this.errorModel});
+}
 
 
+///[9] send Documents
+
+class StartSendDocumentsState extends RegisterState {}
+class SuccessSendRequiredDocumentsState extends RegisterState {
+
+  const SuccessSendRequiredDocumentsState();
+}
+class ErrorSendRequiredDocumentsState extends RegisterState {
+  final String errorMsg;
+  final ErrorModel errorModel;
+
+  const ErrorSendRequiredDocumentsState({required this.errorMsg,required this.errorModel});
+}
 
 
+///[9] select Expired Date
 
+class StartSelectExpiredDateState extends RegisterState {}
+class EndSelectExpiredDateState extends RegisterState {
 
-
-
-
-
-
-
-
-
-
-
-
+  const EndSelectExpiredDateState();
+}

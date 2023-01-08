@@ -1,3 +1,5 @@
+import 'package:dowami/features/login/data/cubit/login_cubit.dart';
+import 'package:dowami/features/login/data/repositories/repository.dart';
 import 'package:dowami/features/register/data/repositories/repository.dart';
 import 'package:dowami/features/register/presentation/cubit/register_cubit.dart';
 import 'package:dowami/helpers/dio_helper.dart';
@@ -7,6 +9,8 @@ final sl = GetIt.instance;
 
 Future<void> init() async {
   sl.registerFactory(() => RegisterCubit(repo: sl()));
+  sl.registerFactory(() => LoginCubit(repo: sl()));
   sl.registerLazySingleton<RegisterRepo>(() => RegisterRepoImpel(dio: sl()));
+  sl.registerLazySingleton<LoginRepo>(() => LoginRepoImpel(dio: sl()));
   sl.registerLazySingleton<DioHelper>(() => DioHelperImpl());
 }

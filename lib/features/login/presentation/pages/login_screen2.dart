@@ -5,22 +5,20 @@ import 'package:dowami/constant/shared_widgets/shard_elevated_button.dart';
 import 'package:dowami/constant/shared_widgets/shared_appbar.dart';
 import 'package:dowami/constant/shared_widgets/shared_card_input.dart';
 import 'package:dowami/constant/shared_widgets/toast.dart';
-import 'package:dowami/features/register/presentation/cubit/register_cubit.dart';
-import 'package:dowami/features/register/presentation/pages/steps/fill_data_screen.dart';
+import 'package:dowami/features/home/presentation/pages/home_screen.dart';
+import 'package:dowami/features/login/data/cubit/login_cubit.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../constant/shared_function/navigator.dart';
 import '../../../../../constant/text_style/text_style.dart';
-import 'add_pass_screen.dart';
 
-class RegisterStepTwoScreen extends StatelessWidget {
- // String phoneNumber;
+
+class LoginScreen2 extends StatelessWidget {
+  // String phoneNumber;
   var digitController1 = TextEditingController();
   var digitController2 = TextEditingController();
   var digitController3 = TextEditingController();
@@ -33,16 +31,16 @@ class RegisterStepTwoScreen extends StatelessWidget {
   final nod4 = FocusNode();
   final nod5 = FocusNode();
   final nod6 = FocusNode();
-  RegisterStepTwoScreen({super.key, //required this.phoneNumber
+  LoginScreen2({super.key, //required this.phoneNumber
   });
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<RegisterCubit, RegisterState>(
+    return BlocConsumer<LoginCubit, LoginState>(
       listener: (context, state) {
-        if (state is SuccessCodeState) {
-          navigateTo(context, FillUserRegisterDataScreen());}
-        if (state is ErrorCodeState) {
+        if (state is SuccessCodeLoginState) {
+          navigateTo(context, const HomeScreen());}
+        if (state is ErrorCodeLoginState) {
           showErrorToast(message:state.errorMsg);
         }
       },
@@ -54,7 +52,7 @@ class RegisterStepTwoScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _build4LineText(context,RegisterCubit.get(context)),
+                _build4LineText(context,LoginCubit.get(context)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -77,34 +75,34 @@ class RegisterStepTwoScreen extends StatelessWidget {
   }
 
   Widget _buildResendTextButton(context, state) {
-    var cubit = RegisterCubit.get(context);
+    var cubit = LoginCubit.get(context);
     return InkWell(
-      onTap: state is TimeOutSendSmsCodeState
+      onTap: state is TimeOutSendSmsCodeLoginState
           ? () {
-              cubit.sendOtp(phoneNum: cubit.phoneCode + cubit.phoneNumber);
-            }
+        cubit.sendOtp(phoneNum: cubit.phoneCode + cubit.phoneNumber);
+      }
           : null,
       child: Center(
         child: RichText(
             text: TextSpan(children: [
-          TextSpan(text: 'أعد ارسال الرمز',
-              style: taj14Blue().copyWith(decoration:state is TimeOutSendSmsCodeState?TextDecoration.underline:TextDecoration.none )
-          ),
-              state is TimeOutSendSmsCodeState
-              ?const TextSpan():
+              TextSpan(text: 'أعد ارسال الرمز',
+                  style: taj14Blue().copyWith(decoration:state is TimeOutSendSmsCodeLoginState?TextDecoration.underline:TextDecoration.none )
+              ),
+              state is TimeOutSendSmsCodeLoginState
+                  ?const TextSpan():
               TextSpan(
-            text: '${RegisterCubit.get(context).second} ثانية',
-            style: taj14Amber().copyWith(
-                decoration: state is TimeOutSendSmsCodeState
-                    ? TextDecoration.underline
-                    : null),
-          ),
-        ])).paddingB(context, 0.05),
+                text: '${LoginCubit.get(context).second} ثانية',
+                style: taj14Amber().copyWith(
+                    decoration: state is TimeOutSendSmsCodeLoginState
+                        ? TextDecoration.underline
+                        : null),
+              ),
+            ])).paddingB(context, 0.05),
       ),
     );
   }
 
-  Column _build4LineText(BuildContext context,RegisterCubit cubit) {
+  Column _build4LineText(BuildContext context,LoginCubit cubit) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -124,9 +122,9 @@ class RegisterStepTwoScreen extends StatelessWidget {
         Navigator.pop(context);
       },
       child: Text('Is the number correct?'.tr(context),
-              style: taj14Blue().copyWith(
-                  decoration: TextDecoration.underline,
-                  color: Recolor.amberColor))
+          style: taj14Blue().copyWith(
+              decoration: TextDecoration.underline,
+              color: Recolor.amberColor))
           .paddingB(context, 0.1),
     );
   }
@@ -135,34 +133,34 @@ class RegisterStepTwoScreen extends StatelessWidget {
       TextEditingController digitController, FocusNode nod) {
     return Center(
       child: sharedCardInput(context,
-              controller: digitController,
-              hintText: '*',
-              txtStyle: pop18BoldGree(),
-              textAlign: TextAlign.center,
-              focusNode: nod,
-              hintStyle: pop18BoldGree(),
-              onChanged: (p0) {
-                if (p0.length == 1) {
-                  FocusScope.of(context).previousFocus();
-                } else if (nod == nod6) {
-                  FocusScope.of(context).unfocus();
-                } else {
-                  FocusScope.of(context).nextFocus();
-                }
-              },
-              inputFormatters: [LengthLimitingTextInputFormatter(1)],
-              textInputAction:
-                  nod == nod6 ? TextInputAction.previous : TextInputAction.done,
-              validator: (p0) {
-                if (p0!.isEmpty) {
-                  return 'Empty';
-                } else {
-                  int.tryParse(p0);
-                }
-              },
-              keyboardType: TextInputType.number)
+          controller: digitController,
+          hintText: '*',
+          txtStyle: pop18BoldGree(),
+          textAlign: TextAlign.center,
+          focusNode: nod,
+          hintStyle: pop18BoldGree(),
+          onChanged: (p0) {
+            if (p0.length == 1) {
+              FocusScope.of(context).previousFocus();
+            } else if (nod == nod6) {
+              FocusScope.of(context).unfocus();
+            } else {
+              FocusScope.of(context).nextFocus();
+            }
+          },
+          inputFormatters: [LengthLimitingTextInputFormatter(1)],
+          textInputAction:
+          nod == nod6 ? TextInputAction.previous : TextInputAction.done,
+          validator: (p0) {
+            if (p0!.isEmpty) {
+              return 'Empty';
+            } else {
+              int.tryParse(p0);
+            }
+          },
+          keyboardType: TextInputType.number)
           .roundWidget(
-              width: 0.15.widthX(context), height: 0.07.heightX(context))
+          width: 0.15.widthX(context), height: 0.07.heightX(context))
           .cardAll(elevation: 6, radius: 6),
     );
   }
@@ -182,7 +180,11 @@ class RegisterStepTwoScreen extends StatelessWidget {
             digitController2.text +
             digitController1.text;
         int cod = int.parse(code);
-        RegisterCubit.get(context).verifyCode(cod);
+       // LoginCubit.get(context).verifyCode(cod);
+        if(cod==LoginCubit.get(context).smsCode){
+
+          navigateTo(context, const HomeScreen());
+        }
       },
     );
   }

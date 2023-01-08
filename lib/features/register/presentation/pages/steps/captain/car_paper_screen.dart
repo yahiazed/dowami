@@ -1,59 +1,88 @@
+import 'dart:io';
+
 import 'package:dowami/constant/extensions/media_extension.dart';
 import 'package:dowami/constant/extensions/round_extension.dart';
 import 'package:dowami/constant/shared_colors/shared_colors.dart';
 import 'package:dowami/constant/shared_widgets/shard_elevated_button.dart';
 import 'package:dowami/constant/shared_widgets/shared_appbar.dart';
+import 'package:dowami/constant/shared_widgets/shared_card_input.dart';
+import 'package:dowami/constant/shared_widgets/toast.dart';
+import 'package:dowami/features/register/data/models/required_doc_model.dart';
+import 'package:dowami/features/register/data/models/user_doc_model.dart';
 import 'package:dowami/features/register/presentation/cubit/register_cubit.dart';
 import 'package:dowami/features/register/presentation/pages/steps/register_final_screen.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../../../constant/shared_function/navigator.dart';
 import '../../../../../../constant/shared_widgets/shared_accept_terms.dart';
 import '../../../../../../constant/text_style/text_style.dart';
-import '../../../../../terms/presentation/pages/privacy_policy_screen.dart';
-import '../../../../../terms/presentation/pages/terms_screen.dart';
 
 class RegisterCarPaperScreen extends StatelessWidget {
 
-  const RegisterCarPaperScreen({super.key});
+    RegisterCarPaperScreen({super.key});
+  var carDocsFormKey = GlobalKey<FormState>();
+
+
+  List<TextEditingController>dateControllers=List.generate(10, (index) => TextEditingController());
+  List<TextEditingController>idNumbersControllers=List.generate(10, (index) => TextEditingController());
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<RegisterCubit, RegisterState>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if(state is ErrorSendRequiredDocumentsState){
+          showErrorToast(message: state.errorMsg);
+        }
+
+      },
       builder: (context, state) {
         var cubit=RegisterCubit.get(context);
+        if(cubit.requiredDocuments.isEmpty){cubit.getRequiredDocs();}
+
         return Scaffold(
           appBar: sharedAppBar(context),
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              _buildTopTextColumn(context),
+          body: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _buildTopTextColumn(context),
+                Form(key: carDocsFormKey,
+                  child: Column(
+                    children: cubit.requiredDocuments.map((e) =>
+                        _buildDocItem(context: context,cubit: cubit,index: cubit.requiredDocuments.indexOf(e),requiredDocModel: e),
+                    ).toList()
 
-              _buildIdLicenseInkwell(context: context,cubit:cubit),
-              _buildDriveLicenseInkwell(context: context,cubit:cubit),
 
-              cubit.isRent?
-              _buildAuthLicenseInkwell(context: context,cubit:cubit)
-              : _buildCarLicenseInkwell(context: context,cubit:cubit),
+                    ,
+                  ),
+                ),
 
-              _buildTotalRowOperationColor(context),
-              buildAcceptsTermsRow(
-                  RegisterCubit.get(context).isAcceptTerms, context),
-              sharedElevatedButton(
-                  onPressed: () {
-                    navigateTo(context, RegisterFinalScreen());
-                  },
-                  txt: 'Confirm'.tr(context),
-                  textStyle: taj16BoldWhite(),
-                  radius: 9,
-                  verticalPadding: 0.025.heightX(context),
-                  horizontalPadding: 0.2.widthX(context),
-                  color: Recolor.amberColor)
-            ],
+
+
+               // cubit.isRent?
+               // _buildAuthLicenseInkwell(context: context,cubit:cubit)
+               // : _buildCarLicenseInkwell(context: context,cubit:cubit),
+
+
+                buildAcceptsTermsRow(
+                    RegisterCubit.get(context).isAcceptTerms, context),
+                sharedElevatedButton(
+                    onPressed: () async{
+                      await onConfirmButton(context: context,cubit: RegisterCubit.get(context));
+                    },
+                    txt: 'Confirm'.tr(context),
+                    textStyle: taj16BoldWhite(),
+                    radius: 9,
+                    verticalPadding: 0.025.heightX(context),
+                    horizontalPadding: 0.2.widthX(context),
+                    color: Recolor.amberColor)
+              ],
+            ),
           ),
         );
       },
@@ -73,8 +102,149 @@ class RegisterCarPaperScreen extends StatelessWidget {
   }
 
 
+    InkWell _buildDocItem({required BuildContext context,required RegisterCubit cubit,required int index,required RequiredDocModel requiredDocModel}) {
+      return InkWell(
+        onTap: ()async{
+          await cubit.pickDocImageFromGallery(index: index);
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding:
+                  EdgeInsetsDirectional.only(start: 0.90.widthX(context) * .1,),
+                  child: Text(requiredDocModel.name!, style: taj17ExtraBoldBlue()),
+                ),
+                Container(
+                  width: 0.90.widthX(context) * .2,
+                  height: .05.heightX(context),
+
+                  decoration:
+                  cubit.docImagesFiles[index]==null||cubit.docImagesFiles[index]==File('')||cubit.docImagesFiles[index]!.path.isEmpty
+                      ? const BoxDecoration()
+                      :BoxDecoration(
+                      image:  DecorationImage(image:   FileImage(cubit.docImagesFiles[index]!),fit: BoxFit.contain,)
+                  ),
+                  child:  cubit.docImagesFiles[index]==null||cubit.docImagesFiles[index]==File('')||cubit.docImagesFiles[index]!.path.isEmpty
+                      ?Icon(Icons.camera_alt_outlined,color: Recolor.txtGreyColor,)
+                  :const SizedBox(),
+                ),
+
+              ],
+            ).paddingSV(context, .01
+            ),
+
+              Column(
+                children:
+                [
+                 if(requiredDocModel.hasExpiredDate=='1') sharedCardInput(context,
+                      controller: dateControllers[index],
+                    hintText: 'expired date',
+                    keyboardType: TextInputType.none,
+                   txtStyle:taj12RegGree() ,
+
+                   validator: (v){if(v!.isEmpty){return 'enter expired date ';}return null;},
+                      onTap: () async {
+                    DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now().add(Duration(days: 15)),
+                        firstDate: DateTime.now().add(Duration(days: 15)),
+                         lastDate: DateTime(2100));
+
+                    if (pickedDate != null) {
+                      print(pickedDate);
+                      String formattedDate =
+                      DateFormat('yyyy-MM-dd').format(pickedDate);
+                      print(formattedDate); //formatted date output using intl package =>  2021-03-16
+
+                      dateControllers[index].text = formattedDate;
+                      cubit.onSelectExpiredDate(formattedDate);
+
+                    } else {debugPrint('null in date');}
+                  },
+                 ).paddingSH(context, 0.02).roundWidget(
+                     color: Recolor.whiteColor,
+                     borderColor: Recolor.txtGreyColor,
+                     borderWidth: 1,
+                     radius: 5
+                 ).paddingS(context, .01, .01),
 
 
+
+
+
+
+
+                  if(requiredDocModel.hasIdNumber=='1') sharedUnderLineInput(context,
+                      controller: idNumbersControllers[index],
+                      labelText: 'car id number',
+
+                      labelStyle:taj12RegGree() ,
+                      validator: (v){if(v!.isEmpty){return 'enter car id number ';}return null;}
+                  ).paddingSH(context, 0.02).roundWidget(
+                    color: Recolor.whiteColor,
+                    borderColor: Recolor.txtGreyColor,
+                    borderWidth: 1,
+                    radius: 5
+                  ).paddingS(context, .01, .01),
+
+
+                ]
+
+            ).paddingB(context, .02),
+
+
+          ],
+        )
+            .roundWidget(
+            width: 0.90.widthX(context), //height: 0.08.heightX(context)
+        )
+            .cardAll(cardColor: Recolor.whiteColor, elevation: 9, radius: 9)
+            .paddingB(context, 0.02),
+      );
+    }
+    onConfirmButton({required RegisterCubit cubit ,required BuildContext context})async{
+
+      if(!RegisterCubit.get(context).isAcceptTerms){
+        showErrorToast(message:'terms');
+        return;
+
+      }
+      if (  !carDocsFormKey.currentState!.validate()){print('here');return ;}
+        var requiredDocsList=cubit.requiredDocuments;
+
+print(requiredDocsList);
+
+
+  for(var requiredDoc in requiredDocsList){
+
+    int index=requiredDocsList.indexOf(requiredDoc);
+    if( cubit.docImagesPicked[index]==null||cubit.docImagesPicked[index]==XFile('')||
+        cubit.docImagesPicked[index]!.path.isEmpty){
+      showErrorToast(message: 'select all images');return;}
+
+    var userDocModel=UserDocModel(
+        userId: '4',
+        docId: requiredDoc.id.toString(),
+        expiredDate: dateControllers[index].text,
+        idNumber:  idNumbersControllers[index].text
+    );
+    XFile? picked=cubit.docImagesPicked[index];
+    await  cubit.sendDocuments(userDocModel: userDocModel, xFile: picked!);
+
+  }
+
+
+
+
+ navigateTo(context, RegisterFinalScreen());
+
+
+
+    }
 
   InkWell _buildIdLicenseInkwell({required BuildContext context,required RegisterCubit cubit}) {
     return InkWell(
@@ -177,12 +347,11 @@ class RegisterCarPaperScreen extends StatelessWidget {
                 image:  DecorationImage(image:   FileImage(cubit.carLicenseOrDocImageFile!),fit: BoxFit.contain,)
             )
             ,
+            child:  cubit.carLicenseOrDocImageFile==null
+                ?Icon(Icons.camera_alt_outlined,color: Recolor.txtGreyColor,)
+                :const SizedBox(),
           ),
-          Container(
-            width: 0.90.widthX(context) * .1,
-            height: .08.heightX(context),
-            color: Recolor.txtRefuseColor,
-          )
+
         ],
       )
           .roundWidget(
@@ -215,12 +384,11 @@ class RegisterCarPaperScreen extends StatelessWidget {
                 image:  DecorationImage(image:   FileImage(cubit.carLicenseOrDocImageFile!),fit: BoxFit.contain,)
             )
             ,
+            child:  cubit.carLicenseOrDocImageFile==null
+                ?Icon(Icons.camera_alt_outlined,color: Recolor.txtGreyColor,)
+                :const SizedBox(),
           ),
-          Container(
-            width: 0.90.widthX(context) * .1,
-            height: .08.heightX(context),
-            color: Recolor.txtRefuseColor,
-          )
+
         ],
       )
           .roundWidget(
@@ -229,6 +397,8 @@ class RegisterCarPaperScreen extends StatelessWidget {
           .paddingB(context, 0.02),
     );
   }
+
+
 
 
 
