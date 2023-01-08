@@ -185,6 +185,9 @@ class LoginScreen2 extends StatelessWidget {
 
           navigateTo(context, const HomeScreen());
         }
+        else{
+          showErrorToast(message: 'wrong code');
+        }
       },
     );
   }
