@@ -7,6 +7,3 @@ extension SizeX on double {
       this * MediaQuery.of(context).size.height;
 }
 
-// extension WidgetX on Widget{
-//   Widget raduisAll()=>RoundedRectangleBorder()
-// }

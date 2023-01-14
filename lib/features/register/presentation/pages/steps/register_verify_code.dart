@@ -11,15 +11,13 @@ import 'package:dowami/helpers/localization/app_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../constant/shared_function/navigator.dart';
 import '../../../../../constant/text_style/text_style.dart';
-import 'add_pass_screen.dart';
 
-class RegisterStepTwoScreen extends StatelessWidget {
+class RegisterVerifyCodeScreen extends StatelessWidget {
  // String phoneNumber;
   var digitController1 = TextEditingController();
   var digitController2 = TextEditingController();
@@ -33,8 +31,7 @@ class RegisterStepTwoScreen extends StatelessWidget {
   final nod4 = FocusNode();
   final nod5 = FocusNode();
   final nod6 = FocusNode();
-  RegisterStepTwoScreen({super.key, //required this.phoneNumber
-  });
+  RegisterVerifyCodeScreen({super.key,});
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +64,7 @@ class RegisterStepTwoScreen extends StatelessWidget {
                   ],
                 ).paddingB(context, 0.05),
                 _buildResendTextButton(context, state),
+                _buildCodeSms(context),
                 _buildButton(context)
               ],
             ),
@@ -74,6 +72,11 @@ class RegisterStepTwoScreen extends StatelessWidget {
         );
       },
     );
+  }
+  Widget _buildCodeSms(context){
+    return Text(RegisterCubit.get(context).smsCode.toString()
+    ).paddingSV(context, 0.01);
+
   }
 
   Widget _buildResendTextButton(context, state) {

@@ -9,6 +9,7 @@ import 'package:dowami/constant/shared_widgets/shared_appbar.dart';
 import 'package:dowami/constant/shared_widgets/shared_card_input.dart';
 import 'package:dowami/constant/shared_widgets/toast.dart';
 import 'package:dowami/constant/text_style/text_style.dart';
+import 'package:dowami/features/maps/helper/permission.dart';
 import 'package:dowami/features/register/presentation/cubit/register_cubit.dart';
 
 import 'package:dowami/helpers/localization/app_localization.dart';
@@ -79,10 +80,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
 
 
         }
-        if(state is ErrorPermissionsLocationState){
-          showErrorToast(message: state.errorMsg);
 
-        }
         if(state is ErrorGetCarsModelsState){
           showErrorToast(message: state.errorMsg);
 
@@ -350,8 +348,9 @@ class FillUserRegisterDataScreen extends StatelessWidget {
             onPressed: () async{
 
 
-              await cubit.getPermissions(context) ;
 
+            bool locationEnable= await checkLocationPermissions();
+            if(locationEnable){
               await Geolocator.getCurrentPosition().then((value) =>  cubit.latLng=LatLng(value.latitude,value.longitude) );
 
               await  showDialog(context: context, builder: (context) =>Dialog(
@@ -361,6 +360,8 @@ class FillUserRegisterDataScreen extends StatelessWidget {
                 if( RegisterCubit.get(context).area.isNotEmpty){regionController.text=RegisterCubit.get(context).area;}
                 if( RegisterCubit.get(context).district.isNotEmpty){neighborhoodController.text=RegisterCubit.get(context).district;}
               } );
+            }
+
 
 
 

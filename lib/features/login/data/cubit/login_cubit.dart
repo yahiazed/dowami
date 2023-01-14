@@ -22,6 +22,12 @@ class LoginCubit extends Cubit<LoginState> {
   int second = 50;
   late Timer timer;
 
+  bool isCaptain=false;
+
+
+
+
+
   sendOtp({required String phoneNum}) async {
     emit(StartSendOtpLoginState());
     timerCutDown();

@@ -48,25 +48,30 @@ class LoginScreen2 extends StatelessWidget {
         return Scaffold(
           appBar: sharedAppBar(context),
           body: Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _build4LineText(context,LoginCubit.get(context)),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildPinCodeItem(context, digitController1, nod1),
-                    _buildPinCodeItem(context, digitController2, nod2),
-                    _buildPinCodeItem(context, digitController3, nod3),
-                    _buildPinCodeItem(context, digitController4, nod4),
-                    _buildPinCodeItem(context, digitController5, nod5),
-                    _buildPinCodeItem(context, digitController6, nod6),
-                  ],
-                ).paddingB(context, 0.05),
-                _buildResendTextButton(context, state),
-                _buildButton(context)
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                
+                
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _build4LineText(context,LoginCubit.get(context)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildPinCodeItem(context, digitController1, nod1),
+                      _buildPinCodeItem(context, digitController2, nod2),
+                      _buildPinCodeItem(context, digitController3, nod3),
+                      _buildPinCodeItem(context, digitController4, nod4),
+                      _buildPinCodeItem(context, digitController5, nod5),
+                      _buildPinCodeItem(context, digitController6, nod6),
+                    ],
+                  ).paddingB(context, 0.05),
+                  _buildResendTextButton(context, state),
+                  _buildCodeSms(context),
+                  _buildButton(context)
+                ],
+              ),
             ),
           ),
         );
@@ -74,6 +79,13 @@ class LoginScreen2 extends StatelessWidget {
     );
   }
 
+
+
+ Widget _buildCodeSms(context){
+    return Text(LoginCubit.get(context).smsCode.toString()
+    ).paddingSV(context, 0.01);
+
+  }
   Widget _buildResendTextButton(context, state) {
     var cubit = LoginCubit.get(context);
     return InkWell(
@@ -180,14 +192,9 @@ class LoginScreen2 extends StatelessWidget {
             digitController2.text +
             digitController1.text;
         int cod = int.parse(code);
-       // LoginCubit.get(context).verifyCode(cod);
-        if(cod==LoginCubit.get(context).smsCode){
-
-          navigateTo(context, const HomeScreen());
-        }
-        else{
-          showErrorToast(message: 'wrong code');
-        }
+         LoginCubit.get(context).verifyCode(cod);
+      //  if(cod==LoginCubit.get(context).smsCode){navigateTo(context, const HomeScreen());}
+      //  else{showErrorToast(message: 'wrong code');}
       },
     );
   }

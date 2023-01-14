@@ -21,3 +21,13 @@ class ErrorModel extends Equatable{
   }
 
 }
+
+
+/// error.response!.
+///
+/// statusCode==500 >>> [unExpected error]
+/// statusCode==401 >>> [UnAuthorized    response with error]
+
+/// statusCode==404 >>> [Not found ]
+/// statusCode==405 >>> [Method Not Allowed    maybe url wrong   check[/]]
+/// statusCode==200 >>> [success]

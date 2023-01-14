@@ -246,6 +246,7 @@ print(requiredDocsList);
 
     }
 
+/*
   InkWell _buildIdLicenseInkwell({required BuildContext context,required RegisterCubit cubit}) {
     return InkWell(
       onTap: ()async{
@@ -397,6 +398,7 @@ print(requiredDocsList);
           .paddingB(context, 0.02),
     );
   }
+*/
 
 
 

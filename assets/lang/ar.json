@@ -94,5 +94,19 @@
     "Captain will come through": "سيصل الكابتن خلال",
     "Hour": "ساعة",
     "Minute": "دقيقة",
-    "Second": "ثانية"
+    "Second": "ثانية",
+    "welcome to": "أهلا بك فى ",
+    "adjust your settings": "قم بضبط إعداداتك",
+    "to get best": "لتحصل على أفضل مطابقه",
+    "dont worry settings": "لا تقلق يمكنك دائماّ تعديل بياناتك",
+    "go": "متابعه",
+
+
+    "saturday": "س",
+    "sunday": "ح",
+    "monday": "إث",
+    "tuesday": "ث",
+    "wednesday": "أر",
+    "thursday": "خ",
+    "friday": "ج"
 }

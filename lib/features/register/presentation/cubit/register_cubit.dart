@@ -20,7 +20,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../../constant/strings/failuer_string.dart';
 import '../../data/models/user_model.dart';
-import '../../data/repositories/repository.dart';
+import '../../data/repositories/register_repository.dart';
 import '../pages/steps/get_location_dialog.dart';
 
 part 'register_state.dart';
@@ -44,12 +44,10 @@ class RegisterCubit extends Cubit<RegisterState> {
   String expiredDate='';
   int? userId;
   String? token;
-
   LatLng? latLng;
   String city='';
   String area='';
   String district='';
-
   List<CarModel>carsModels=[];
   List<CarDataModel>carsDataModels=[];
   CarModel? selectedCarModel;
@@ -57,39 +55,63 @@ class RegisterCubit extends Cubit<RegisterState> {
   String? selectedCarYear;
   List<RequiredDocModel>requiredDocuments=[];
 
-//step one
+
+
+
+
+
+
+
+
+
+/// (1) [sendOtp]
+/// (2) [verifyCode]
+/// (3) [sendCompleteProfileData]
+/// (4) [getCarsModels]
+/// (5) [getCarsDataModels]
+/// (6) [sendCaptainVehicleData]
+/// (7) [getRequiredDocs]
+/// (8) [sendDocuments]
+
+
+
+
+
+
+
+  ///{1}------------------------------------------------------------------------
   sendOtp({required String phoneNum}) async {
     emit(StartSendOtpState());
     timerCutDown();
    second = 50;
     final failureOrSmsCode = await repo.sendOtp(phone: phoneNum);
 
-    emit(_mapFailureOrSmsCodeToState(failureOrSmsCode));
+    emit(_sendOtpToState(failureOrSmsCode));
   }
-  RegisterState _mapFailureOrSmsCodeToState(Either<Failure, int> either) {
+  RegisterState _sendOtpToState(Either<Failure, int> either) {
     return either.fold(
-          (failure) => ErrorSendOtpState(errorMsg: _mapFailureToMessage(failure)),
+          (failure) => ErrorSendOtpState(errorMsg: _failureToMessage(failure)),
           (code) => SuccessSendOtpState(smsCode: code),
     );
   }
 
-  //step two
+
+  ///{2}------------------------------------------------------------------------
   verifyCode(int code) async {
     emit(StartVerifyCodeState());
     final checkCode = await repo.verifyCode(
         code: code, phoneNum: phoneCode + phoneNumber,);
-    emit(_mapFailureOrCodeTrueState(checkCode));
+    emit(_verifyCodeToState(checkCode));
   }
-
-  RegisterState _mapFailureOrCodeTrueState(Either<Failure, Unit> either) {
+  RegisterState _verifyCodeToState(Either<Failure, Unit> either) {
     return either.fold(
-      (failure) => ErrorCodeState(errorMsg: _mapFailureToMessage(failure)),
+      (failure) => ErrorCodeState(errorMsg: _failureToMessage(failure)),
       (x) {timer.cancel();  return const SuccessCodeState();} ,
     );
   }
 
 
-
+  ///{3}------------------------------------------------------------------------
   sendCompleteProfileData({required UserModel userModel})async{
     emit(StartSendProfileDataState());
 
@@ -97,12 +119,12 @@ class RegisterCubit extends Cubit<RegisterState> {
       userModel: userModel,
        xFile: avatarPicked!
         );
-    emit(_mapFailureOrProfileDataState(profileDataResponse));
+    emit(_sendCompleteProfileDataToState(profileDataResponse));
 
   }
-  RegisterState _mapFailureOrProfileDataState(Either<Failure,  Map<String,dynamic>> either) {
+  RegisterState _sendCompleteProfileDataToState(Either<Failure,  Map<String,dynamic>> either) {
     return either.fold(
-          (failure) => ErrorProfileDataState(errorMsg: _mapFailureToMessage(failure),errorModel: (failure as DioResponseFailure).errorModel!),
+          (failure) => ErrorProfileDataState(errorMsg: _failureToMessage(failure),errorModel: (failure as DioResponseFailure).errorModel!),
           (map) {
 
             token=map['token']!;
@@ -113,54 +135,41 @@ class RegisterCubit extends Cubit<RegisterState> {
     );
   }
 
-  onSelectCarModel(value){
-  emit(StartSelectCarModelState());
-  selectedCarModel = value;
-  selectedCarDataModel=null;
-  emit(EndSelectCarModelState());
-}
 
-   onSelectDataCarModel(value){
-  emit(StartSelectCarDataModelState());
-  selectedCarDataModel = value;
-  emit(EndSelectCarDataModelState());
-}
-
-
+  ///{4}------------------------------------------------------------------------
   getCarsModels()async{
     emit(StartGetCarsModelsState());
-    print('start');
 
     final carsModelsResponse= await repo.getCarModels();
-    emit(_mapFailureOrCarsModelsState(carsModelsResponse));
+    emit(_getCarsModelsToState(carsModelsResponse));
 
   }
-
-  RegisterState _mapFailureOrCarsModelsState(Either<Failure, List<CarModel>> either) {
+  RegisterState _getCarsModelsToState(Either<Failure, List<CarModel>> either) {
     return either.fold(
-          (failure) => ErrorGetCarsModelsState(errorMsg: _mapFailureToMessage(failure),errorModel: (failure as DioResponseFailure).errorModel!),
+          (failure) => ErrorGetCarsModelsState(errorMsg: _failureToMessage(failure),errorModel: (failure as DioResponseFailure).errorModel!),
           (cars) {carsModels=cars; return SuccessGetCarsModelsState(cars:cars  );},
     );
   }
 
 
+  ///{5}------------------------------------------------------------------------
   getCarsDataModels({required int id})async{
     emit(StartGetCarsDataModelsState());
     print('start');
 
     final carsDataModelsResponse= await repo.getCarDataModels(id: id);
-    emit(_mapFailureOrCarsDataModelsState(carsDataModelsResponse));
+    emit(_getCarsDataModelsToState(carsDataModelsResponse));
 
   }
-
-  RegisterState _mapFailureOrCarsDataModelsState(Either<Failure, List<CarDataModel>> either) {
+  RegisterState _getCarsDataModelsToState(Either<Failure, List<CarDataModel>> either) {
     return either.fold(
-          (failure) => ErrorGetCarsDataModelsState(errorMsg: _mapFailureToMessage(failure),errorModel: (failure as DioResponseFailure).errorModel!),
+          (failure) => ErrorGetCarsDataModelsState(errorMsg: _failureToMessage(failure),errorModel: (failure as DioResponseFailure).errorModel!),
           (cars) {carsDataModels=cars; return SuccessGetCarsDataModelsState(carsData:cars  );},
     );
   }
 
 
+  ///{6}------------------------------------------------------------------------
   sendCaptainVehicleData({required CaptainVehicleModel captainVehicleModel})async{
     emit(StartSendCaptainVehicleDataState());
 
@@ -168,12 +177,12 @@ class RegisterCubit extends Cubit<RegisterState> {
        captainVehicleModel: captainVehicleModel,
       xFiles: carImagesPicked
     );
-    emit(_mapFailureOrSendCaptainVehicleDataState(captainVehicleResponse));
+    emit(_sendCaptainVehicleDataToState(captainVehicleResponse));
 
   }
-  RegisterState _mapFailureOrSendCaptainVehicleDataState(Either<Failure,  Unit> either) {
+  RegisterState _sendCaptainVehicleDataToState(Either<Failure,  Unit> either) {
     return either.fold(
-          (failure) => ErrorSendCaptainVehicleDataState(errorMsg: _mapFailureToMessage(failure),errorModel: (failure as DioResponseFailure).errorModel!),
+          (failure) => ErrorSendCaptainVehicleDataState(errorMsg: _failureToMessage(failure),errorModel: (failure as DioResponseFailure).errorModel!),
           (unit) {
             carImagesFiles=[];carImagesPicked=[];
             return const SuccessSendCaptainVehicleDataState();
@@ -182,18 +191,18 @@ class RegisterCubit extends Cubit<RegisterState> {
   }
 
 
-
+  ///{7}------------------------------------------------------------------------
   getRequiredDocs()async{
     emit(StartGetRequiredDocumentsState());
 
     Either<Failure, List<RequiredDocModel>> requiredDocumentsResponse= await repo.getRequiredDocs();
 
-    emit(_mapFailureOrGetRequiredDocsState(requiredDocumentsResponse));
+    emit(_getRequiredDocsToState(requiredDocumentsResponse));
 
   }
-  RegisterState _mapFailureOrGetRequiredDocsState(Either<Failure,  List<RequiredDocModel>> either) {
+  RegisterState _getRequiredDocsToState(Either<Failure,  List<RequiredDocModel>> either) {
     return either.fold(
-          (failure) => ErrorGetRequiredDocumentsState(errorMsg: _mapFailureToMessage(failure),errorModel: (failure as DioResponseFailure).errorModel!),
+          (failure) => ErrorGetRequiredDocumentsState(errorMsg: _failureToMessage(failure),errorModel: (failure as DioResponseFailure).errorModel!),
           (requiredDocs) {
             requiredDocuments= requiredDocs;
             createDocImagesLists(requiredDocsLength: requiredDocs.length);
@@ -202,17 +211,17 @@ class RegisterCubit extends Cubit<RegisterState> {
   }
 
 
-
+  ///{8}------------------------------------------------------------------------
   sendDocuments({required UserDocModel userDocModel, required XFile xFile})async{
     emit(StartSendDocumentsState());
 
     Either<Failure, Unit> sendDocumentsResponse= await repo.sendDocuments(userDocModel: userDocModel, xFile: xFile);
 
-    emit(_mapFailureOrSendDocumentsState(sendDocumentsResponse));
+    emit(_sendDocumentsToState(sendDocumentsResponse));
   }
-  RegisterState _mapFailureOrSendDocumentsState(Either<Failure,  Unit> either) {
+  RegisterState _sendDocumentsToState(Either<Failure,  Unit> either) {
     return either.fold(
-          (failure) => ErrorSendRequiredDocumentsState(errorMsg: _mapFailureToMessage(failure),errorModel: (failure as DioResponseFailure).errorModel!),
+          (failure) => ErrorSendRequiredDocumentsState(errorMsg: _failureToMessage(failure),errorModel: (failure as DioResponseFailure).errorModel!),
           (requiredDocs) {return  const SuccessSendRequiredDocumentsState( );},
     );
   }
@@ -225,7 +234,7 @@ class RegisterCubit extends Cubit<RegisterState> {
 
 
 
-  String _mapFailureToMessage(Failure failure) {
+  String _failureToMessage(Failure failure) {
     switch (failure.runtimeType) {
       case ServerFailure:
         return SERVER_FAILURE_MESSAGE;
@@ -240,6 +249,43 @@ class RegisterCubit extends Cubit<RegisterState> {
     }
   }
 
+
+
+
+
+
+
+
+
+  /// (1) [onSelectCarModel]
+  /// (2) [onSelectDataCarModel]
+  /// (3) [onChangedGenderRadio]
+  /// (4) [onSelectDate]
+  /// (5) [onSelectExpiredDate]
+  /// (6) [onChangedAcceptTerms]
+  /// (7) [onChangedRadioRent]
+  /// (8) [timerCutDown]
+  /// (9) [getPermissions]
+  /// (10) [pickImageFromGallery]
+  /// (11) [pickDocImageFromGallery]
+  /// (12) [createDocImagesLists]
+
+
+
+
+  onSelectCarModel(value){
+    emit(StartSelectCarModelState());
+    selectedCarModel = value;
+    selectedCarDataModel=null;
+    emit(EndSelectCarModelState());
+  }
+
+  onSelectDataCarModel(value){
+    emit(StartSelectCarDataModelState());
+    selectedCarDataModel = value;
+    emit(EndSelectCarDataModelState());
+  }
+
   void onChangedGenderRadio(value) {
     emit(StartChangeGenderRadioState());
     isMale = value;
@@ -251,6 +297,7 @@ class RegisterCubit extends Cubit<RegisterState> {
     birthDate = value;
     emit(EndSelectDateState());
   }
+
   void onSelectExpiredDate(value) {
     emit(StartSelectExpiredDateState());
     expiredDate = value;
@@ -284,36 +331,6 @@ class RegisterCubit extends Cubit<RegisterState> {
   }
 
 
-    getPermissions(context)async{
-    ///emit start [1]
-    emit(StartPermissionsLocationState());
-    bool serviceEnabled;
-    LocationPermission permission;
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-                            emit( const ErrorPermissionsLocationState(errorMsg:'Location services are disabled.' ));
-                           // return Future.error('Location services are disabled.');
-      }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-              permission = await Geolocator.requestPermission();
-                    if (permission == LocationPermission.denied) {
-                                                          emit( const ErrorPermissionsLocationState(errorMsg:'Location permissions are denied' ));
-                                                          return Future.error('Location permissions are denied');}
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-                                                          emit( const ErrorPermissionsLocationState(errorMsg:'Location permissions are permanently denied, we cannot request permissions.' ));
-                                                          return Future.error('Location permissions are permanently denied, we cannot request permissions.');}
-
-
-
-
-
-    emit( SuccessPermissionsLocationState());
-
-  }
 
 
 
@@ -329,23 +346,12 @@ class RegisterCubit extends Cubit<RegisterState> {
 
 
   ImagePicker picker=ImagePicker();
-
- // MultipartFile? imageMultipartFile;
-
   File? avatarImageFile;
   XFile? avatarPicked;
-
   List<File>carImagesFiles=[];
   List<XFile>carImagesPicked=[];
-
-  File? personalLicenseImageFile;
-  XFile? personalLicensePicked;
-
-  File? driveLicenseImageFile;
-  XFile? driveLicensePicked;
-
-  File? carLicenseOrDocImageFile;
-  XFile? carLicenseOrDocPicked;
+  List<File?>docImagesFiles=[];
+  List<XFile?>docImagesPicked=[];
 
   Future<void>pickImageFromGallery({required String photoType})async{
     emit(StartPickImageState());
@@ -359,7 +365,7 @@ class RegisterCubit extends Cubit<RegisterState> {
           emit(SuccessPickImageState(imageFile: avatarImageFile!,imagesFiles: []));
           break;
 
-        case 'personalLicense':
+   /*     case 'personalLicense':
           personalLicensePicked=await picker.pickImage(source: ImageSource.gallery);
           personalLicenseImageFile=File(personalLicensePicked!.path);
           emit(SuccessPickImageState(imageFile: personalLicenseImageFile!,imagesFiles: []));
@@ -375,7 +381,7 @@ class RegisterCubit extends Cubit<RegisterState> {
           carLicenseOrDocPicked=await picker.pickImage(source: ImageSource.gallery);
           carLicenseOrDocImageFile=File(carLicenseOrDocPicked!.path);
           emit(SuccessPickImageState(imageFile: carLicenseOrDocImageFile!,imagesFiles: []));
-          break;
+          break;*/
 
         default:
           carImagesPicked=await picker.pickMultiImage();
@@ -393,37 +399,19 @@ class RegisterCubit extends Cubit<RegisterState> {
 
 
   }
-
-
-
-  List<File?>docImagesFiles=[];
-  List<XFile?>docImagesPicked=[];
-
   Future<void>pickDocImageFromGallery({required int index})async{
 
 
     emit(StartPickImageState());
     try{
-
-
-
-
       docImagesPicked[index]=await picker.pickImage(source: ImageSource.gallery);
       docImagesFiles[index]=File(docImagesPicked[index]!.path);
       emit(SuccessPickImageState(imageFile: docImagesFiles[index]!,imagesFiles:const []));
-
-
-
-
       debugPrint('image got');
     }on Exception catch(e){
       emit(const ErrorPickImageState(errorMsg: 'image not selected'));
       debugPrint(e.toString());}
-
-
   }
-
-
   createDocImagesLists({required int requiredDocsLength}){
     docImagesFiles=List.generate(requiredDocsLength, (index) => File(''));
     docImagesPicked=List.generate(requiredDocsLength, (index) => XFile(''));
@@ -431,7 +419,12 @@ class RegisterCubit extends Cubit<RegisterState> {
 
 
 
-
+/* File? personalLicenseImageFile;
+  XFile? personalLicensePicked;
+  File? driveLicenseImageFile;
+  XFile? driveLicensePicked;
+  File? carLicenseOrDocImageFile;
+  XFile? carLicenseOrDocPicked;*/
 
 
 

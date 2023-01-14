@@ -14,7 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../constant/text_style/text_style.dart';
-import 'steps/register_step_one.dart';
+import 'steps/register_send_otp.dart';
 
 class SelectAccountKind extends StatelessWidget {
   const SelectAccountKind({super.key});
@@ -79,7 +79,7 @@ class SelectAccountKind extends StatelessWidget {
                       sharedElevatedButton2(
                           onPressed: () {
                             RegisterCubit.get(context).userType = 'client';
-                            navigateTo(context, RegisterStepOneScreen());
+                            navigateTo(context, RegisterSendOtpScreen());
                           },
                           radius: 15,
                           color: Recolor.amberColor,
@@ -101,7 +101,7 @@ class SelectAccountKind extends StatelessWidget {
                       sharedElevatedButton2(
                           onPressed: () {
                             RegisterCubit.get(context).userType = 'captain';
-                            navigateTo(context, RegisterStepOneScreen());
+                            navigateTo(context, RegisterSendOtpScreen());
                           },
                           radius: 15,
                           horizontalPadding: 0.09.widthX(context),

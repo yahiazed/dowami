@@ -25,7 +25,11 @@ class LoginRepoImpel implements LoginRepo {
       return Right(res.data['code']);
     }on DioError catch (e) {
       debugPrint(e.response.toString());
-      return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data! as Map<String,dynamic>  )));
+      if(e.response!.statusCode==500){
+        debugPrint(e.response!.statusCode.toString());
+        return Left(ServerFailure());
+      }
+      else{ return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data!  as Map<String,dynamic>  )));}
 
     }
   }
@@ -41,7 +45,11 @@ class LoginRepoImpel implements LoginRepo {
       return   const Right(unit);
     }on DioError catch (e) {
       debugPrint(e.response.toString());
-      return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data! as Map<String,dynamic>  )));
+      if(e.response!.statusCode==500){
+        debugPrint(e.response!.statusCode.toString());
+        return Left(ServerFailure());
+      }
+      else{ return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data!  as Map<String,dynamic>  )));}
     }
   }
 

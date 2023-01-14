@@ -10,9 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoding/geocoding.dart';
- import 'package:geolocator/geolocator.dart';
-import 'package:geolocator_apple/geolocator_apple.dart';
-import 'package:geolocator_android/geolocator_android.dart';
+
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../cubit/register_cubit.dart';
@@ -48,7 +46,7 @@ class GetLocationDialog extends StatelessWidget {
     );
   }
 
-
+  RegisterState f=RegisterInitial();
 
   Widget _buildGoogleMap(){
     return BlocConsumer<RegisterCubit, RegisterState>(

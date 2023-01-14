@@ -12,6 +12,8 @@ const String sendCaptainVehicleUrl = '/store-captain-vehicle';
 const String requiredDocumentsUrl = '/required-documents';
 const String uploadDocumentsUrl = '/upload-documents';
 
+const String makeJobDowamiUrl = '/make-request';
+
 
 
 

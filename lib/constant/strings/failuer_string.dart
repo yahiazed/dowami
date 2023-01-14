@@ -1,4 +1,4 @@
-const String SERVER_FAILURE_MESSAGE = 'Please try again later .';
+const String SERVER_FAILURE_MESSAGE = ' Server error Please try again later .';
 const String EMPTY_CACHE_FAILURE_MESSAGE = 'No Data';
 const String OFFLINE_FAILURE_MESSAGE = 'Please Check your Internet Connection';
 const String VALID_PHONE_NUMBER_FAILURE_MESSAGE = 'wrong phone number';

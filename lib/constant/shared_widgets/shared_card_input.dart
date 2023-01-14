@@ -42,9 +42,9 @@ Widget sharedCardInput(context,
       onChanged: onChanged,
       validator: validator ??
           (value) {
-            if (value != null && value.isNotEmpty)
+            if (value != null && value.isNotEmpty) {
               return null;
-            else {
+            } else {
               return 'Invalid'.tr(context);
             }
           },
@@ -87,4 +87,53 @@ Widget sharedUnderLineInput(context,
               return 'Invalid'.tr(context);
             }
           },
+    );
+
+
+
+
+Widget sharedBorderedInput(context,
+    {required TextEditingController controller,
+      TextInputType? keyboardType,
+      required String hintText,
+      Color? fillColor,
+      TextStyle? labelStyle,
+      Widget? suffix,
+      bool? isPassword,
+      TextAlign? textAlign,
+      double? borderWidth,
+      double? radius,
+      void Function()? onTap,
+      String? Function(String?)? validator}) =>
+    TextFormField(
+      controller: controller,
+      keyboardType: keyboardType ?? TextInputType.text,
+      obscureText: isPassword ?? false,
+      textAlign: textAlign ?? TextAlign.start,
+      decoration: InputDecoration(
+
+        enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(radius??0),
+            borderSide: BorderSide(color: Recolor.underLineColor.withOpacity(.5),width:borderWidth??1,)),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(radius??0),
+            borderSide: BorderSide(color:Recolor.underLineColor.withOpacity(.5),width:borderWidth??1)),
+        errorBorder:  OutlineInputBorder(
+            borderRadius: BorderRadius.circular(radius??0),
+            borderSide: BorderSide(color: Recolor.redColor,width:borderWidth??1)),
+
+        labelStyle: labelStyle ?? reg18Blue().copyWith(color: Recolor.txtGreyColor),
+
+        suffixIcon: suffix,
+        hintText: hintText,
+        errorStyle: reg14Blue().copyWith(color: Recolor.redColor),
+      ),
+      validator: validator ?? (value) {
+            if (value != null && value.isNotEmpty) {
+              return null;
+            } else {
+              return 'Invalid'.tr(context);
+            }
+          },
+      onTap: onTap,
     );

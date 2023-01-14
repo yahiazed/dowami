@@ -4,7 +4,7 @@ import 'package:dowami/constant/shared_widgets/shard_elevated_button.dart';
 import 'package:dowami/constant/shared_widgets/toast.dart';
 import 'package:dowami/features/register/presentation/cubit/register_cubit.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
-import 'package:dowami/features/register/presentation/pages/steps/register_step_two.dart';
+import 'package:dowami/features/register/presentation/pages/steps/register_verify_code.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -20,11 +20,11 @@ import '../../../../../constant/text_style/text_style.dart';
 import '../../../../terms/presentation/pages/privacy_policy_screen.dart';
 import '../../../../terms/presentation/pages/terms_screen.dart';
 
-class RegisterStepOneScreen extends StatelessWidget {
+class RegisterSendOtpScreen extends StatelessWidget {
   // bool isCaptain;
   String phoneCode = '+966';
   TextEditingController phoneController = TextEditingController();
-  RegisterStepOneScreen({super.key});
+  RegisterSendOtpScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +37,7 @@ class RegisterStepOneScreen extends StatelessWidget {
         if (state is SuccessSendOtpState) {
           RegisterCubit.get(context).smsCode = state.smsCode;
           print('smscode======================${state.smsCode}');
-          navigateTo(context, RegisterStepTwoScreen(
-
-          ));
+          navigateTo(context, RegisterVerifyCodeScreen());
         }
       },
       builder: (context, state) {

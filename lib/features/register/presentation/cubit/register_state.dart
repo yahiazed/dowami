@@ -8,24 +8,51 @@ abstract class RegisterState extends Equatable {
   List<Object> get props => [];
 }
 
-/// [register_step_one_screen] {1}
-///[1] Send OTP     [StartSendOtpState]
 
 
 
-/// [register_step_two_screen] {2}
-///[1] Verify CODE     [StartVerifyCodeState]
-///[2] Timer     [StartTimeDownState]
+///[1] Send OTP                  [StartSendOtpState]
+///[2] Verify CODE            [StartVerifyCodeState]
+///[3] Timer                 [StartTimeDownState]
+///[4] Pick Image            [StartPickImageState]
+///[5] gender              [StartChangeGenderRadioState]
+///[6] date                  [StartSelectDateState]
+///[7] location              [StartPermissionsLocationState]
+///[8] terms       [StartChangeAcceptTermsState]
+///[9] sendProfileData       [StartSendProfileDataState]
+
+
+/// {( Captain )}
+///[1] isRent                         [StartChangeRadioRentState]
+///[2] get cars models                [StartChangeRadioRentState]
+///[3] get cars data models            [StartChangeRadioRentState]
+///[4] select car model              [StartSelectCarModelState]
+///[5] select car  data model         [StartSelectCarDataModelState]
+///[6] send captain vehicle         [StartSendCaptainVehicleDataState]
+///[7] get Required Documents         [StartGetRequiredDocumentsState]
+///[8] send Documents                 [StartGetRequiredDocumentsState]
+///[9] select Expired Date         [StartSelectExpiredDateState]
 
 
 
 
-/// {( client )} [fill_data_screen]  {3}
-///[1] Pick Image     [StartPickImageState]
-///[2] gender     [StartChangeGenderRadioState]
-///[3] date     [StartSelectDateState]
-///[4] location     [StartPermissionsLocationState]
-///[5] sendProfileData     [StartSendProfileDataState]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -33,10 +60,24 @@ abstract class RegisterState extends Equatable {
 class RegisterInitial extends RegisterState {}
 
 
-/// [register_step_one_screen] {1}
-///[1] Send OTP     [StartSendOtpState]
+
+///[1] Send OTP                  [StartSendOtpState]
+///[2] Verify CODE            [StartVerifyCodeState]
+///[3] Timer                 [StartTimeDownState]
+///[4] Pick Image            [StartPickImageState]
+///[5] gender              [StartChangeGenderRadioState]
+///[6] date                  [StartSelectDateState]
+///[7] location              [StartPermissionsLocationState]
+///[8] terms       [StartChangeAcceptTermsState]
+///[9] sendProfileData       [StartSendProfileDataState]
 
 
+
+
+
+
+
+///[1] Send OTP
 class StartSendOtpState extends RegisterState {}
 class SuccessSendOtpState extends RegisterState {
   final int smsCode;
@@ -47,25 +88,10 @@ class ErrorSendOtpState extends RegisterState {
 
   const ErrorSendOtpState({required this.errorMsg});
 }
-//------------------------------------------------------------------------------
+//-----------
 
 
-
-
-/// [register_step_two_screen] {2}
-///[1] Verify CODE     [StartVerifyCodeState]
-///[2] Timer     [StartTimeDownState]
-
-
-
-
-
-
-
-
-
-///[1] Verify CODE     [StartVerifyCodeState]
-
+///[2] Verify CODE
 class StartVerifyCodeState extends RegisterState {}
 class SuccessCodeState extends RegisterState {
 
@@ -75,26 +101,17 @@ class ErrorCodeState extends RegisterState {
   final String errorMsg;
   const ErrorCodeState({required this.errorMsg,});
 }
-
 //-----
-///[2] Timer     [StartTimeDownState]
+
+
+///[3] Timer
 class TimeOutSendSmsCodeState extends RegisterState {}
 class StartTimeDownState extends RegisterState {}
 class EndTimeDownState extends RegisterState {}
-
-//------------------------------------------------------------------------------
-
+//---------
 
 
-/// {( client )} [fill_data_screen]  {3}
-///[1] Pick Image     [StartPickImageState]
-///[2] gender     [StartChangeGenderRadioState]
-///[3] date     [StartSelectDateState]
-///[4] location     [StartPermissionsLocationState]
-///[5] sendProfileData     [StartSendProfileDataState]
-
-
-
+///[4] Pick Image
 class StartPickImageState extends RegisterState {}
 class SuccessPickImageState extends RegisterState {
   final File imageFile;
@@ -106,33 +123,38 @@ class ErrorPickImageState extends RegisterState {
 
   const ErrorPickImageState({required this.errorMsg});
 }
+//----
 
-//-----
 
+///[5] gender
 class StartChangeGenderRadioState extends RegisterState {}
 class EndChangeGenderRadioState extends RegisterState {}
-
 //-----
 
+
+///[7] location
 class StartPermissionsLocationState extends RegisterState {}
 class SuccessPermissionsLocationState extends RegisterState {}
 class ErrorPermissionsLocationState extends RegisterState {
   final String errorMsg;
   const ErrorPermissionsLocationState({required this.errorMsg});
 }
-
 //-----
 
+
+///[8] terms
 class StartChangeAcceptTermsState extends RegisterState {}
 class EndChangeAcceptTermsState extends RegisterState {}
+//----
 
-//-----
 
+///[6] date
 class StartSelectDateState extends RegisterState {}
 class EndSelectDateState extends RegisterState {}
-
 //-----
 
+
+///[9] sendProfileData
 class StartSendProfileDataState extends RegisterState {}
 class SuccessProfileDataState extends RegisterState {
   final String token;
@@ -145,26 +167,44 @@ class ErrorProfileDataState extends RegisterState {
 
   const ErrorProfileDataState({required this.errorMsg,required this.errorModel});
 }
-//------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------
 
 
-/// {( Captain )} [fill_data_screen]  {3}
-///[2] isRent     [StartChangeRadioRentState]
-///[3] get cars models     [StartChangeRadioRentState]
-///[4] get cars data models     [StartChangeRadioRentState]
-///[5] select car model     [StartSelectCarModelState]
-///[6] select car  data model     [StartSelectCarDataModelState]
-///[7] send captain vehicle      [StartSendCaptainVehicleDataState]
-///[8] get Required Documents      [StartGetRequiredDocumentsState]
-///[9] send Documents     [StartGetRequiredDocumentsState]
 
+
+
+
+
+
+
+
+
+
+
+
+/// {( Captain )}
+///[1] isRent                         [StartChangeRadioRentState]
+///[2] get cars models                [StartChangeRadioRentState]
+///[3] get cars data models            [StartChangeRadioRentState]
+///[4] select car model              [StartSelectCarModelState]
+///[5] select car  data model         [StartSelectCarDataModelState]
+///[6] send captain vehicle         [StartSendCaptainVehicleDataState]
+///[7] get Required Documents         [StartGetRequiredDocumentsState]
+///[8] send Documents                 [StartGetRequiredDocumentsState]
+///[9] select Expired Date         [StartSelectExpiredDateState]
+
+
+
+
+
+
+///[1] isRent
 class StartChangeRadioRentState extends RegisterState {}
 class EndChangeRadioRentState extends RegisterState {}
+//-------------
 
-//------------------------------------------------------------------------------
 
-
-///[3] get cars models
+///[2] get cars models
 class StartGetCarsModelsState extends RegisterState {}
 class SuccessGetCarsModelsState extends RegisterState {
   final List<CarModel>cars;
@@ -176,8 +216,10 @@ class ErrorGetCarsModelsState extends RegisterState {
 
   const ErrorGetCarsModelsState({required this.errorMsg,required this.errorModel});
 }
+//----------
 
-///[4] get cars Data models
+
+///[3] get cars Data models
 class StartGetCarsDataModelsState extends RegisterState {}
 class SuccessGetCarsDataModelsState extends RegisterState {
   final List<CarDataModel>carsData;
@@ -189,20 +231,22 @@ class ErrorGetCarsDataModelsState extends RegisterState {
 
   const ErrorGetCarsDataModelsState({required this.errorMsg,required this.errorModel});
 }
+//----------
 
-//------------------------------------------------------------------------------
-///[5] select car model
+
+///[4] select car model
 class StartSelectCarModelState extends RegisterState {}
 class EndSelectCarModelState extends RegisterState {}
+//----------
 
-//------------------------------------------------------------------------------
 
-///[6] select car  data model
+///[5] select car  data model
 class StartSelectCarDataModelState extends RegisterState {}
 class EndSelectCarDataModelState extends RegisterState {}
+//----------
 
 
-///[7] send captain vehicle
+///[6] send captain vehicle
 class StartSendCaptainVehicleDataState extends RegisterState {}
 class SuccessSendCaptainVehicleDataState extends RegisterState {
 
@@ -214,9 +258,10 @@ class ErrorSendCaptainVehicleDataState extends RegisterState {
 
   const ErrorSendCaptainVehicleDataState({required this.errorMsg,required this.errorModel});
 }
+//----------
 
-///[8] get Required Documents
 
+///[7] get Required Documents
 class StartGetRequiredDocumentsState extends RegisterState {}
 class SuccessGetRequiredDocumentsState extends RegisterState {
 final List<RequiredDocModel> requiredDocs;
@@ -228,10 +273,10 @@ class ErrorGetRequiredDocumentsState extends RegisterState {
 
   const ErrorGetRequiredDocumentsState({required this.errorMsg,required this.errorModel});
 }
+//----------
 
 
-///[9] send Documents
-
+///[8] send Documents
 class StartSendDocumentsState extends RegisterState {}
 class SuccessSendRequiredDocumentsState extends RegisterState {
 
@@ -243,10 +288,10 @@ class ErrorSendRequiredDocumentsState extends RegisterState {
 
   const ErrorSendRequiredDocumentsState({required this.errorMsg,required this.errorModel});
 }
+//----------
 
 
 ///[9] select Expired Date
-
 class StartSelectExpiredDateState extends RegisterState {}
 class EndSelectExpiredDateState extends RegisterState {
 

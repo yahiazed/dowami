@@ -39,8 +39,13 @@ class RegisterRepoImpel implements RegisterRepo {
       Response res = await dio.postData(url: sendOtpRegisterUrl, data: {'mobile': phone});
       return Right(res.data['code']);
     }on DioError catch (e) {
-      debugPrint(e.response.toString());
-      return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data! as Map<String,dynamic>  )));
+     // debugPrint(e.response.toString());
+     // debugPrint(e.response!.statusCode.toString());
+      if(e.response!.statusCode==500){
+        debugPrint(e.response!.statusCode.toString());
+        return Left(ServerFailure());
+      }
+      else{ return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data!  as Map<String,dynamic>  )));}
 
     }
   }
@@ -56,7 +61,11 @@ class RegisterRepoImpel implements RegisterRepo {
       return   const Right(unit);
     }on DioError catch (e) {
       debugPrint(e.response.toString());
-      return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data! as Map<String,dynamic>  )));
+      if(e.response!.statusCode==500){
+        debugPrint(e.response!.statusCode.toString());
+        return Left(ServerFailure());
+      }
+      else{ return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data!  as Map<String,dynamic>  )));}
     }
   }
 
@@ -82,7 +91,11 @@ class RegisterRepoImpel implements RegisterRepo {
     }on DioError catch (e) {
       debugPrint('failure');
       debugPrint(e.response.toString());
-      return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data! as Map<String,dynamic>  )));
+      if(e.response!.statusCode==500){
+        debugPrint(e.response!.statusCode.toString());
+        return Left(ServerFailure());
+      }
+      else{ return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data!  as Map<String,dynamic>  )));}
     }
 
 
@@ -109,7 +122,11 @@ class RegisterRepoImpel implements RegisterRepo {
     }on DioError catch (e) {
       debugPrint('failure');
       debugPrint(e.response.toString());
-      return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data!  as Map<String,dynamic>  )));
+      if(e.response!.statusCode==500){
+        debugPrint(e.response!.statusCode.toString());
+        return Left(ServerFailure());
+      }
+      else{ return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data!  as Map<String,dynamic>  )));}
     }
 
   }
@@ -134,7 +151,11 @@ class RegisterRepoImpel implements RegisterRepo {
     }on DioError catch (e) {
       debugPrint('failure');
       debugPrint(e.response.toString());
-      return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data!  as Map<String,dynamic>  )));
+      if(e.response!.statusCode==500){
+        debugPrint(e.response!.statusCode.toString());
+        return Left(ServerFailure());
+      }
+      else{ return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data!  as Map<String,dynamic>  )));}
     }
   }
 
@@ -150,9 +171,13 @@ class RegisterRepoImpel implements RegisterRepo {
       return   const Right( unit );
     }on DioError catch (e) {
       debugPrint('failure');
-      debugPrint(e.toString());
+
       debugPrint(e.response.toString());
-      return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data!  as Map<String,dynamic>  )));
+      if(e.response!.statusCode==500){
+        debugPrint(e.response!.statusCode.toString());
+        return Left(ServerFailure());
+      }
+      else{ return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data!  as Map<String,dynamic>  )));}
     }
   }
 
@@ -164,9 +189,6 @@ class RegisterRepoImpel implements RegisterRepo {
     try {
 
       Response res =  await dio.getData(url: requiredDocumentsUrl );
-      debugPrint('\n \n ');
-
-      debugPrint('\n \n ');
       debugPrint('success');
 
       List<RequiredDocModel>requiredDocsModels=[];
@@ -179,9 +201,13 @@ class RegisterRepoImpel implements RegisterRepo {
       return    Right( requiredDocsModels );
     }on DioError catch (e) {
       debugPrint('failure');
-      debugPrint(e.toString());
+
       debugPrint(e.response.toString());
-      return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data!  as Map<String,dynamic>  )));
+      if(e.response!.statusCode==500){
+        debugPrint(e.response!.statusCode.toString());
+        return Left(ServerFailure());
+      }
+      else{ return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data!  as Map<String,dynamic>  )));}
     }
   }
 
@@ -198,9 +224,13 @@ class RegisterRepoImpel implements RegisterRepo {
       return   const Right( unit );
     }on DioError catch (e) {
       debugPrint('failure');
-      //debugPrint(e.toString());
+
       debugPrint(e.response.toString());
-      return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data!  as Map<String,dynamic>  )));
+      if(e.response!.statusCode==500){
+        debugPrint(e.response!.statusCode.toString());
+        return Left(ServerFailure());
+      }else{ return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data!  as Map<String,dynamic>  )));}
+
     }
   }
 
