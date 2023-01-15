@@ -28,5 +28,5 @@ class ErrorMakeJobState extends DowamiClientState {
 
 
 
-class StartSelectLocationState extends DowamiClientState {}
-class EndSelectLocationState extends DowamiClientState {}
+class StartChangeState extends DowamiClientState {}
+class EndChangeState extends DowamiClientState {}

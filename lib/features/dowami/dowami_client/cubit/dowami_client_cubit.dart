@@ -31,10 +31,10 @@ class DowamiClientCubit extends Cubit<DowamiClientState> {
     );
   }
 
-  onSelectLocation(){
-    emit(StartSelectLocationState());
+  onChangeThing(){
+    emit(StartChangeState());
 
-    emit(EndSelectLocationState());
+    emit(EndChangeState());
   }
 
   String _failureToMessage(Failure failure) {

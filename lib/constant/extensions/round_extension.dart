@@ -146,20 +146,20 @@ extension WidgetX on Widget {
         padding: EdgeInsets.all(all),
         child: this,
       );
-  Widget paddingT(context, double all) => Padding(
-        padding: EdgeInsets.only(top: all.heightX(context)),
+  Widget paddingT(context, double top) => Padding(
+        padding: EdgeInsets.only(top: top.heightX(context)),
         child: this,
       );
-  Widget paddingB(context, double all) => Padding(
-        padding: EdgeInsets.only(bottom: all.heightX(context)),
+  Widget paddingB(context, double bottom) => Padding(
+        padding: EdgeInsets.only(bottom: bottom.heightX(context)),
         child: this,
       );
-  Widget paddingL(context, double all) => Padding(
-        padding: EdgeInsets.only(left: all.widthX(context)),
+  Widget paddingL(context, double left) => Padding(
+        padding: EdgeInsets.only(left: left.widthX(context)),
         child: this,
       );
-  Widget paddingR(context, double all) => Padding(
-        padding: EdgeInsets.only(right: all.widthX(context)),
+  Widget paddingR(context, double right) => Padding(
+        padding: EdgeInsets.only(right: right.widthX(context)),
         child: this,
       );
   Widget sizeDown(context, double size) => Column(

@@ -97,9 +97,11 @@ Widget sharedBorderedInput(context,
       TextInputType? keyboardType,
       required String hintText,
       Color? fillColor,
-      TextStyle? labelStyle,
+      TextStyle? hintStyle,
+      TextStyle? textStyle,
       Widget? suffix,
       bool? isPassword,
+      bool? readOnly,
       TextAlign? textAlign,
       double? borderWidth,
       double? radius,
@@ -110,7 +112,11 @@ Widget sharedBorderedInput(context,
       keyboardType: keyboardType ?? TextInputType.text,
       obscureText: isPassword ?? false,
       textAlign: textAlign ?? TextAlign.start,
+      style:textStyle ,
+
+
       decoration: InputDecoration(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 5,vertical: 1),
 
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(radius??0),
@@ -122,10 +128,11 @@ Widget sharedBorderedInput(context,
             borderRadius: BorderRadius.circular(radius??0),
             borderSide: BorderSide(color: Recolor.redColor,width:borderWidth??1)),
 
-        labelStyle: labelStyle ?? reg18Blue().copyWith(color: Recolor.txtGreyColor),
+      //  labelStyle: labelStyle ?? reg18Blue().copyWith(color: Recolor.txtGreyColor),
 
         suffixIcon: suffix,
         hintText: hintText,
+        hintStyle: hintStyle,
         errorStyle: reg14Blue().copyWith(color: Recolor.redColor),
       ),
       validator: validator ?? (value) {
@@ -136,4 +143,5 @@ Widget sharedBorderedInput(context,
             }
           },
       onTap: onTap,
+      readOnly:readOnly ?? false ,
     );
