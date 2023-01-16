@@ -4,8 +4,7 @@ import 'package:dowami/constant/shared_widgets/shared_appbar.dart';
 import 'package:dowami/features/bottom_bar/cubit/bottom_bar_cubit.dart';
 import 'package:dowami/features/bottom_bar/cubit/bottom_bar_state.dart';
 import 'package:dowami/features/bottom_bar/presentation/dowami_bottom_bar.dart';
-import 'package:dowami/features/home/presentation/cubit/home_cubit.dart';
-import 'package:dowami/features/login/data/cubit/login_cubit.dart';
+import 'package:dowami/features/login/cubit/login_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

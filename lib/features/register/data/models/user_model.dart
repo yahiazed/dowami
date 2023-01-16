@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -17,11 +18,13 @@ class UserModel extends Equatable{
  final String? gender;
  final String? userType;
  final String? iBAN;
+ final String? avatar;
 
- final int? userId;
+ final int? id;
  final String? lat;
  final String? long;
  final String? mobile;
+ final String? publish;
 
   const UserModel(
       {this.firstName,
@@ -33,12 +36,14 @@ class UserModel extends Equatable{
       this.area,
       this.district,
       this.gender,
-      this.userId,
+      this.id,
       this.userType,
       this.iBAN,
       this.lat,
       this.long,
       this.mobile,
+      this.avatar,
+      this.publish,
 
       });
 
@@ -55,12 +60,14 @@ class UserModel extends Equatable{
        'area':userModel.area,
        'district':userModel.district,
        'gender':userModel.gender,
-       'user_id':userModel.userId,
+       'id':userModel.id,
        'type':userModel.userType,
        'iban':userModel.iBAN,
        'lat':userModel.lat,
        'long':userModel.long,
        'mobile':userModel.mobile,
+       'avatar':userModel.avatar,
+       'publish':userModel.publish,
 
 
 
@@ -80,12 +87,14 @@ class UserModel extends Equatable{
        area:map['area'],
        district :map['district'],
        gender :map['gender'],
-       userId :map['user_id'],
+       id :map['id'],
        userType :map['type'],
        iBAN :map['iban'],
        lat :map['lat'],
        long :map['long'],
-       mobile:map['mobile']
+       mobile:map['mobile'],
+       avatar:map['avatar'],
+       publish:map['publish'],
 
 
      )
@@ -94,6 +103,9 @@ class UserModel extends Equatable{
  }
 
 
+ String toJson(UserModel userModel) => json.encode(toMap(userModel:userModel));
+
+ factory UserModel.fromJson(String source) => UserModel.fromMap( json.decode(source));
 
 
 
@@ -101,5 +113,5 @@ class UserModel extends Equatable{
 
 
   @override
-  List<Object?> get props => [firstName,fatherName,nickName,nationalId,birthDate,city,area,district,gender,userId];
+  List<Object?> get props => [firstName,fatherName,nickName,nationalId,birthDate,city,area,district,gender,id];
 }

@@ -15,6 +15,7 @@ class HomeModuleScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+
           _buildHeaderBanner(context),
           _buildHireCaptinButton(context),
           _buildHaveTripButton(context),

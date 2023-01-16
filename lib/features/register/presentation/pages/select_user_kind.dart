@@ -4,7 +4,7 @@ import 'package:dowami/constant/shared_colors/shared_colors.dart';
 import 'package:dowami/constant/shared_function/navigator.dart';
 import 'package:dowami/constant/shared_widgets/shard_elevated_button.dart';
 import 'package:dowami/constant/strings/strings.dart';
-import 'package:dowami/features/register/presentation/cubit/register_cubit.dart';
+import 'package:dowami/features/register/cubit/register_cubit.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
 import 'package:dowami/features/terms/presentation/pages/privacy_policy_screen.dart';
 import 'package:dowami/features/terms/presentation/pages/terms_screen.dart';

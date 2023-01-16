@@ -3,6 +3,7 @@ import 'package:dowami/constant/extensions/round_extension.dart';
 import 'package:dowami/constant/shared_colors/shared_colors.dart';
 import 'package:dowami/constant/shared_function/navigator.dart';
 import 'package:dowami/constant/shared_widgets/shard_elevated_button.dart';
+import 'package:dowami/features/login/cubit/login_cubit.dart';
 import 'package:dowami/features/register/presentation/pages/select_user_kind.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
 import 'package:flutter/material.dart';
@@ -50,6 +51,12 @@ class SelectLog extends StatelessWidget {
                 verticalPadding: .02.heightX(context)),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: ()async{
+          await LoginCubit.get(context). getDataFromPrefs();
+
+        },
       ),
     );
   }

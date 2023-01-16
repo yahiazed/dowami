@@ -3,7 +3,7 @@ import 'package:dowami/helpers/localization/app_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-import '../../features/register/presentation/cubit/register_cubit.dart';
+import '../../features/register/cubit/register_cubit.dart';
 import '../../features/terms/presentation/pages/privacy_policy_screen.dart';
 import '../../features/terms/presentation/pages/terms_screen.dart';
 import '../shared_colors/shared_colors.dart';

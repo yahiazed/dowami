@@ -108,5 +108,9 @@
     "tuesday": "ث",
     "wednesday": "أر",
     "thursday": "خ",
-    "friday": "ج"
+    "friday": "ج",
+    "small": "صغيره",
+    "medium": "متوسطه",
+    "large": "كبيره",
+    "Search": "بحث"
 }

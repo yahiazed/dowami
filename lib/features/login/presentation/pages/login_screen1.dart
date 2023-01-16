@@ -1,13 +1,11 @@
-import 'package:country_pickers/country.dart';
-import 'package:country_pickers/country_pickers.dart';
-import 'package:country_pickers/utils/utils.dart';
+
 import 'package:dowami/constant/extensions/media_extension.dart';
 import 'package:dowami/constant/extensions/round_extension.dart';
 import 'package:dowami/constant/shared_colors/shared_colors.dart';
 import 'package:dowami/constant/shared_function/navigator.dart';
 import 'package:dowami/constant/shared_widgets/toast.dart';
 import 'package:dowami/constant/text_style/text_style.dart';
-import 'package:dowami/features/login/data/cubit/login_cubit.dart';
+import 'package:dowami/features/login/cubit/login_cubit.dart';
 import 'package:dowami/features/login/presentation/pages/login_screen2.dart';
 import 'package:dowami/features/register/presentation/pages/select_register_screen.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
@@ -58,31 +56,9 @@ class LogInScreen1 extends StatelessWidget {
                   ).paddingB(context, 0.03),
                   _buildPhoneInput(context),
 
-          /*        sharedCardInput(context,
-                          controller: phoneController,
-                          hintText: 'enterPhone'.tr(context),
-                          suffix: buildFlag(cCode: phoneCode))
-                      .roundWidget(
-                          width: .9.widthX(context), height: 0.070.heightX(context))
-                      .cardAll(
-                          elevation: 6,
-                          radius: 7,
-                          shadowColor: const Color(0xffF6F6F6))
-                      .paddingB(context, 0.02),*/
+
                   _buildButton( context),
-                 /* sharedElevatedButton(
-                          onPressed: () {
-                            if (loginFormKey.currentState!.validate()) {print('validate');};
-                            //  navigateRep(context, LogInScreen());
-                          },
-                          txt: "goon".tr(context),
-                          color: Recolor.amberColor,
-                          radius: 6,
-                          textStyle: taj19BoldWhite(),
-                          horizontalPadding: .2.widthX(context),
-                          verticalPadding: .02.heightX(context))
-                      .paddingT(context, 0.025)
-                      .sizeDown(context, 0.01),*/
+
                   TextButton(
                       onPressed: () {
                         navigateTo(context, SelectLog());
@@ -126,7 +102,8 @@ class LogInScreen1 extends StatelessWidget {
 
         LoginCubit.get(context).phoneCode = phoneCode;
         LoginCubit.get(context).phoneNumber = phoneController.text;
-        LoginCubit.get(context).sendOtp(phoneNum: phoneCode + phoneController.text);
+        LoginCubit.get(context).sendOtp(phoneNum: //phoneCode +
+            phoneController.text);
 
       },
         txt: "goon".tr(context),

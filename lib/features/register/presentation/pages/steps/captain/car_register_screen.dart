@@ -8,7 +8,7 @@ import 'package:dowami/constant/shared_widgets/shared_appbar.dart';
 import 'package:dowami/constant/shared_widgets/shared_card_input.dart';
 import 'package:dowami/constant/shared_widgets/toast.dart';
 import 'package:dowami/features/register/data/models/captain_vehicle_model.dart';
-import 'package:dowami/features/register/presentation/cubit/register_cubit.dart';
+import 'package:dowami/features/register/cubit/register_cubit.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';

@@ -68,7 +68,7 @@ class DioHelperImpl implements DioHelper {
     dio.options.headers = {
       //'lang': appLanguage,
       'Content-Type': 'application/json',
-      'Authorization': token ?? '',
+      'Authorization': token==null ? '':"Bearer $token",
     };
 
    try{}on DioError catch(e){print(e.toString());}

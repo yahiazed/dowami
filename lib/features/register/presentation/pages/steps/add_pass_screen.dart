@@ -11,7 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../constant/shared_function/navigator.dart';
 import '../../../../../constant/shared_widgets/shard_elevated_button.dart';
 import '../../../../../constant/shared_widgets/toast.dart';
-import '../../cubit/register_cubit.dart';
+import '../../../cubit/register_cubit.dart';
 import 'fill_data_screen.dart';
 
 class AddPasswordScreen extends StatelessWidget {

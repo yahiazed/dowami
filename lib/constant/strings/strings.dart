@@ -13,6 +13,7 @@ const String requiredDocumentsUrl = '/required-documents';
 const String uploadDocumentsUrl = '/upload-documents';
 
 const String makeJobDowamiUrl = '/make-request';
+const String mainSettingsUrl = '/main-settings';
 
 
 
@@ -33,4 +34,9 @@ const String wadeny2Svg = 'assets/svg/wadeny2.svg';
 const String activeDowamSvg = 'assets/svg/activeDowam.svg';
 const String dawamiSvg = 'assets/svg/dawami.svg';
 const String drawerSvg = 'assets/svg/drawer.svg';
+const String carSvg = 'assets/svg/car.svg';
 
+List<String>carSizes=['small','medium','large'];
+
+
+//"token":"11|KJGMhHH8gRn6DLbAMoR2iWF0hoSm6Aa7vypZFxEG"

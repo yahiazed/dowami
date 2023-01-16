@@ -5,7 +5,7 @@ import 'package:dowami/constant/shared_widgets/shard_elevated_button.dart';
 import 'package:dowami/constant/shared_widgets/shared_appbar.dart';
 import 'package:dowami/constant/shared_widgets/shared_card_input.dart';
 import 'package:dowami/constant/shared_widgets/toast.dart';
-import 'package:dowami/features/register/presentation/cubit/register_cubit.dart';
+import 'package:dowami/features/register/cubit/register_cubit.dart';
 import 'package:dowami/features/register/presentation/pages/steps/fill_data_screen.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
 import 'package:flutter/gestures.dart';

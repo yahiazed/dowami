@@ -73,5 +73,5 @@ class DowamiJobModel extends Equatable {
 
 
   @override
-  List<Object?> get props => [name];
+  List<Object?> get props => [name,fromLoc,toLoc,stopPoints,days,requestType,goingTime,comingTime,passengersCount,carType,priceOffer];
 }

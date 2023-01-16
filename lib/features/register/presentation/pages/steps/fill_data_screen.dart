@@ -10,7 +10,7 @@ import 'package:dowami/constant/shared_widgets/shared_card_input.dart';
 import 'package:dowami/constant/shared_widgets/toast.dart';
 import 'package:dowami/constant/text_style/text_style.dart';
 import 'package:dowami/features/maps/helper/permission.dart';
-import 'package:dowami/features/register/presentation/cubit/register_cubit.dart';
+import 'package:dowami/features/register/cubit/register_cubit.dart';
 
 import 'package:dowami/helpers/localization/app_localization.dart';
 

@@ -3,6 +3,8 @@ import 'package:dowami/constant/extensions/round_extension.dart';
 import 'package:dowami/constant/shared_function/navigator.dart';
 import 'package:dowami/constant/shared_widgets/shard_elevated_button.dart';
 import 'package:dowami/constant/shared_widgets/shared_appbar.dart';
+import 'package:dowami/features/login/presentation/pages/login_screen1.dart';
+import 'package:dowami/features/register/cubit/register_cubit.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
 import 'package:flutter/material.dart';
 
@@ -27,7 +29,11 @@ class RegisterFinalScreen extends StatelessWidget {
               .cardAll(radius: 12, elevation: 7),
           sharedElevatedButton(
                   onPressed: () {
-                    navigateRem(context, HomeScreen());
+
+                    navigateRem(context, LogInScreen1());
+
+
+
                   },
                   txt: 'skip'.tr(context),
                   textStyle: taj16BoldWhite(),

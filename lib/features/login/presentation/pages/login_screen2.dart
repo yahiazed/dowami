@@ -6,7 +6,7 @@ import 'package:dowami/constant/shared_widgets/shared_appbar.dart';
 import 'package:dowami/constant/shared_widgets/shared_card_input.dart';
 import 'package:dowami/constant/shared_widgets/toast.dart';
 import 'package:dowami/features/home/presentation/pages/home_screen.dart';
-import 'package:dowami/features/login/data/cubit/login_cubit.dart';
+import 'package:dowami/features/login/cubit/login_cubit.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -39,7 +39,14 @@ class LoginScreen2 extends StatelessWidget {
     return BlocConsumer<LoginCubit, LoginState>(
       listener: (context, state) {
         if (state is SuccessCodeLoginState) {
-          navigateTo(context, const HomeScreen());}
+          LoginCubit.get(context).saveDataToPrefs();        }
+
+        if (state is SuccessSaveDataState) {
+          navigateTo(context, const HomeScreen());
+        }
+        if (state is ErrorSaveDataState) {
+          showErrorToast(message:'error connection');
+        }
         if (state is ErrorCodeLoginState) {
           showErrorToast(message:state.errorMsg);
         }
@@ -193,6 +200,7 @@ class LoginScreen2 extends StatelessWidget {
             digitController1.text;
         int cod = int.parse(code);
          LoginCubit.get(context).verifyCode(cod);
+
       //  if(cod==LoginCubit.get(context).smsCode){navigateTo(context, const HomeScreen());}
       //  else{showErrorToast(message: 'wrong code');}
       },

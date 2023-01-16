@@ -109,7 +109,11 @@
     "tuesday": "tue",
     "wednesday": "wed",
     "thursday": "thr",
-    "friday": "fri"
+    "friday": "fri",
+    "small": "small",
+    "medium": "medium",
+    "large": "large",
+    "Search": "search"
 
 
 
