@@ -34,5 +34,8 @@ class ErrorGetSettingsState extends MainSettingsState {
 
 
 
-class StartTimeDownLoginState extends MainSettingsState {}
-class EndTimeDownLoginState extends MainSettingsState {}
+class StartGetLanguageState extends MainSettingsState {}
+class EndGetLanguageState extends MainSettingsState {}
+
+class StartChangeLanguageState extends MainSettingsState {}
+class EndChangeLanguageState extends MainSettingsState {}

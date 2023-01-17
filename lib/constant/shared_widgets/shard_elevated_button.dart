@@ -10,11 +10,12 @@ Widget sharedElevatedButton({
   double? verticalPadding,
   double? radius,
   TextStyle? textStyle,
+  required BuildContext context,
 }) {
   return ElevatedButton(
     onPressed: onPressed,
     style: ButtonStyle(
-        backgroundColor: MaterialStatePropertyAll(color ?? Recolor.mainColor),
+        backgroundColor: MaterialStatePropertyAll(color ?? Theme.of(context).canvasColor),
         shape: MaterialStatePropertyAll(RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(radius ?? 0))))),
     child: Padding(
@@ -35,11 +36,12 @@ Widget sharedElevatedButton2({
   double? verticalPadding,
   double? radius,
   required Widget widget,
+  required BuildContext context,
 }) {
   return ElevatedButton(
     onPressed: onPressed,
     style: ButtonStyle(
-        backgroundColor: MaterialStatePropertyAll(color ?? Recolor.mainColor),
+        backgroundColor: MaterialStatePropertyAll(color ?? Theme.of(context).canvasColor),
         shape: MaterialStatePropertyAll(RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(radius ?? 0))))),
     child: Padding(

@@ -53,8 +53,8 @@ class RegisterSendOtpScreen extends StatelessWidget {
                 _buildHappyText(context),
                 _buildPhoneInput(context),
                 Text("By creating".tr(context),
-                    style: taj12BoldWhite().copyWith(
-                      color: Recolor.mainColor,
+                    style: bold12(context).copyWith(
+                      color: Theme.of(context).canvasColor,
                     )).paddingB(context, 0.02),
                 _buildPrivacyText(context),
                 _buildButton(context),
@@ -68,11 +68,12 @@ class RegisterSendOtpScreen extends StatelessWidget {
 
   Widget _buildButton(BuildContext context) {
     return sharedElevatedButton(
+      context: context,
       txt: 'next'.tr(context),
       radius: 9,
       verticalPadding: 0.023.heightX(context),
       horizontalPadding: 0.2.widthX(context),
-      textStyle: taj16BoldBlue().copyWith(color: Recolor.amberColor),
+      textStyle:bold16(context).copyWith(color: Theme.of(context).primaryColor),
       onPressed: () {
         RegisterCubit.get(context).phoneCode = phoneCode;
         RegisterCubit.get(context).phoneNumber = phoneController.text;
@@ -88,20 +89,20 @@ class RegisterSendOtpScreen extends StatelessWidget {
       children: [
         TextSpan(
             text: "Privacy Policy".tr(context),
-            style: taj16BoldBlue()
-                .copyWith(fontSize: 12, color: Recolor.amberColor),
+            style:bold16(context)
+                .copyWith(fontSize: 12, color: Theme.of(context).primaryColor),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
                 navigateRep(context, const PrivacyPolicyScreen());
               }),
         TextSpan(
           text: "and".tr(context),
-          style: taj14Blue().copyWith(fontSize: 12),
+          style: reg14(context).copyWith(fontSize: 12),
         ),
         TextSpan(
             text: "Terms of Service".tr(context),
-            style: taj16BoldBlue()
-                .copyWith(fontSize: 12, color: Recolor.amberColor),
+            style: bold16(context)
+                .copyWith(fontSize: 12, color: Theme.of(context).primaryColor),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
                 navigateTo(context, const ServiceTerms());
@@ -132,7 +133,7 @@ class RegisterSendOtpScreen extends StatelessWidget {
       TextSpan(text: "Happy".tr(context), style: taj25BoldBlue2()),
       TextSpan(
           text: '${"join".tr(context)}\t',
-          style: taj25BoldBlue2().copyWith(color: Recolor.amberColor)),
+          style: taj25BoldBlue2().copyWith(color: Theme.of(context).primaryColor)),
       TextSpan(text: "us".tr(context), style: taj25BoldBlue2()),
     ])).paddingB(context, 0.02);
   }
@@ -140,10 +141,10 @@ class RegisterSendOtpScreen extends StatelessWidget {
   Widget _buildWelcomeText(BuildContext context) {
     return RichText(
         text: TextSpan(children: [
-      TextSpan(text: "WeToDawmi".tr(context), style: taj15Blue()),
+      TextSpan(text: "WeToDawmi".tr(context), style: reg16(context) ),
       TextSpan(
           text: "Dawami".tr(context),
-          style: taj15Blue().copyWith(color: Recolor.amberColor)),
+          style:reg16(context).copyWith(color: Theme.of(context).primaryColor)),
     ])).paddingB(context, 0.02);
   }
 }

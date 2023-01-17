@@ -9,7 +9,9 @@ import 'package:dowami/features/main_settings/data/main_settings_repository/main
 import 'package:dowami/features/main_settings/data/models/main_settings_model.dart';
 import 'package:dowami/features/register/data/models/user_model.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -24,8 +26,11 @@ class MainSettingsCubit extends Cubit<MainSettingsState> {
 
   MainSettingsModel? mainSettingsModel;
 
+ String? primaryColor;
+  String? secondColor;
+  String? splashScreen;
 
-
+Locale? language;
 
 
 
@@ -42,11 +47,32 @@ class MainSettingsCubit extends Cubit<MainSettingsState> {
           (failure) => ErrorGetSettingsState(errorMsg: _mapFailureToMessage(failure)),
           (mainSettingsModel) {
             this.mainSettingsModel=mainSettingsModel;
+            primaryColor=mainSettingsModel.primaryColor;
+            secondColor=mainSettingsModel.secondColor;
+            splashScreen=mainSettingsModel.splashScreen;
+
             return
             SuccessGetSettingsState(mainSettingsModel: mainSettingsModel);
           },
     );
   }
+
+
+getLanguageFromPrefs()async{
+    emit(StartGetLanguageState());
+    language=Locale(await repo.getLanguageFromPrefs()) ;
+    emit(EndGetLanguageState());
+
+}
+
+onChangeLanguage(String value)async{
+  emit(StartGetLanguageState());
+
+  await repo.saveLanguageToPrefs(value:value);
+  language=Locale(value);
+
+  emit(EndChangeLanguageState());
+}
 
 
 

@@ -103,17 +103,33 @@
     "go": "Go",
 
 
-    "saturday": "sat",
-    "sunday": "sun",
-    "monday": "mon",
-    "tuesday": "tue",
-    "wednesday": "wed",
-    "thursday": "thr",
-    "friday": "fri",
-    "small": "small",
-    "medium": "medium",
-    "large": "large",
-    "Search": "search"
+    "saturday": "Sat",
+    "sunday": "Sun",
+    "monday": "Mon",
+    "tuesday": "Tue",
+    "wednesday": "Wed",
+    "thursday": "Thr",
+    "friday": "Fri",
+
+
+    "tripName": "trip name",
+    "startPoint": "start point",
+    "endPoint": "end point",
+    "stopPoint": "stop point",
+    "stop": "stop",
+    "days": "days",
+    "time": "time",
+    "goingAndComing": "going and coming",
+    "going": "going",
+    "coming": "coming",
+    "passengerCount": "passengers count",
+    "carType": "car type",
+    "Sedan": "Sedan",
+    "SUV": "SUV",
+    "priceOffer": "price offer",
+    "R.S": "R.S",
+    "Search": "Search"
+
 
 
 

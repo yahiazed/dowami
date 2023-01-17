@@ -150,7 +150,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text("Few steps left".tr(context), style: taj12MedBlue()),
+        Text("Few steps left".tr(context), style: med12(context)),
         Text("Let's get to know you".tr(context), style: taj25BoldBlue()),
         Text("informationProvided".tr(context),
             textAlign: TextAlign.center, style: taj11MedBlue()),
@@ -175,13 +175,13 @@ class FillUserRegisterDataScreen extends StatelessWidget {
               width: 0.35.widthX(context),
               height: 0.1.heightX(context),
               decoration: BoxDecoration(
-                border: Border.all(color: Recolor.mainColor, width: 2),
+                border: Border.all(color: Theme.of(context).canvasColor, width: 2),
                 color: Recolor.underLineColor,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.camera_alt_outlined,
-                color: Recolor.mainColor,)
+                color: Theme.of(context).canvasColor,)
           )
 
 
@@ -190,7 +190,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
             width: 0.35.widthX(context),
             height: 0.1.heightX(context),
             decoration: BoxDecoration(
-                border: Border.all(color: Recolor.mainColor, width: 2),
+                border: Border.all(color: Theme.of(context).canvasColor, width: 2),
                 color: Recolor.underLineColor,
                 shape: BoxShape.circle,
                 image: DecorationImage(image:   FileImage(cubit.avatarImageFile!),fit: BoxFit.contain,)
@@ -285,7 +285,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
               children: [
                 Text('male'.tr(context), style: taj12RegGree()),
                 Radio(
-                  fillColor: MaterialStatePropertyAll(Recolor.amberColor),
+                  fillColor: MaterialStatePropertyAll(Theme.of(context).primaryColor),
                   value: true,
                   groupValue: RegisterCubit.get(context).isMale,
                   onChanged: (value) =>
@@ -298,7 +298,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
               children: [
                 Text('female'.tr(context), style: taj12RegGree()),
                 Radio(
-                  fillColor: MaterialStatePropertyAll(Recolor.amberColor),
+                  fillColor: MaterialStatePropertyAll(Theme.of(context).primaryColor),
                   value: false,
                   groupValue: RegisterCubit.get(context).isMale,
                   onChanged: (value) =>
@@ -405,6 +405,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
   }
   Widget _buildOnSubmitButton(BuildContext context) {
     return sharedElevatedButton(
+      context: context,
       onPressed: ()async {
         if(!RegisterCubit.get(context).isAcceptTerms){
           showErrorToast(message:'terms');
@@ -456,7 +457,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
       txt: 'Confirm'.tr(context),
       textStyle: taj19BoldWhite(),
       radius: 9,
-      color: Recolor.amberColor,
+      color: Theme.of(context).primaryColor,
       horizontalPadding: 0.25.widthX(context),
       verticalPadding: 0.025.heightX(context),
     );

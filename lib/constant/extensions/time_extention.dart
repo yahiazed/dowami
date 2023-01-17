@@ -4,7 +4,7 @@ extension Timex on TimeOfDay {
 
   String getStringFormat({required BuildContext context,required TimeOfDay time}) {
     final localizations = MaterialLocalizations.of(context);
-    String formattedTimeOfDay = localizations.formatTimeOfDay(this,alwaysUse24HourFormat: true);
+    String formattedTimeOfDay = localizations.formatTimeOfDay(time,alwaysUse24HourFormat: true);
     return formattedTimeOfDay;
       }
 
@@ -16,3 +16,4 @@ extension Timex on TimeOfDay {
   String formattedTimeOfDay = localizations.formatTimeOfDay(time,alwaysUse24HourFormat: true);
   return formattedTimeOfDay;
 }
+

@@ -91,13 +91,13 @@ class RegisterVerifyCodeScreen extends StatelessWidget {
         child: RichText(
             text: TextSpan(children: [
           TextSpan(text: 'أعد ارسال الرمز',
-              style: taj14Blue().copyWith(decoration:state is TimeOutSendSmsCodeState?TextDecoration.underline:TextDecoration.none )
+              style: reg14(context).copyWith(decoration:state is TimeOutSendSmsCodeState?TextDecoration.underline:TextDecoration.none )
           ),
               state is TimeOutSendSmsCodeState
               ?const TextSpan():
               TextSpan(
             text: '${RegisterCubit.get(context).second} ثانية',
-            style: taj14Amber().copyWith(
+            style: reg14(context).copyWith(color: Theme.of(context).primaryColor,
                 decoration: state is TimeOutSendSmsCodeState
                     ? TextDecoration.underline
                     : null),
@@ -111,11 +111,11 @@ class RegisterVerifyCodeScreen extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text("Check Your Phone Number".tr(context), style: taj12MedBlue()),
+        Text("Check Your Phone Number".tr(context), style: med12(context)),
         Text("Enter Verification Code".tr(context), style: taj25BoldBlue2()),
         Text('Enter the quad code sent to the number'.tr(context),
-            style: taj14Blue()),
-        Text(cubit.phoneNumber, style: taj14Blue()),
+            style: reg14(context)),
+        Text(cubit.phoneNumber, style: reg14(context)),
         _buildButtonEditPhoneNumber(context),
       ],
     );
@@ -127,9 +127,9 @@ class RegisterVerifyCodeScreen extends StatelessWidget {
         Navigator.pop(context);
       },
       child: Text('Is the number correct?'.tr(context),
-              style: taj14Blue().copyWith(
+              style:reg14(context).copyWith(
                   decoration: TextDecoration.underline,
-                  color: Recolor.amberColor))
+                  color: Theme.of(context).primaryColor))
           .paddingB(context, 0.1),
     );
   }
@@ -172,11 +172,12 @@ class RegisterVerifyCodeScreen extends StatelessWidget {
 
   Widget _buildButton(BuildContext context) {
     return sharedElevatedButton(
+      context: context,
       txt: 'next'.tr(context),
       radius: 9,
       verticalPadding: 0.023.heightX(context),
       horizontalPadding: 0.15.widthX(context),
-      textStyle: taj16BoldBlue().copyWith(color: Recolor.amberColor),
+      textStyle:  bold16(context).copyWith(color: Theme.of(context).primaryColor),
       onPressed: () {
         String code = digitController6.text +
             digitController5.text +

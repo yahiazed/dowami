@@ -25,10 +25,10 @@ class DowamiClientCubit extends Cubit<DowamiClientState> {
   bool isGoingAndComing=false;
   TimeOfDay  goingTime=TimeOfDay.now();
   TimeOfDay  comingTime=TimeOfDay.now();
-  int passengerCount=0;
+  int passengerCount=1;
   List<String>selectedDaysIds=[];
 
-  String selectedSize='small';
+  String selectedSize='Sedan';
 
 
 

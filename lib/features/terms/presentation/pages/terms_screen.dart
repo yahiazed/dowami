@@ -31,7 +31,7 @@ class ServiceTerms extends StatelessWidget {
                 children: [
                   Text(
                     'back'.tr(context),
-                    style: taj14Blue().copyWith(
+                    style: reg14(context).copyWith(
                         fontWeight: FontWeight.bold, color: Colors.black),
                   ),
                   const Icon(

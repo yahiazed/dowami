@@ -20,7 +20,7 @@ AppBar sharedAppBar(context) => AppBar(
               children: [
                 Text(
                   'back'.tr(context),
-                  style: taj14Blue().copyWith(
+                  style: reg14(context).copyWith(
                       fontWeight: FontWeight.bold, color: Colors.black),
                 ),
                 const Icon(
@@ -41,7 +41,7 @@ AppBar sharedHomeAppBar(
       elevation: 0,
       automaticallyImplyLeading: false,
       centerTitle: true,
-      title: Text(title.tr(context), style: taj16ExtraBoldBlue()),
+      title: Text(title.tr(context), style: eBold16(context)),
       leading: Padding(
         padding: const EdgeInsetsDirectional.only(start: 8.0),
         child: Row(
@@ -78,7 +78,7 @@ class SharedHomeAppBar extends StatelessWidget {
       elevation: 0,
       automaticallyImplyLeading: false,
       centerTitle: true,
-      title: Text(title.tr(context), style: taj16ExtraBoldBlue()),
+      title: Text(title.tr(context), style: eBold16(context)),
       leading: Padding(
         padding: const EdgeInsetsDirectional.only(start: 8.0),
         child: Row(

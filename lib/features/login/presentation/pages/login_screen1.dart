@@ -68,7 +68,7 @@ class LogInScreen1 extends StatelessWidget {
                         style: TextStyle(
                             fontFamily: 'Tajawal',
                             fontSize: 13,
-                            color: Recolor.mainColor,
+                            color: Theme.of(context).canvasColor,
                             decoration: TextDecoration.underline),
                       )),
                 ],
@@ -96,6 +96,7 @@ class LogInScreen1 extends StatelessWidget {
   }
   Widget _buildButton(BuildContext context) {
     return sharedElevatedButton(
+      context: context,
 
       onPressed: () {
         if (!loginFormKey.currentState!.validate()) {showErrorToast(message: 'enter phone');}
@@ -107,7 +108,7 @@ class LogInScreen1 extends StatelessWidget {
 
       },
         txt: "goon".tr(context),
-        color: Recolor.amberColor,
+        color: Theme.of(context).primaryColor,
         radius: 6,
         textStyle: taj19BoldWhite(),
         horizontalPadding: .2.widthX(context),

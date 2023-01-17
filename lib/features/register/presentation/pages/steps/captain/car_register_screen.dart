@@ -90,7 +90,7 @@ class CarRegisterScreen extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text("To Finish".tr(context), style: taj12MedBlue()),
+        Text("To Finish".tr(context), style:med12(context)),
         Text("Enter car".tr(context), style: taj25BoldBlue()),
         Text("desc Car".tr(context),
             textAlign: TextAlign.center, style: taj11MedBlue()),
@@ -101,6 +101,7 @@ class CarRegisterScreen extends StatelessWidget {
 
   Widget _buildButtonNext(BuildContext context) {
     return sharedElevatedButton(
+        context: context,
         onPressed: () async{
 
          var  cubit=RegisterCubit.get(context);
@@ -132,7 +133,7 @@ class CarRegisterScreen extends StatelessWidget {
         horizontalPadding: 0.18.widthX(context),
         verticalPadding: 0.025.heightX(context),
         radius: 9,
-        textStyle: taj16BoldAmber());
+        textStyle: bold16(context).copyWith( color: Theme.of(context).primaryColor,));
   }
 
   Widget _buildButtonAttach3CarPhoto(BuildContext context) {
@@ -149,7 +150,7 @@ class CarRegisterScreen extends StatelessWidget {
               children: [
                 Icon(
                   Icons.camera_alt_outlined,
-                  color: Recolor.mainColor,
+                  color: Theme.of(context).canvasColor,
                 ),
                 Text("Attach at least 3 photos, one of the inside".tr(context),
                     style: taj11MedBlue())
@@ -189,14 +190,14 @@ class CarRegisterScreen extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildRadio(cubit, false),
+            _buildRadio(cubit, false,context),
             Text("ownership".tr(context), style: taj12RegGree()),
           ],
         ),
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildRadio(cubit, true),
+            _buildRadio(cubit, true,context),
             Text("rent".tr(context), style: taj12RegGree()),
           ],
         ),
@@ -204,9 +205,9 @@ class CarRegisterScreen extends StatelessWidget {
     ).paddingT(context, 0.025);
   }
 
-  Radio<bool> _buildRadio(RegisterCubit cubit, bool value) {
+  Radio<bool> _buildRadio(RegisterCubit cubit, bool value,context) {
     return Radio(
-        fillColor: MaterialStatePropertyAll(Recolor.amberColor),
+        fillColor: MaterialStatePropertyAll(Theme.of(context).primaryColor),
         value: value,
         groupValue: cubit.isRent,
         onChanged: (value) => cubit.onChangedRadioRent(value));

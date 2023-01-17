@@ -28,6 +28,7 @@ class RegisterFinalScreen extends StatelessWidget {
                   width: 0.7.widthX(context), height: 0.4.heightX(context))
               .cardAll(radius: 12, elevation: 7),
           sharedElevatedButton(
+              context: context,
                   onPressed: () {
 
                     navigateRem(context, LogInScreen1());
@@ -53,7 +54,7 @@ class RegisterFinalScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text("Congratulation".tr(context), style: taj12MedBlue()),
+          Text("Congratulation".tr(context), style: med12(context)),
           RichText(
               text: TextSpan(children: [
             TextSpan(text: "Welcome".tr(context), style: taj25BoldBlue()),

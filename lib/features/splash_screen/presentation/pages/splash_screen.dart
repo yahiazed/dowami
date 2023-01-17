@@ -26,11 +26,13 @@ class _SplashScreenState extends State<SplashScreen> {
 await MainSettingsCubit.get(context).getMainSettings();
 if(!mounted)return;
 await LoginCubit.get(context).getDataFromPrefs();
+if(!mounted)return;
+await MainSettingsCubit.get(context).getLanguageFromPrefs();
 
 Timer(const Duration(seconds: 5), () {
 
-  if(LoginCubit.get(context).token==null){navigateTo(context, SelectLog());}
-  else{navigateTo(context, HomeScreen());}
+  if(LoginCubit.get(context).token==null){navigateTo(context, const SelectLog());}
+  else{navigateTo(context, const HomeScreen());}
 
 
 
@@ -40,7 +42,7 @@ Timer(const Duration(seconds: 5), () {
   void initState() {
     super.initState();
     getSettings();
-   // Timer(Duration(seconds: 5), () {navigateTo(context, SelectLog());});
+
   }
   @override
   Widget build(BuildContext context) {
@@ -69,11 +71,11 @@ Timer(const Duration(seconds: 5), () {
             width: 1.0.widthX(context),
             height: 1.0.heightX(context),
 
-            color: Recolor.amberColor,
+            color: Theme.of(context).primaryColor,
             child: Center(
               child: MainSettingsCubit.get(context).mainSettingsModel==null
                   ||MainSettingsCubit.get(context).mainSettingsModel!.splashScreen!=null
-                  ? Text('',style: eBold30Blue(),)
+                  ? Text('',style: eBold30(context),)
                   :SvgPicture.asset('assets/svg/Group9786.svg',),
             )
             // Image(image: NetworkImage(MainSettingsCubit.get(context).mainSettingsModel!.logo!))

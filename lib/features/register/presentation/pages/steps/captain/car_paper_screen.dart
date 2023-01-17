@@ -72,6 +72,7 @@ class RegisterCarPaperScreen extends StatelessWidget {
                 buildAcceptsTermsRow(
                     RegisterCubit.get(context).isAcceptTerms, context),
                 sharedElevatedButton(
+                    context: context,
                     onPressed: () async{
                       await onConfirmButton(context: context,cubit: RegisterCubit.get(context));
                     },
@@ -80,7 +81,7 @@ class RegisterCarPaperScreen extends StatelessWidget {
                     radius: 9,
                     verticalPadding: 0.025.heightX(context),
                     horizontalPadding: 0.2.widthX(context),
-                    color: Recolor.amberColor)
+                    color: Theme.of(context).primaryColor)
               ],
             ),
           ),
@@ -94,7 +95,7 @@ class RegisterCarPaperScreen extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text("To Finish".tr(context), style: taj12MedBlue()),
+        Text("To Finish".tr(context), style: med12(context)),
         Text("Attach Paper".tr(context), style: taj25BoldBlue()),
         Text("BeSurePaper".tr(context), textAlign: TextAlign.center, style: taj11MedBlue()),
       ],
@@ -116,7 +117,7 @@ class RegisterCarPaperScreen extends StatelessWidget {
                 Padding(
                   padding:
                   EdgeInsetsDirectional.only(start: 0.90.widthX(context) * .1,),
-                  child: Text(requiredDocModel.name!, style: taj17ExtraBoldBlue()),
+                  child: Text(requiredDocModel.name!, style: eBold16(context)),
                 ),
                 Container(
                   width: 0.90.widthX(context) * .2,
@@ -259,7 +260,7 @@ print(requiredDocsList);
         _buildRowOperationColorItem(
             context: context, txt: "confirmed", color: Recolor.onlineColor),
         _buildRowOperationColorItem(
-            context: context, txt: "waiting", color: Recolor.amberColor),
+            context: context, txt: "waiting", color: Theme.of(context).primaryColor),
         _buildRowOperationColorItem(
             context: context, txt: "refused", color: Recolor.txtRefuseColor),
       ],

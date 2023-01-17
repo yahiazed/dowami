@@ -40,7 +40,7 @@ class AddJobClient extends StatelessWidget {
         listener: (context, state) {},
         builder: (context,state){
          if(state is SuccessMakeJobState){
-           return successPreview();
+           return successPreview(context);
          }
          else{
            return makeJobPreview(context );
@@ -50,9 +50,9 @@ class AddJobClient extends StatelessWidget {
     );
   }
 
-  Widget successPreview() {
+  Widget successPreview(context) {
     return Center(
-      child: Text('good',style: eBold30Blue(),),
+      child: Text('good',style: eBold30(context),),
     );
 
   }
@@ -112,8 +112,8 @@ class AddJobClient extends StatelessWidget {
         radius: 5,
         suffix: Icon(Icons.location_on_outlined, color: Recolor.txtColor),
         keyboardType: TextInputType.none,
-        hintStyle: bold12Blue().copyWith(color: Recolor.txtGreyColor),
-        textStyle: bold14Blue().copyWith(color: Recolor.txtGreyColor),
+        hintStyle: bold12(context).copyWith(color: Recolor.txtGreyColor),
+        textStyle: bold14(context).copyWith(color: Recolor.txtGreyColor),
         readOnly: true, onTap: () async {
       LatLng? selectedLatLng = await openLocationDialog(context);
       if (selectedLatLng == null) {
@@ -144,8 +144,8 @@ class AddJobClient extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'اسم الرحله',
-              style: eBold16Blue(),
+              'tripName'.tr(context),
+              style: eBold16(context),
             ).paddingB(context, .01),
             sharedBorderedInput(
               context,
@@ -157,8 +157,8 @@ class AddJobClient extends StatelessWidget {
               radius: 5,
               suffix: Icon(Icons.location_on_outlined, color: Recolor.txtColor),
               // keyboardType: TextInputType.none,
-              hintStyle: bold12Blue().copyWith(color: Recolor.txtGreyColor),
-              textStyle: bold14Blue().copyWith(color: Recolor.txtGreyColor),
+              hintStyle: bold12(context).copyWith(color: Recolor.txtGreyColor),
+              textStyle: bold14(context).copyWith(color: Recolor.txtGreyColor),
               readOnly: false,
 
             ).cardAllSized(context,
@@ -175,7 +175,7 @@ class AddJobClient extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _title(
-            name: 'نقطه الإنطلاق',
+            name: 'startPoint'.tr(context),
             icon: Icons.location_on_outlined,
             context: context),
         getLocButton(
@@ -195,7 +195,7 @@ class AddJobClient extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _title(
-            name: 'نقطه الوصول',
+            name: 'endPoint'.tr(context),
             icon: Icons.location_on_outlined,
             context: context),
         getLocButton(
@@ -224,12 +224,12 @@ class AddJobClient extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   _title(
-                      name: 'نقطه توقف',
+                      name: 'stopPoint'.tr(context),
                       icon: Icons.location_on_outlined,
                       context: context),
                   Icon(
                     Icons.add_circle_outline_rounded,
-                    color: Recolor.mainColor,
+                    color:Theme.of(context).canvasColor,
                   ).paddingB(context, .01)
                 ],
               ),
@@ -254,7 +254,7 @@ class AddJobClient extends StatelessWidget {
     return Column(
       children: [
         _title(
-            name: ' توقف ${index + 1}',
+            name: '${'stop'.tr(context)} ${index + 1}',
             icon: Icons.warning_amber,
             context: context),
         getLocButton(
@@ -278,7 +278,7 @@ class AddJobClient extends StatelessWidget {
           var cubit=DowamiClientCubit.get(context);
         return Column(
           children: [
-            _title(name: 'الأيام', icon: Icons.calendar_month, context: context),
+            _title(name: 'days'.tr(context), icon: Icons.calendar_month, context: context),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -290,7 +290,7 @@ class AddJobClient extends StatelessWidget {
                 borderRadius: BorderRadius.circular(5),
                     child: Text(
                         e['name']!.tr(context),
-                        style: bold14Blue().copyWith(color: Recolor.whiteColor),
+                        style: bold14(context).copyWith(color: Recolor.whiteColor),
                     ).roundWidget(
                       color: !cubit.selectedDaysIds.contains(e['id'])
                           ? Recolor.redColor.withOpacity(.5)
@@ -324,17 +324,17 @@ class AddJobClient extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
               children: [
-                _title(name: 'التوقيت', icon: Icons.access_time_outlined , context: context),
+                _title(name: 'time'.tr(context), icon: Icons.access_time_outlined , context: context),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      'ذهاب وعوده',
-                      style: bold16Blue(),
+                      'goingAndComing'.tr(context),
+                      style: bold16(context),
                     ).paddingB(context, .01),
                     Text(
                       ':',
-                      style: bold16Blue(),
+                      style: bold16(context),
                     ).paddingB(context, .01),
                     Switch(
                       inactiveTrackColor: Recolor.txtGreyColor,
@@ -371,7 +371,7 @@ class AddJobClient extends StatelessWidget {
 
 
                   },
-                  child: _timeWidget(name: 'الذهاب',hour: cubit.goingTime.hour.toString(),min: cubit.goingTime.minute.toString(),context: context),
+                  child: _timeWidget(name: 'going'.tr(context),hour: cubit.goingTime.hour.toString(),min: cubit.goingTime.minute.toString(),context: context),
                 ),
                 if(cubit.isGoingAndComing)  InkWell(
                     onTap: ()async{
@@ -384,7 +384,7 @@ class AddJobClient extends StatelessWidget {
                           cubit.onChangeTime(coming:comingTime1,going:cubit.goingTime  );}
                       });
                     },
-                    child: _timeWidget(name: 'العوده',hour: cubit.comingTime.hour.toString(),min:cubit. comingTime.minute.toString(),context: context),
+                    child: _timeWidget(name: 'coming'.tr(context),hour: cubit.comingTime.hour.toString(),min:cubit. comingTime.minute.toString(),context: context),
                 ),
               ],
 
@@ -399,8 +399,8 @@ class AddJobClient extends StatelessWidget {
     return
       Row(
         children: [
-          Icon(Icons.access_time_rounded, color: Recolor.amberColor, size: .04.widthX(context)),
-          Text(name,style: bold14Blue(),).paddingSH(context, .02),
+          Icon(Icons.access_time_rounded, color: Theme.of(context).primaryColor, size: .04.widthX(context)),
+          Text(name,style: bold14(context),).paddingSH(context, .02),
           Text(min).roundWidget(borderWidth: 1,radius: 5,color: Recolor.whiteColor,borderColor: Recolor.txtGreyColor,height: .03.heightX(context),width: .07.widthX(context)),
          const Text(':').paddingSH(context, .01),
           Text(hour).roundWidget(borderWidth: 1, radius: 5, color: Recolor.whiteColor, borderColor: Recolor.txtGreyColor, height: .03.heightX(context),width: .07.widthX(context)),
@@ -419,21 +419,23 @@ class AddJobClient extends StatelessWidget {
           var cubit=DowamiClientCubit.get(context);
         return Column(
           children: [
-            _title(name: 'عدد الركاب', icon: Icons.people, context: context),
+            _title(name: 'passengerCount'.tr(context), icon: Icons.people, context: context),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 IconButton(onPressed: (){
-                  cubit.onChangePassengerCount(cubit.passengerCount+1);
-                  }, icon: Icon(Icons.add,color: Recolor.mainColor)),
-                Text(cubit.passengerCount.toString(),style: eBold16Blue(),),
+                 if(cubit.passengerCount<4){
+                   cubit.onChangePassengerCount(cubit.passengerCount+1);
+                 }
+                  }, icon: Icon(Icons.add,color:Theme.of(context).canvasColor)),
+                Text(cubit.passengerCount.toString(),style: eBold16(context),),
 
                 IconButton(onPressed: (){
-                  if(cubit.passengerCount<=0){return;}
+                  if(cubit.passengerCount<=1){return;}
                   else{   cubit.onChangePassengerCount(cubit.passengerCount-1);}
 
-                  }, icon: Icon(Icons.remove,color: Recolor.mainColor,)),
+                  }, icon: Icon(Icons.remove,color: Theme.of(context).canvasColor,)),
 
 
               ],
@@ -459,15 +461,15 @@ class AddJobClient extends StatelessWidget {
         var cubit=DowamiClientCubit.get(context);
         return Column(
           children: [
-            _title(context:context,name: 'نوع السياره',icon: Icons.car_crash_outlined),
+            _title(context:context,name: 'carType'.tr(context),icon: Icons.car_crash_outlined),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
 
 
-                carSizeItem(carSize: 'small',imageUrl: carSvg,context: context,cubit:cubit ),
-                carSizeItem(carSize: 'medium',imageUrl: carSvg,context: context,cubit:cubit),
-                carSizeItem(carSize: 'large',imageUrl: carSvg,context: context,cubit:cubit),
+                carSizeItem(carSize: 'Sedan',imageUrl: carSvg,context: context,cubit:cubit ),
+                carSizeItem(carSize: 'SUV',imageUrl: carSvg,context: context,cubit:cubit),
+
               ],
             )
 
@@ -497,7 +499,7 @@ class AddJobClient extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(carSize.tr(context),style: eBold16Blue(),),
+                  Text(carSize,style: eBold16(context),),
                 ],
               ).paddingT(context, .01),
             ],
@@ -506,7 +508,7 @@ class AddJobClient extends StatelessWidget {
             borderWidth:cubit.selectedSize==carSize? 2:0,
             radius: 10
             ,
-            borderColor: Recolor.mainColor.withOpacity(cubit.selectedSize==carSize? 1:0),
+            borderColor: Theme.of(context).canvasColor.withOpacity(cubit.selectedSize==carSize? 1:0),
             width: .2.widthX(context), height: .1.heightX(context))
     );
 
@@ -521,7 +523,7 @@ class AddJobClient extends StatelessWidget {
           var cubit=DowamiClientCubit.get(context);
         return Column(
           children: [
-            _title(context:context,name: 'عرض السعر',icon: Icons.monetization_on_outlined),
+            _title(context:context,name: 'priceOffer'.tr(context),icon: Icons.monetization_on_outlined),
             Row(
               children: [
                 sharedBorderedInput(
@@ -535,13 +537,13 @@ class AddJobClient extends StatelessWidget {
                  // suffix: Icon(Icons.location_on_outlined, color: Recolor.txtColor),
                    keyboardType: TextInputType.number,
 
-                  hintStyle: bold12Blue().copyWith(color: Recolor.txtGreyColor),
-                  textStyle: bold14Blue().copyWith(color: Recolor.txtGreyColor),
+                  hintStyle: bold12(context).copyWith(color: Recolor.txtGreyColor),
+                  textStyle: bold14(context).copyWith(color: Recolor.txtGreyColor),
                   readOnly: false,
                   hintText: '',
                 ).cardAllSized(context,
                     width: .7, height: .04, cardColor: Colors.transparent, elevation: 0).expandedWidget(flex: 1),
-                Text('ر.س',style: eBold16Blue(),).paddingSH(context, .01)
+                Text('R.S'.tr(context),style: eBold16(context),).paddingSH(context, .01)
               ],
             )
 
@@ -555,10 +557,10 @@ class AddJobClient extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Icon(icon, color: Recolor.amberColor, size: .04.widthX(context)),
+        Icon(icon, color: Theme.of(context).primaryColor, size: .04.widthX(context)),
         Text(
           name,
-          style: eBold16Blue(),
+          style: eBold16(context),
         ).paddingSH(context, .02),
       ],
     ).paddingB(context, .01);
@@ -583,14 +585,14 @@ class AddJobClient extends StatelessWidget {
           builder: (context,state)  {
            var cubit=DowamiClientCubit.get(context);
           return sharedElevatedButton(
+            context: context,
               onPressed: () async{
 
 
                 DowamiJobModel dowamiJobModel=DowamiJobModel(
                   name:cubit. nameController.text,
                   days: cubit.selectedDaysIds,
-                  carType:'Sedan'
-                 // cubit.selectedSize
+                  carType: cubit.selectedSize
                     ,
                   requestType: cubit.isGoingAndComing?'1':'0',
                   comingTime: cubit.isGoingAndComing?getStringFormat(context: context,time: cubit.comingTime) :null,
@@ -607,9 +609,9 @@ class AddJobClient extends StatelessWidget {
 
               },
               txt: "Search".tr(context),
-              color: Recolor.mainColor,
+              color: Theme.of(context).canvasColor,
               radius: 10,
-              textStyle: bold18Blue().copyWith(color: Recolor.amberColor),
+              textStyle: bold18(context).copyWith(color: Theme.of(context).primaryColor),
               horizontalPadding: .18.widthX(context),
               verticalPadding: .016.heightX(context))
               .paddingSV(context, .03);

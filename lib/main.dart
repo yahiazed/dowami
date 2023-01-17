@@ -1,3 +1,4 @@
+import 'package:dowami/constant/extensions/color_extention.dart';
 import 'package:dowami/constant/extensions/lat_lng_extension.dart';
 import 'package:dowami/constant/shared_colors/shared_colors.dart';
 import 'package:dowami/constant/text_style/text_style.dart';
@@ -7,6 +8,7 @@ import 'package:dowami/features/home/presentation/pages/home_screen.dart';
 import 'package:dowami/features/login/cubit/login_cubit.dart';
 import 'package:dowami/features/login/presentation/pages/login_screen2.dart';
 import 'package:dowami/features/main_settings/cubit/main_settings_cubit.dart';
+import 'package:dowami/features/main_settings/cubit/main_settings_state.dart';
 import 'package:dowami/features/maps/cubit/map_cubit.dart';
 import 'package:dowami/features/register/cubit/register_cubit.dart';
 import 'package:dowami/features/register/presentation/pages/steps/captain/car_paper_screen.dart';
@@ -30,10 +32,7 @@ void main() async {
   await di.init();
 
 
-  double lat=40;
-  double long=50;
-  String s='$lat,$long';
-  print(s.getLatLng().toStringPoint());
+
 
   runApp(const MyApp());
 }
@@ -56,51 +55,75 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => HomeCubit()),
 
         ],
-        child: MaterialApp(
-          title: 'Flutter Demo',
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-              primarySwatch: Recolor.kMain,
-              appBarTheme: const AppBarTheme(
-                  systemOverlayStyle: SystemUiOverlayStyle(
-                      statusBarColor: Colors.transparent,
-                      statusBarBrightness: Brightness.light,
-                      statusBarIconBrightness: Brightness.dark)),
-              bottomNavigationBarTheme: BottomNavigationBarThemeData(
-                  selectedLabelStyle: taj12RegBlue(),
-                  unselectedLabelStyle: taj12RegGree())),
-          supportedLocales: const [
-            Locale('en'),
-            Locale('ar'),
-          ],
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-          ],
-          /*localeResolutionCallback: (deviceLocale, supportedLocales) {
-            for (var locale in supportedLocales) {
-              if (deviceLocale != null &&
-                  deviceLocale.languageCode == locale.languageCode) {
-                return deviceLocale;
-              }
-            }
+        child: BlocConsumer<MainSettingsCubit,MainSettingsState>(
+          buildWhen: (previous, current) =>current is SuccessGetSettingsState||current is EndGetLanguageState||current is EndChangeLanguageState ,
+          listenWhen: (previous, current) =>current is SuccessGetSettingsState||current is EndGetLanguageState ||current is EndChangeLanguageState,
+          listener: (context, state) {},
+          builder: (context,state) {
 
-            return supportedLocales.last;
-          },*/
-            locale:const Locale('ar') ,
 
-          home:
-          const SplashScreen()
-             // HomeScreen()
-             // SelectLog(),
-         // LoginScreen2(),
-         // RegisterStepTwoScreen()
-          // CarRegisterScreen()
-           // FillUserRegisterDataScreen(),
-              // RegisterCarPaperScreen(),
-         // SettingCaptainDowamiScreen()
+            var cubit=MainSettingsCubit.get(context);
+            return MaterialApp(
+              title: 'Flutter Demo',
+              debugShowCheckedModeBanner: false,
+              theme: ThemeData(
+                  primarySwatch: Recolor.kMain,
+                  primaryColor:cubit.primaryColor==null? Recolor.amberColor:HexColor.fromHex(cubit.primaryColor!),
+                  canvasColor:cubit.secondColor==null? Recolor.mainColor:HexColor.fromHex(cubit.secondColor!),
+                  backgroundColor: Recolor.whiteColor,
+                  scaffoldBackgroundColor: Recolor.whiteColor,
+
+
+
+
+                  appBarTheme: const AppBarTheme(
+                      systemOverlayStyle: SystemUiOverlayStyle(
+                          statusBarColor: Colors.transparent,
+                          statusBarBrightness: Brightness.light,
+                          statusBarIconBrightness: Brightness.dark)),
+                  bottomNavigationBarTheme: BottomNavigationBarThemeData(
+                    backgroundColor:Recolor.whiteColor ,
+                      selectedLabelStyle: taj12RegBlue(),
+                      unselectedLabelStyle: taj12RegGree())),
+
+
+
+
+
+              supportedLocales: const [
+                Locale('en'),
+                Locale('ar'),
+              ],
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+              ],
+              /*localeResolutionCallback: (deviceLocale, supportedLocales) {
+                for (var locale in supportedLocales) {
+                  if (deviceLocale != null &&
+                      deviceLocale.languageCode == locale.languageCode) {
+                    return deviceLocale;
+                  }
+                }
+
+                return supportedLocales.last;
+              },*/
+                locale: MainSettingsCubit.get(context).language??const Locale('ar') ,
+
+              home:
+              const SplashScreen()
+                 // HomeScreen()
+                 // SelectLog(),
+             // LoginScreen2(),
+             // RegisterStepTwoScreen()
+              // CarRegisterScreen()
+               // FillUserRegisterDataScreen(),
+                  // RegisterCarPaperScreen(),
+             // SettingCaptainDowamiScreen()
+            );
+          }
         ));
   }
 }

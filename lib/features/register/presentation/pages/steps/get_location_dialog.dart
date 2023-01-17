@@ -79,6 +79,7 @@ class GetLocationDialog extends StatelessWidget {
 
   Widget  saveButton2(context){
       return  sharedElevatedButton(
+        context: context,
             onPressed: ()async {
               var cubit=BlocProvider.of<RegisterCubit>(context,listen: false);
               var myLatLng=cubit.latLng!;
@@ -98,13 +99,14 @@ class GetLocationDialog extends StatelessWidget {
             txt: 'Confirm'.tr(context),
             textStyle: taj19BoldWhite(),
             radius: 9,
-            color: Recolor.amberColor,
+            color: Theme.of(context).primaryColor,
             horizontalPadding: 0.05.widthX(context),
             verticalPadding: 0.01.heightX(context),
   );
 }
   Widget  closeButton2(context){
       return  sharedElevatedButton(
+        context: context,
             onPressed: ()async {
 
               Navigator.pop(context);
@@ -112,7 +114,7 @@ class GetLocationDialog extends StatelessWidget {
             txt: 'back'.tr(context),
             textStyle: taj19BoldWhite(),
             radius: 9,
-            color: Recolor.amberColor,
+            color:Theme.of(context).primaryColor,
             horizontalPadding: 0.05.widthX(context),
             verticalPadding: 0.01.heightX(context),
   );

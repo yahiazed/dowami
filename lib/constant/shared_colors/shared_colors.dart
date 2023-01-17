@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class Recolor {
-  static Color mainColor = const Color(0xff003466);
-  static Color amberColor = const Color(0xffFFB808);
+  static Color mainColor = const Color(0xff003466);//secondary
+  static Color amberColor = const Color(0xffFFB808);//primary
   static Color whiteColor = const Color(0xffFFFFFF);
   static Color underLineColor = const Color(0xffD3DFEF);
   static Color redColor = const Color(0xffFF0000);

@@ -109,8 +109,25 @@
     "wednesday": "أر",
     "thursday": "خ",
     "friday": "ج",
-    "small": "صغيره",
-    "medium": "متوسطه",
-    "large": "كبيره",
+
+    "tripName": "إسم الرحله",
+    "startPoint": "نقطه الإنطلاق",
+    "endPoint": "نقطه الوصول",
+    "stopPoint": "نقطه توقف",
+    "stop": "توقف",
+
+    "days": "الأيام",
+    "time": "التوقيت",
+    "goingAndComing": "ذهاب وعوده",
+    "going": "الذهاب",
+    "coming": "العوده",
+    "passengerCount": "عدد الركاب",
+    "carType": "نوع السياره",
+    "Sedan": "Sedan",
+    "SUV": "SUV",
+    "priceOffer": "عرض السعر",
+    "R.S": "ر.س",
     "Search": "بحث"
+
+
 }

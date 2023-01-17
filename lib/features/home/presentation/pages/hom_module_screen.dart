@@ -3,6 +3,7 @@ import 'package:dowami/constant/extensions/round_extension.dart';
 import 'package:dowami/constant/shared_colors/shared_colors.dart';
 import 'package:dowami/constant/shared_widgets/shard_elevated_button.dart';
 import 'package:dowami/constant/text_style/text_style.dart';
+import 'package:dowami/features/main_settings/cubit/main_settings_cubit.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +16,15 @@ class HomeModuleScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          IconButton(onPressed: (){
+            MainSettingsCubit.get(context).onChangeLanguage('en');
+          }, icon: Icon(Icons.abc_outlined)),
+
+          IconButton(onPressed: (){
+            MainSettingsCubit.get(context).onChangeLanguage('ar');
+          }, icon: Icon(Icons.access_time_filled_sharp)),
+
+
 
           _buildHeaderBanner(context),
           _buildHireCaptinButton(context),
@@ -37,7 +47,7 @@ class HomeModuleScreen extends StatelessWidget {
       required int second}) {
     return Column(
       children: [
-        Text(tripName, style: taj18MediumAmber()).paddingT(context, 0.009),
+        Text(tripName, style: med18(context).copyWith(  color: Theme.of(context).primaryColor,)).paddingT(context, 0.009),
         Text('Captain will come through'.tr(context), style: taj11MedBlue())
             .paddingSV(context, 0.01),
         Row(
@@ -72,7 +82,7 @@ class HomeModuleScreen extends StatelessWidget {
             headText.tr(context),
             style: taj7MedGrey(),
           ),
-          Text(time, style: taj16MediumAmber()),
+          Text(time, style:  med16(context).copyWith(  color: Theme.of(context).primaryColor,)),
         ],
       ),
     )
@@ -84,11 +94,12 @@ class HomeModuleScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("WADINITRIPS".tr(context), style: taj17ExtraBoldBlue())
+        Text("WADINITRIPS".tr(context), style: eBold16(context))
             .paddingB(context, 0.01),
         Text("NOMESHOAR".tr(context), style: taj11MedGreeHint()),
         Center(
           child: sharedElevatedButton2(
+            context: context,
               onPressed: () {},
               radius: 9,
               horizontalPadding: 0.05.widthX(context),
@@ -98,11 +109,11 @@ class HomeModuleScreen extends StatelessWidget {
                 children: [
                   Text(
                     "I have a ride".tr(context),
-                    style: taj18ExtraBoldAmber(),
+                    style: eBold18(context).copyWith( color: Theme.of(context).primaryColor,),
                   ),
                   Icon(
                     Icons.add_circle_outline_outlined,
-                    color: Recolor.amberColor,
+                    color: Theme.of(context).primaryColor,
                     size: .09.widthX(context),
                   )
                 ],
@@ -116,11 +127,12 @@ class HomeModuleScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("DAWAMITRIPS".tr(context), style: taj17ExtraBoldBlue())
+        Text("DAWAMITRIPS".tr(context), style: eBold16(context))
             .paddingB(context, 0.01),
         Text("NOSUBSCRIPTION".tr(context), style: taj11MedGreeHint()),
         Center(
           child: sharedElevatedButton2(
+            context: context,
               onPressed: () {},
               radius: 9,
               horizontalPadding: 0.05.widthX(context),
@@ -130,11 +142,11 @@ class HomeModuleScreen extends StatelessWidget {
                 children: [
                   Text(
                     "Hire a captain".tr(context),
-                    style: taj18ExtraBoldAmber(),
+                    style: eBold18(context).copyWith( color: Theme.of(context).primaryColor,),
                   ),
                   Icon(
                     Icons.add_circle_outline_outlined,
-                    color: Recolor.amberColor,
+                    color: Theme.of(context).primaryColor,
                     size: .09.widthX(context),
                   )
                 ],

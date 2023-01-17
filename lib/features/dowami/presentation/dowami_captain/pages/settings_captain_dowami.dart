@@ -50,18 +50,19 @@ class SettingCaptainDowamiScreen extends StatelessWidget {
             RichText(
               text: TextSpan(
                 children: [
-                  TextSpan(text: "welcome to".tr(context), style: eBold30Blue()),
-                  TextSpan(text: "Dawami".tr(context), style: eBold30Blue().copyWith(color: Recolor.amberColor)),
+                  TextSpan(text: "welcome to".tr(context), style: eBold30(context)),
+                  TextSpan(text: "Dawami".tr(context), style: eBold30(context).copyWith(color: Theme.of(context).primaryColor)),
                 ],
               ),
             ).paddingB(context, 0.04),
 
 
-            Text('adjust your settings'.tr(context), style: med20Blue(),).paddingB(context, 0.01),
+            Text('adjust your settings'.tr(context), style: med20(context),).paddingB(context, 0.01),
 
-            Text("to get best".tr(context), style: med20Blue()).paddingB(context, 0.08),
+            Text("to get best".tr(context), style: med20(context)).paddingB(context, 0.08),
 
             sharedElevatedButton(
+              context: context,
                 onPressed: () async{
                   bool locationEnable= await checkLocationPermissions();
                   if(locationEnable) {
@@ -73,14 +74,14 @@ class SettingCaptainDowamiScreen extends StatelessWidget {
 
                 },
                 txt: "go".tr(context),
-                color: Recolor.mainColor,
+                color: Theme.of(context).canvasColor,
                 radius: 10,
-                textStyle: bold18Blue().copyWith(color: Recolor.amberColor),
+                textStyle: bold18(context).copyWith(color:Theme.of(context).primaryColor),
                 horizontalPadding: .18.widthX(context),
                 verticalPadding: .016.heightX(context))
                 .paddingB(context, .03),
 
-            Text("dont worry settings".tr(context), style: reg14Blue())
+            Text("dont worry settings".tr(context), style: reg14(context))
 
           ]),
     )

@@ -103,7 +103,7 @@ class AddPasswordScreen extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text("add password".tr(context), style: taj12MedBlue()),
+        Text("add password".tr(context), style: med12(context)),
         Text("our end! Verified".tr(context), style: taj25BoldBlue2()),
         Text("Now enter and confirm the password".tr(context),
             style: taj14MedBlue()),
@@ -113,11 +113,12 @@ class AddPasswordScreen extends StatelessWidget {
 
   Widget _buildButton(BuildContext context) {
     return sharedElevatedButton(
+      context: context,
       txt: 'next'.tr(context),
       radius: 9,
       verticalPadding: 0.023.heightX(context),
       horizontalPadding: 0.15.widthX(context),
-      textStyle: taj16BoldBlue().copyWith(color: Recolor.amberColor),
+      textStyle: bold16(context).copyWith(color:Theme.of(context).primaryColor),
       onPressed: () {
 
         if( passController.text==rePassController.text){

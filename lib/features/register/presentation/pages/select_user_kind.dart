@@ -36,7 +36,7 @@ class SelectAccountKind extends StatelessWidget {
                     children: [
                       Text(
                         'back'.tr(context),
-                        style: taj14Blue().copyWith(
+                        style: reg14(context).copyWith(
                             fontWeight: FontWeight.bold, color: Colors.black),
                       ),
                       const Icon(
@@ -55,8 +55,8 @@ class SelectAccountKind extends StatelessWidget {
                   RichText(
                       text: TextSpan(
                         children: [
-                    TextSpan(text: "WeToDawmi".tr(context), style: taj15Blue()),
-                    TextSpan(text: "Dawami".tr(context), style: taj15Blue().copyWith(color: Recolor.amberColor)),
+                    TextSpan(text: "WeToDawmi".tr(context), style: reg16(context)),
+                    TextSpan(text: "Dawami".tr(context), style: reg16(context).copyWith(color: Theme.of(context).primaryColor)),
                         ],
                       ),
                   ).paddingB(context, 0.02),
@@ -65,24 +65,25 @@ class SelectAccountKind extends StatelessWidget {
                       text: TextSpan(
                           children: [
                     TextSpan(text: "Happy".tr(context), style: taj25BoldBlue2()),
-                    TextSpan(text: '${"join".tr(context)}\t', style: taj25BoldBlue2().copyWith(color: Recolor.amberColor),),
+                    TextSpan(text: '${"join".tr(context)}\t', style: taj25BoldBlue2().copyWith(color:Theme.of(context).primaryColor),),
                     TextSpan(text: "us".tr(context), style: taj25BoldBlue2()),
 
                           ],
                       ),
                   ).paddingB(context, 0.02),
                   Text(
-                    'chooseAccount'.tr(context), style: taj16BoldBlue(),).paddingB(context, 0.02),
+                    'chooseAccount'.tr(context), style: reg16(context),).paddingB(context, 0.02),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       sharedElevatedButton2(
+                        context: context,
                           onPressed: () {
                             RegisterCubit.get(context).userType = 'client';
                             navigateTo(context, RegisterSendOtpScreen());
                           },
                           radius: 15,
-                          color: Recolor.amberColor,
+                          color: Theme.of(context).primaryColor,
                           horizontalPadding: 0.09.widthX(context),
                           verticalPadding: 0.03.heightX(context),
                           widget: Column(
@@ -94,11 +95,12 @@ class SelectAccountKind extends StatelessWidget {
                               ).paddingB(context, 0.01),
                               Text(
                                 "customer account".tr(context),
-                                style: taj12BoldWhite(),
+                                style:bold12(context).copyWith(color: Recolor.whiteColor),
                               )
                             ],
                           )),
                       sharedElevatedButton2(
+                          context: context,
                           onPressed: () {
                             RegisterCubit.get(context).userType = 'captain';
                             navigateTo(context, RegisterSendOtpScreen());
@@ -115,22 +117,22 @@ class SelectAccountKind extends StatelessWidget {
                               ).paddingB(context, 0.01),
                               Text(
                                 "captain account".tr(context),
-                                style: taj12BoldWhite(),
+                                style:  bold12(context).copyWith(color: Recolor.whiteColor),
                               )
                             ],
                           )),
                     ],
                   ).paddingB(context, 0.093),
                   Text("By creating".tr(context),
-                      style: taj12BoldWhite().copyWith(
-                        color: Recolor.mainColor,
+                      style:  bold12(context).copyWith(
+                        color: Theme.of(context).canvasColor,
                       )).paddingB(context, 0.02),
                   RichText(
                       text: TextSpan(
                     children: [
                       TextSpan(
                           text: "Privacy Policy".tr(context),
-                          style: taj16BoldBlue().copyWith(
+                          style:bold16(context).copyWith(
                             fontSize: 12,
                           ),
                           recognizer: TapGestureRecognizer()
@@ -139,11 +141,11 @@ class SelectAccountKind extends StatelessWidget {
                             }),
                       TextSpan(
                         text: "and".tr(context),
-                        style: taj14Blue().copyWith(fontSize: 12),
+                        style: reg14(context).copyWith(fontSize: 12),
                       ),
                       TextSpan(
                           text: "Terms of Service".tr(context),
-                          style: taj16BoldBlue().copyWith(fontSize: 12),
+                          style: bold16(context).copyWith(fontSize: 12),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
                               navigateTo(context, const ServiceTerms());

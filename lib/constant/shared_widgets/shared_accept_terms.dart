@@ -17,7 +17,7 @@ Widget buildAcceptsTermsRow(bool isAcceptTerms, BuildContext context) {
     children: [
       Checkbox(
         shape: RoundedRectangleBorder(
-            side: BorderSide(color: Recolor.mainColor, width: 1),
+            side: BorderSide(color: Theme.of(context).canvasColor, width: 1),
             borderRadius: BorderRadius.circular(5)),
         value: isAcceptTerms,
         onChanged: (value) {
@@ -29,7 +29,7 @@ Widget buildAcceptsTermsRow(bool isAcceptTerms, BuildContext context) {
         TextSpan(text: "I Accept".tr(context), style: taj12RegBlue()),
         TextSpan(
             text: "Privacy Policy".tr(context),
-            style: taj12MedBlue(),
+            style: med12(context),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
                 navigateTo(context, const PrivacyPolicyScreen());
@@ -37,7 +37,7 @@ Widget buildAcceptsTermsRow(bool isAcceptTerms, BuildContext context) {
         TextSpan(text: "and".tr(context), style: taj11MedBlue()),
         TextSpan(
             text: "Terms of Service".tr(context),
-            style: taj12MedBlue(),
+            style: med12(context),
             recognizer: TapGestureRecognizer()
               ..onTap = () => navigateTo(context, const ServiceTerms())),
       ]))

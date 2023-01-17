@@ -33,7 +33,7 @@ Widget sharedCardInput(context,
       decoration: InputDecoration(
         border: InputBorder.none,
         hintText: hintText,
-        hintStyle: hintStyle ?? taj14Blue().copyWith(color: Recolor.cardColor),
+        hintStyle: hintStyle ?? reg14(context).copyWith(color: Recolor.cardColor),
         filled: true,
         fillColor: fillColor ?? Recolor.whiteColor,
         suffixIcon: suffix,
@@ -74,7 +74,7 @@ Widget sharedUnderLineInput(context,
         enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Recolor.underLineColor)),
         focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Recolor.amberColor, width: 2)),
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2)),
         labelStyle: labelStyle ?? taj12RegGreeHint(),
         labelText: labelText,
         suffixIcon: suffix,
@@ -133,7 +133,7 @@ Widget sharedBorderedInput(context,
         suffixIcon: suffix,
         hintText: hintText,
         hintStyle: hintStyle,
-        errorStyle: reg14Blue().copyWith(color: Recolor.redColor),
+        errorStyle: reg14(context).copyWith(color: Recolor.redColor),
       ),
       validator: validator ?? (value) {
             if (value != null && value.isNotEmpty) {

@@ -25,14 +25,15 @@ class SelectLog extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SvgPicture.asset(logo).sizeDown(context, 0.06),
-            Text('Welcome'.tr(context), style: taj14Blue()).paddingB(context, 0.03),
+            Text('Welcome'.tr(context), style: reg14(context)).paddingB(context, 0.03),
             Text('BeReady'.tr(context), style: taj19BoldBlue()).paddingB(context, 0.03),
             sharedElevatedButton(
+                context: context,
                     onPressed: () {
                       navigateTo(context, LogInScreen1());
                     },
                     txt: "I Have an Account".tr(context),
-                    color: Recolor.amberColor,
+                    color: Theme.of(context).primaryColor,
                     radius: 6,
                     textStyle: taj19BoldWhite(),
                     horizontalPadding: .1.widthX(context),
@@ -41,6 +42,7 @@ class SelectLog extends StatelessWidget {
                 //     width: .50.widthX(context), height: .07.heightX(context))
                 .paddingB(context, .03),
             sharedElevatedButton(
+                context: context,
                 onPressed: () {
                   navigateTo(context, const SelectAccountKind());
                 },
