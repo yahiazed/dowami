@@ -97,7 +97,7 @@ class GetLocationDialog extends StatelessWidget {
               Navigator.pop(context);
             },
             txt: 'Confirm'.tr(context),
-            textStyle: taj19BoldWhite(),
+            textStyle: eBold19(context).copyWith(color: Recolor.whiteColor),
             radius: 9,
             color: Theme.of(context).primaryColor,
             horizontalPadding: 0.05.widthX(context),
@@ -112,7 +112,7 @@ class GetLocationDialog extends StatelessWidget {
               Navigator.pop(context);
             },
             txt: 'back'.tr(context),
-            textStyle: taj19BoldWhite(),
+            textStyle: eBold19(context).copyWith(color: Recolor.whiteColor),
             radius: 9,
             color:Theme.of(context).primaryColor,
             horizontalPadding: 0.05.widthX(context),

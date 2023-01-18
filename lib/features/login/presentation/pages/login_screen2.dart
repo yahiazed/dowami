@@ -7,6 +7,7 @@ import 'package:dowami/constant/shared_widgets/shared_card_input.dart';
 import 'package:dowami/constant/shared_widgets/toast.dart';
 import 'package:dowami/features/home/presentation/pages/home_screen.dart';
 import 'package:dowami/features/login/cubit/login_cubit.dart';
+import 'package:dowami/features/main_settings/cubit/main_settings_cubit.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -98,7 +99,7 @@ class LoginScreen2 extends StatelessWidget {
     return InkWell(
       onTap: state is TimeOutSendSmsCodeLoginState
           ? () {
-        cubit.sendOtp(phoneNum: cubit.phoneCode + cubit.phoneNumber);
+        cubit.sendOtp(phoneNum: cubit.phoneCode + cubit.phoneNumber,lang: MainSettingsCubit.get(context).languageCode);
       }
           : null,
       child: Center(
@@ -126,7 +127,7 @@ class LoginScreen2 extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text("Check Your Phone Number".tr(context), style: med12(context)),
-        Text("Enter Verification Code".tr(context), style: taj25BoldBlue2()),
+        Text("Enter Verification Code".tr(context), style: eBold25(context)),
         Text('Enter the quad code sent to the number'.tr(context),
             style: reg14(context)),
         Text(cubit.phoneNumber, style: reg14(context)),
@@ -154,10 +155,10 @@ class LoginScreen2 extends StatelessWidget {
       child: sharedCardInput(context,
           controller: digitController,
           hintText: '*',
-          txtStyle: pop18BoldGree(),
+          txtStyle:reg18Pop(),
           textAlign: TextAlign.center,
           focusNode: nod,
-          hintStyle: pop18BoldGree(),
+          hintStyle: reg18Pop(),
           onChanged: (p0) {
             if (p0.length == 1) {
               FocusScope.of(context).previousFocus();
@@ -200,7 +201,7 @@ class LoginScreen2 extends StatelessWidget {
             digitController2.text +
             digitController1.text;
         int cod = int.parse(code);
-         LoginCubit.get(context).verifyCode(cod);
+         LoginCubit.get(context).verifyCode(code:cod,lang: MainSettingsCubit.get(context).languageCode);
 
       //  if(cod==LoginCubit.get(context).smsCode){navigateTo(context, const HomeScreen());}
       //  else{showErrorToast(message: 'wrong code');}

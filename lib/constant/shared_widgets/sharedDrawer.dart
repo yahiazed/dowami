@@ -36,40 +36,40 @@ Drawer sharedDrawer(BuildContext context,
                           width: 74,
                           height: 74)
                       .paddingB(context, .025),
-                  Text(userName, style: taj22ExtraBoldBlue())
+                  Text(userName, style: eBold22(context))
                       .paddingB(context, .025),
-                  Text("editProfile".tr(context), style: taj14MedAmber()),
+                  Text("editProfile".tr(context), style: med14(context).copyWith(color:Theme.of(context).primaryColor)),
                 ],
               ).paddingSV(context, 0.1),
               TextButton(
                   onPressed: () {},
                   child: Text('SETTINGD'.tr(context),
-                      style: taj20ExtraBoldBlue())),
+                      style: eBold20(context))),
               TextButton(
                   onPressed: () {},
                   child:
-                      Text('WALLET'.tr(context), style: taj20ExtraBoldBlue())),
+                      Text('WALLET'.tr(context), style: eBold20(context))),
               TextButton(
                   onPressed: () {},
                   child: Text('NOTIFICATION'.tr(context),
-                      style: taj20ExtraBoldBlue())),
+                      style: eBold20(context))),
               TextButton(
                   onPressed: () {},
                   child: Text('promotion'.tr(context),
-                      style: taj20ExtraBoldBlue())),
+                      style: eBold20(context))),
               TextButton(
                   onPressed: () {},
                   child: Text('Help Center'.tr(context),
-                      style: taj20ExtraBoldBlue())),
+                      style: eBold20(context))),
               TextButton(
                   onPressed: () {},
                   child:
-                      Text('SETTING'.tr(context), style: taj20ExtraBoldBlue())),
+                      Text('SETTING'.tr(context), style: eBold20(context))),
               Spacer(),
               TextButton(
                       onPressed: () {},
                       child: Text("Log out".tr(context),
-                          style: taj20ExtraBoldBlue()))
+                          style: eBold20(context)))
                   .paddingB(context, 0.03),
             ],
           ),

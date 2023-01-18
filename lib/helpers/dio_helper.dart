@@ -8,18 +8,21 @@ abstract class DioHelper {
     required String url,
     required dynamic data,
     String token,
+    required String lang,
   });
   Future<Response> postDataWithFile({
     required String url,
     required dynamic data,
     required XFile xFile,
-  required String name
+  required String name,
+    required  String lang,
   });
   Future<Response> postDataWithFiles({
     required String url,
     required Map<String,dynamic> data,
     required List<XFile> xFiles,
-  required String name
+  required String name,
+    required  String lang,
   });
 
 
@@ -27,12 +30,14 @@ abstract class DioHelper {
     required String url,
     required dynamic data,
     String token,
+    required String lang,
   });
 
   Future<Response> getData({
     required String url,
     dynamic query,
     String token,
+    required String lang,
   });
 }
 
@@ -45,30 +50,31 @@ class DioHelperImpl implements DioHelper {
       connectTimeout: 20 * 1000,
       headers: {
         // 'default-lang': 'en',
-        'Content-Type': 'application/json',
+       // 'Content-Type': 'application/json',
         // 'Authorization': token ?? '',
       }
     ),
   );
 
+  String bearerString='Bearer ';
 
 
   @override
-  Future<Response> getData({required String url, query, String? token}) async {
+  Future<Response> getData({required String url, query, String? token,required String lang}) async {
     dio.options.headers = {
-      // 'default-lang': 'ar',
+      'default-lang': lang??'en',
       'Content-Type': 'application/json',
-     // 'Authorization': token ?? '',
+      'Authorization': token==null ? '':bearerString+token,
     };
     return await dio.get(url, queryParameters: query);
   }
 
   @override
-  Future<Response> postData({required String url, required data, String? token}) async {
+  Future<Response> postData({required String url, required data, String? token,required String lang}) async {
     dio.options.headers = {
-      //'lang': appLanguage,
+      'default-lang': lang??'en',
       'Content-Type': 'application/json',
-      'Authorization': token==null ? '':"Bearer $token",
+      'Authorization': token==null ? '':bearerString+token,
     };
 
    try{}on DioError catch(e){print(e.toString());}
@@ -77,12 +83,11 @@ class DioHelperImpl implements DioHelper {
   }
 
   @override
-  Future<Response> putData(
-      {required String url, required data, String? token}) async {
+  Future<Response> putData({required String url, required data, String? token,required String lang}) async {
     dio.options.headers = {
-      // 'lang': appLanguage,
+      'default-lang': lang??'en',
       'Content-Type': 'application/json',
-      'Authorization': token ?? '',
+      'Authorization': token==null ? '':bearerString+token,
     };
     return await dio.put(url, data: data);
   }
@@ -94,7 +99,12 @@ class DioHelperImpl implements DioHelper {
 
 
   @override
-  Future<Response> postDataWithFile({required String url, required  data,required XFile xFile ,required String name })async {
+  Future<Response> postDataWithFile({required String url, required  data,required XFile xFile ,required String name,required String lang, String? token })async {
+    dio.options.headers = {
+      'default-lang': lang??'en',
+      'Authorization': token==null ? '':bearerString+token,
+    };
+
 var formData= FormData.fromMap(data);
 formData .files.add(MapEntry(name,MultipartFile .fromFileSync(xFile.path, filename: xFile.path.split('/').last)));
 
@@ -106,8 +116,11 @@ formData .files.add(MapEntry(name,MultipartFile .fromFileSync(xFile.path, filena
 
 
   @override
-  Future<Response> postDataWithFiles({required String url, required Map<String,dynamic> data,required List<XFile> xFiles ,required String name })async {
-
+  Future<Response> postDataWithFiles({required String url, required Map<String,dynamic> data,required List<XFile> xFiles ,required String name,required String lang, String? token })async {
+    dio.options.headers = {
+      'default-lang': lang??'en',
+      'Authorization': token==null ? '':bearerString+token,
+    };
     FormData formData= FormData.fromMap(data);
 
     formData.files.addAll(

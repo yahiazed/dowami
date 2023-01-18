@@ -26,7 +26,7 @@ class SelectLog extends StatelessWidget {
           children: [
             SvgPicture.asset(logo).sizeDown(context, 0.06),
             Text('Welcome'.tr(context), style: reg14(context)).paddingB(context, 0.03),
-            Text('BeReady'.tr(context), style: taj19BoldBlue()).paddingB(context, 0.03),
+            Text('BeReady'.tr(context), style: eBold19(context)).paddingB(context, 0.03),
             sharedElevatedButton(
                 context: context,
                     onPressed: () {
@@ -35,7 +35,7 @@ class SelectLog extends StatelessWidget {
                     txt: "I Have an Account".tr(context),
                     color: Theme.of(context).primaryColor,
                     radius: 6,
-                    textStyle: taj19BoldWhite(),
+                    textStyle: eBold19(context).copyWith(color: Recolor.whiteColor),
                     horizontalPadding: .1.widthX(context),
                     verticalPadding: .02.heightX(context))
                 // .roundWidget(
@@ -48,18 +48,13 @@ class SelectLog extends StatelessWidget {
                 },
                 txt: "Create Account".tr(context),
                 radius: 6,
-                textStyle: taj19BoldWhite(),
+                textStyle: eBold19(context).copyWith(color: Recolor.whiteColor),
                 horizontalPadding: .1.widthX(context),
                 verticalPadding: .02.heightX(context)),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: ()async{
-          await LoginCubit.get(context). getDataFromPrefs();
 
-        },
-      ),
     );
   }
 }

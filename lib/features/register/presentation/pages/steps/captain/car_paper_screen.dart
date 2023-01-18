@@ -7,6 +7,7 @@ import 'package:dowami/constant/shared_widgets/shard_elevated_button.dart';
 import 'package:dowami/constant/shared_widgets/shared_appbar.dart';
 import 'package:dowami/constant/shared_widgets/shared_card_input.dart';
 import 'package:dowami/constant/shared_widgets/toast.dart';
+import 'package:dowami/features/main_settings/cubit/main_settings_cubit.dart';
 import 'package:dowami/features/register/data/models/required_doc_model.dart';
 import 'package:dowami/features/register/data/models/user_doc_model.dart';
 import 'package:dowami/features/register/cubit/register_cubit.dart';
@@ -42,7 +43,7 @@ class RegisterCarPaperScreen extends StatelessWidget {
       },
       builder: (context, state) {
         var cubit=RegisterCubit.get(context);
-        if(cubit.requiredDocuments.isEmpty){cubit.getRequiredDocs();}
+        if(cubit.requiredDocuments.isEmpty){cubit.getRequiredDocs( lang: MainSettingsCubit.get(context).languageCode);}
 
         return Scaffold(
           appBar: sharedAppBar(context),
@@ -77,7 +78,7 @@ class RegisterCarPaperScreen extends StatelessWidget {
                       await onConfirmButton(context: context,cubit: RegisterCubit.get(context));
                     },
                     txt: 'Confirm'.tr(context),
-                    textStyle: taj16BoldWhite(),
+                    textStyle:  eBold16(context).copyWith(color: Recolor.whiteColor),
                     radius: 9,
                     verticalPadding: 0.025.heightX(context),
                     horizontalPadding: 0.2.widthX(context),
@@ -96,8 +97,8 @@ class RegisterCarPaperScreen extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text("To Finish".tr(context), style: med12(context)),
-        Text("Attach Paper".tr(context), style: taj25BoldBlue()),
-        Text("BeSurePaper".tr(context), textAlign: TextAlign.center, style: taj11MedBlue()),
+        Text("Attach Paper".tr(context), style: reg25(context)),
+        Text("BeSurePaper".tr(context), textAlign: TextAlign.center, style: med11(context)),
       ],
     ).paddingS(context, 0.1, 0.06);
   }
@@ -145,7 +146,7 @@ class RegisterCarPaperScreen extends StatelessWidget {
                       controller: dateControllers[index],
                     hintText: 'expired date',
                     keyboardType: TextInputType.none,
-                   txtStyle:taj12RegGree() ,
+                   txtStyle:reg12(context).copyWith(color: Recolor.rowColor) ,
 
                    validator: (v){if(v!.isEmpty){return 'enter expired date ';}return null;},
                       onTap: () async {
@@ -183,7 +184,7 @@ class RegisterCarPaperScreen extends StatelessWidget {
                       controller: idNumbersControllers[index],
                       labelText: 'car id number',
 
-                      labelStyle:taj12RegGree() ,
+                      labelStyle:reg12(context).copyWith(color: Recolor.rowColor) ,
                       validator: (v){if(v!.isEmpty){return 'enter car id number ';}return null;}
                   ).paddingSH(context, 0.02).roundWidget(
                     color: Recolor.whiteColor,
@@ -234,7 +235,7 @@ print(requiredDocsList);
         idNumber:  idNumbersControllers[index].text
     );
     XFile? picked=cubit.docImagesPicked[index];
-    await  cubit.sendDocuments(userDocModel: userDocModel, xFile: picked!);
+    await  cubit.sendDocuments(userDocModel: userDocModel, xFile: picked!, lang: MainSettingsCubit.get(context).languageCode);
 
   }
 
@@ -273,7 +274,7 @@ print(requiredDocsList);
       children: [
         _buildDotCircleColor(color),
         const SizedBox(width: 5),
-        Text(txt.tr(context), style: taj12RegGree())
+        Text(txt.tr(context), style: reg12(context).copyWith(color: Recolor.rowColor))
       ],
     );
   }

@@ -2,6 +2,7 @@ import 'package:dowami/constant/extensions/media_extension.dart';
 import 'package:dowami/constant/extensions/round_extension.dart';
 import 'package:dowami/constant/shared_widgets/shard_elevated_button.dart';
 import 'package:dowami/constant/shared_widgets/toast.dart';
+import 'package:dowami/features/main_settings/cubit/main_settings_cubit.dart';
 import 'package:dowami/features/register/cubit/register_cubit.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
 import 'package:dowami/features/register/presentation/pages/steps/register_verify_code.dart';
@@ -78,7 +79,7 @@ class RegisterSendOtpScreen extends StatelessWidget {
         RegisterCubit.get(context).phoneCode = phoneCode;
         RegisterCubit.get(context).phoneNumber = phoneController.text;
 
-        RegisterCubit.get(context).sendOtp(phoneNum: phoneCode + phoneController.text);
+        RegisterCubit.get(context).sendOtp(phoneNum: phoneCode + phoneController.text, lang: MainSettingsCubit.get(context).languageCode);
       },
     );
   }
@@ -130,11 +131,11 @@ class RegisterSendOtpScreen extends StatelessWidget {
   Widget _buildHappyText(BuildContext context) {
     return RichText(
         text: TextSpan(children: [
-      TextSpan(text: "Happy".tr(context), style: taj25BoldBlue2()),
+      TextSpan(text: "Happy".tr(context), style: eBold25(context)),
       TextSpan(
           text: '${"join".tr(context)}\t',
-          style: taj25BoldBlue2().copyWith(color: Theme.of(context).primaryColor)),
-      TextSpan(text: "us".tr(context), style: taj25BoldBlue2()),
+          style:eBold25(context).copyWith(color: Theme.of(context).primaryColor)),
+      TextSpan(text: "us".tr(context), style: eBold25(context)),
     ])).paddingB(context, 0.02);
   }
 

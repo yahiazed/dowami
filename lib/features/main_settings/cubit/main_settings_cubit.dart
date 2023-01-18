@@ -31,14 +31,15 @@ class MainSettingsCubit extends Cubit<MainSettingsState> {
   String? splashScreen;
 
 Locale? language;
+String languageCode='ar0';
 
 
 
 
-  getMainSettings( ) async {
+  getMainSettings({required String lang} ) async {
     emit(StartGetSettingsState());
 
-    final getSettingsResponse = await repo.getMainSettings();
+    final getSettingsResponse = await repo.getMainSettings(lang: lang);
 
     emit(_mapFailureOrGetSettingsToLoginState(getSettingsResponse));
   }
@@ -61,6 +62,7 @@ Locale? language;
 getLanguageFromPrefs()async{
     emit(StartGetLanguageState());
     language=Locale(await repo.getLanguageFromPrefs()) ;
+    languageCode=language!.languageCode;
     emit(EndGetLanguageState());
 
 }

@@ -21,7 +21,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
         automaticallyImplyLeading: false,
         title: Text(
           'Privacy Policy'.tr(context),
-          style: taj19BoldBlue(),
+          style: eBold19(context),
         ),
         actions: [
           TextButton(

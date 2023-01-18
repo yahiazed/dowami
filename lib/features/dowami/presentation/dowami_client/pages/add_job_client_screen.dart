@@ -13,6 +13,7 @@ import 'package:dowami/features/dowami/data/models/dowami_job_model.dart';
 import 'package:dowami/features/dowami/cubit/dowami_client_cubit.dart';
 import 'package:dowami/features/dowami/cubit/dowami_client_state.dart';
 import 'package:dowami/features/login/cubit/login_cubit.dart';
+import 'package:dowami/features/main_settings/cubit/main_settings_cubit.dart';
 import 'package:dowami/features/maps/map_widget/location_dialog.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
 import 'package:flutter/material.dart';
@@ -72,7 +73,7 @@ class AddJobClient extends StatelessWidget {
           _passengersCount(),
           _carSize(),
           _offerPrice(context),
-          _buildErrorsMessages()
+          _buildErrorsMessages(context)
               .cardAll(elevation: 1, radius: 0)
               .paddingSV(context,0.01),
           _saveButton()
@@ -86,13 +87,13 @@ class AddJobClient extends StatelessWidget {
 
 
    List<dynamic> errors=[];
-  Widget _buildErrorsMessages(){
+  Widget _buildErrorsMessages(context){
     return Column(
 
 
       crossAxisAlignment: CrossAxisAlignment.end,
       children:errors.map((e) =>
-          Text('$e  * ',style: taj11MedGreeHint().copyWith(color: Colors.red) ,)
+          Text('$e  * ',style: med11(context).copyWith(color: Colors.red) ,)
       ).toList() ,
     );
   }
@@ -604,7 +605,12 @@ class AddJobClient extends StatelessWidget {
                   stopPoints:cubit. stopPointsLocs.map((e) =>LatLng(e.latitude,e.longitude).toStringPoint() ).toList()
 
                 );
-              await  cubit. makeJobDowami(dowamiJobModel: dowamiJobModel,token: LoginCubit.get(context).token!);
+              await  cubit. makeJobDowami(
+                  dowamiJobModel: dowamiJobModel,
+                  token: LoginCubit.get(context).token!,
+                  lang: MainSettingsCubit.get(context).languageCode
+
+              );
 
 
               },

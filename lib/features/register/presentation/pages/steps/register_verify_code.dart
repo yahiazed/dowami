@@ -5,6 +5,7 @@ import 'package:dowami/constant/shared_widgets/shard_elevated_button.dart';
 import 'package:dowami/constant/shared_widgets/shared_appbar.dart';
 import 'package:dowami/constant/shared_widgets/shared_card_input.dart';
 import 'package:dowami/constant/shared_widgets/toast.dart';
+import 'package:dowami/features/main_settings/cubit/main_settings_cubit.dart';
 import 'package:dowami/features/register/cubit/register_cubit.dart';
 import 'package:dowami/features/register/presentation/pages/steps/fill_data_screen.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
@@ -84,7 +85,7 @@ class RegisterVerifyCodeScreen extends StatelessWidget {
     return InkWell(
       onTap: state is TimeOutSendSmsCodeState
           ? () {
-              cubit.sendOtp(phoneNum: cubit.phoneCode + cubit.phoneNumber);
+              cubit.sendOtp(phoneNum: cubit.phoneCode + cubit.phoneNumber, lang: MainSettingsCubit.get(context).languageCode);
             }
           : null,
       child: Center(
@@ -112,7 +113,7 @@ class RegisterVerifyCodeScreen extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text("Check Your Phone Number".tr(context), style: med12(context)),
-        Text("Enter Verification Code".tr(context), style: taj25BoldBlue2()),
+        Text("Enter Verification Code".tr(context), style: eBold25(context)),
         Text('Enter the quad code sent to the number'.tr(context),
             style: reg14(context)),
         Text(cubit.phoneNumber, style: reg14(context)),
@@ -140,10 +141,10 @@ class RegisterVerifyCodeScreen extends StatelessWidget {
       child: sharedCardInput(context,
               controller: digitController,
               hintText: '*',
-              txtStyle: pop18BoldGree(),
+              txtStyle: reg18Pop(),
               textAlign: TextAlign.center,
               focusNode: nod,
-              hintStyle: pop18BoldGree(),
+              hintStyle: reg18Pop(),
               onChanged: (p0) {
                 if (p0.length == 1) {
                   FocusScope.of(context).previousFocus();
@@ -186,7 +187,7 @@ class RegisterVerifyCodeScreen extends StatelessWidget {
             digitController2.text +
             digitController1.text;
         int cod = int.parse(code);
-        RegisterCubit.get(context).verifyCode(cod);
+        RegisterCubit.get(context).verifyCode(code:cod, lang: MainSettingsCubit.get(context).languageCode);
       },
     );
   }

@@ -26,7 +26,7 @@ Widget buildAcceptsTermsRow(bool isAcceptTerms, BuildContext context) {
       ),
       RichText(
           text: TextSpan(children: [
-        TextSpan(text: "I Accept".tr(context), style: taj12RegBlue()),
+        TextSpan(text: "I Accept".tr(context), style: reg12(context)),
         TextSpan(
             text: "Privacy Policy".tr(context),
             style: med12(context),
@@ -34,7 +34,7 @@ Widget buildAcceptsTermsRow(bool isAcceptTerms, BuildContext context) {
               ..onTap = () {
                 navigateTo(context, const PrivacyPolicyScreen());
               }),
-        TextSpan(text: "and".tr(context), style: taj11MedBlue()),
+        TextSpan(text: "and".tr(context), style: med11(context)),
         TextSpan(
             text: "Terms of Service".tr(context),
             style: med12(context),

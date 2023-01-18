@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 
 abstract class DowamiClientRepo{
 
-  Future<Either<Failure, Unit>> makeJobDowami({required DowamiJobModel dowamiJobModel,required String token});
+  Future<Either<Failure, Unit>> makeJobDowami({required DowamiJobModel dowamiJobModel,required String token,required String lang});
 }
 
 class DowamiClientRepoImpel implements DowamiClientRepo {
@@ -19,10 +19,10 @@ class DowamiClientRepoImpel implements DowamiClientRepo {
   DowamiClientRepoImpel({required this.dio});
 
   @override
-  Future<Either<Failure, Unit>> makeJobDowami({required DowamiJobModel dowamiJobModel,required String token})async {
+  Future<Either<Failure, Unit>> makeJobDowami({required DowamiJobModel dowamiJobModel,required String token,required String lang})async {
 
     try {
-     await dio.postData(url:makeJobDowamiUrl, data: dowamiJobModel.toMap(),token: token);
+     await dio.postData(url:makeJobDowamiUrl, data: dowamiJobModel.toMap(),token: token,lang:lang);
       return const Right(unit);
     }on DioError catch (e) {
        debugPrint(e.response.toString());

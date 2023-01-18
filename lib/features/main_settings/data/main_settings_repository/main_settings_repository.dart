@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class MainSettingsRepo {
-  Future<Either<Failure, MainSettingsModel>> getMainSettings();
+  Future<Either<Failure, MainSettingsModel>> getMainSettings({required String lang});
   Future<String> getLanguageFromPrefs();
   Future<void> saveLanguageToPrefs({required String value});
 
@@ -24,9 +24,9 @@ class MainSettingsRepoImpel implements MainSettingsRepo {
   MainSettingsRepoImpel({required this.dio,});
 
   @override
-  Future<Either<Failure, MainSettingsModel>> getMainSettings() async {
+  Future<Either<Failure, MainSettingsModel>> getMainSettings({required String lang}) async {
     try {
-      Response res = await dio.getData(url: mainSettingsUrl,);
+      Response res = await dio.getData(url: mainSettingsUrl,lang: lang);
       debugPrint(res.data.toString());
       return Right(MainSettingsModel.fromMap(map: res.data['data']));
     }on DioError catch (e) {

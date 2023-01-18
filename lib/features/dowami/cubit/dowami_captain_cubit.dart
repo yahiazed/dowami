@@ -4,6 +4,7 @@ import 'package:dowami/constant/strings/failuer_string.dart';
 import 'package:dowami/core/errors/failure.dart';
 import 'package:dowami/features/dowami/cubit/dowami_captain_state.dart';
 import 'package:dowami/features/dowami/data/repositories/dowami_captain_repository.dart';
+import 'package:dowami/features/main_settings/cubit/main_settings_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DowamiCaptainCubit extends Cubit<DowamiCaptainState> {
@@ -25,11 +26,11 @@ class DowamiCaptainCubit extends Cubit<DowamiCaptainState> {
 
 
   ///{1}------------------------------------------------------------------------
-  first({required String x}) async {
+  first({required String x,required String lang}) async {
     emit(StartFirstState());
 
 
-    final firstResponse = await repo.first(x: '');
+    final firstResponse = await repo.first(x: '', lang: lang);
 
     emit(_firstToState(firstResponse));
   }

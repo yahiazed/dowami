@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
-import 'package:dio/dio.dart';
-import 'package:dowami/constant/shared_function/navigator.dart';
 import 'package:dowami/core/error_model.dart';
 import 'package:dowami/core/errors/failure.dart';
 import 'package:dowami/features/register/data/models/captain_vehicle_model.dart';
@@ -14,14 +12,12 @@ import 'package:dowami/features/register/data/models/user_doc_model.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../constant/strings/failuer_string.dart';
 import '../data/models/user_model.dart';
 import '../data/repositories/register_repository.dart';
-import '../presentation/pages/steps/get_location_dialog.dart';
 
 part 'register_state.dart';
 
@@ -80,11 +76,11 @@ class RegisterCubit extends Cubit<RegisterState> {
 
 
   ///{1}------------------------------------------------------------------------
-  sendOtp({required String phoneNum}) async {
+  sendOtp({required String phoneNum,required String lang}) async {
     emit(StartSendOtpState());
     timerCutDown();
    second = 50;
-    final failureOrSmsCode = await repo.sendOtp(phone: phoneNum);
+    final failureOrSmsCode = await repo.sendOtp(phone: phoneNum,lang: lang);
 
     emit(_sendOtpToState(failureOrSmsCode));
   }
@@ -97,10 +93,10 @@ class RegisterCubit extends Cubit<RegisterState> {
 
 
   ///{2}------------------------------------------------------------------------
-  verifyCode(int code) async {
+  verifyCode({required int code,required String lang}) async {
     emit(StartVerifyCodeState());
     final checkCode = await repo.verifyCode(
-        code: code, phoneNum: phoneCode + phoneNumber,);
+        code: code, phoneNum: phoneCode + phoneNumber,lang: lang);
     emit(_verifyCodeToState(checkCode));
   }
   RegisterState _verifyCodeToState(Either<Failure, Unit> either) {
@@ -112,12 +108,13 @@ class RegisterCubit extends Cubit<RegisterState> {
 
 
   ///{3}------------------------------------------------------------------------
-  sendCompleteProfileData({required UserModel userModel})async{
+  sendCompleteProfileData({required UserModel userModel,required String lang})async{
     emit(StartSendProfileDataState());
 
    final profileDataResponse= await repo.sendCompleteProfileData(
       userModel: userModel,
-       xFile: avatarPicked!
+       xFile: avatarPicked!,
+     lang: lang
         );
     emit(_sendCompleteProfileDataToState(profileDataResponse));
 
@@ -137,10 +134,10 @@ class RegisterCubit extends Cubit<RegisterState> {
 
 
   ///{4}------------------------------------------------------------------------
-  getCarsModels()async{
+  getCarsModels({required String lang})async{
     emit(StartGetCarsModelsState());
 
-    final carsModelsResponse= await repo.getCarModels();
+    final carsModelsResponse= await repo.getCarModels(lang:lang );
     emit(_getCarsModelsToState(carsModelsResponse));
 
   }
@@ -153,11 +150,11 @@ class RegisterCubit extends Cubit<RegisterState> {
 
 
   ///{5}------------------------------------------------------------------------
-  getCarsDataModels({required int id})async{
+  getCarsDataModels({required int id,required String lang})async{
     emit(StartGetCarsDataModelsState());
     print('start');
 
-    final carsDataModelsResponse= await repo.getCarDataModels(id: id);
+    final carsDataModelsResponse= await repo.getCarDataModels(id: id,lang:lang);
     emit(_getCarsDataModelsToState(carsDataModelsResponse));
 
   }
@@ -170,12 +167,13 @@ class RegisterCubit extends Cubit<RegisterState> {
 
 
   ///{6}------------------------------------------------------------------------
-  sendCaptainVehicleData({required CaptainVehicleModel captainVehicleModel})async{
+  sendCaptainVehicleData({required CaptainVehicleModel captainVehicleModel,required String lang})async{
     emit(StartSendCaptainVehicleDataState());
 
     Either<Failure, Unit> captainVehicleResponse= await repo.sendCaptainVehicle(
        captainVehicleModel: captainVehicleModel,
       xFiles: carImagesPicked
+        ,lang:lang
     );
     emit(_sendCaptainVehicleDataToState(captainVehicleResponse));
 
@@ -192,10 +190,10 @@ class RegisterCubit extends Cubit<RegisterState> {
 
 
   ///{7}------------------------------------------------------------------------
-  getRequiredDocs()async{
+  getRequiredDocs({required String lang})async{
     emit(StartGetRequiredDocumentsState());
 
-    Either<Failure, List<RequiredDocModel>> requiredDocumentsResponse= await repo.getRequiredDocs();
+    Either<Failure, List<RequiredDocModel>> requiredDocumentsResponse= await repo.getRequiredDocs(lang:lang);
 
     emit(_getRequiredDocsToState(requiredDocumentsResponse));
 
@@ -212,10 +210,10 @@ class RegisterCubit extends Cubit<RegisterState> {
 
 
   ///{8}------------------------------------------------------------------------
-  sendDocuments({required UserDocModel userDocModel, required XFile xFile})async{
+  sendDocuments({required UserDocModel userDocModel, required XFile xFile,required String lang})async{
     emit(StartSendDocumentsState());
 
-    Either<Failure, Unit> sendDocumentsResponse= await repo.sendDocuments(userDocModel: userDocModel, xFile: xFile);
+    Either<Failure, Unit> sendDocumentsResponse= await repo.sendDocuments(userDocModel: userDocModel, xFile: xFile,lang:lang);
 
     emit(_sendDocumentsToState(sendDocumentsResponse));
   }

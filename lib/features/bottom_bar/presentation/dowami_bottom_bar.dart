@@ -29,7 +29,7 @@ class DowamiBottomBar extends StatelessWidget {
               onTap: (value) => cubit.changeBottomNavIndex(value),
               type: BottomNavigationBarType.fixed,
               showUnselectedLabels: true,
-              unselectedLabelStyle: taj12RegBlue(),
+              unselectedLabelStyle: reg12(context),
               showSelectedLabels: true,
               unselectedFontSize: 14,
               items: [

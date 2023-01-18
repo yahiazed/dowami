@@ -7,6 +7,7 @@ import 'package:dowami/constant/shared_widgets/shard_elevated_button.dart';
 import 'package:dowami/constant/shared_widgets/shared_appbar.dart';
 import 'package:dowami/constant/shared_widgets/shared_card_input.dart';
 import 'package:dowami/constant/shared_widgets/toast.dart';
+import 'package:dowami/features/main_settings/cubit/main_settings_cubit.dart';
 import 'package:dowami/features/register/data/models/captain_vehicle_model.dart';
 import 'package:dowami/features/register/cubit/register_cubit.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
@@ -38,7 +39,7 @@ class CarRegisterScreen extends StatelessWidget {
 
 
         if(state is SuccessSendCaptainVehicleDataState){
-          RegisterCubit.get(context).getRequiredDocs();
+          RegisterCubit.get(context).getRequiredDocs( lang: MainSettingsCubit.get(context).languageCode);
                  navigateTo(context, RegisterCarPaperScreen());
 
         }
@@ -51,7 +52,7 @@ class CarRegisterScreen extends StatelessWidget {
       },
       builder: (context, state) {
         var cubit = RegisterCubit.get(context);
-        if(cubit.carsModels.isEmpty){ RegisterCubit.get(context).getCarsModels();}
+        if(cubit.carsModels.isEmpty){ RegisterCubit.get(context).getCarsModels(lang: MainSettingsCubit.get(context).languageCode);}
         print(state);
 
         return Scaffold(
@@ -91,9 +92,9 @@ class CarRegisterScreen extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text("To Finish".tr(context), style:med12(context)),
-        Text("Enter car".tr(context), style: taj25BoldBlue()),
+        Text("Enter car".tr(context), style: reg25(context)),
         Text("desc Car".tr(context),
-            textAlign: TextAlign.center, style: taj11MedBlue()),
+            textAlign: TextAlign.center, style: med11(context)),
       ],
     ).paddingS(context, 0.1, 0.06);
   }
@@ -122,7 +123,7 @@ class CarRegisterScreen extends StatelessWidget {
               ownershipType: cubit.isRent?'0':'1'
 
             );
-           await cubit.sendCaptainVehicleData(captainVehicleModel: vehicleCaptain);
+           await cubit.sendCaptainVehicleData(captainVehicleModel: vehicleCaptain,lang: MainSettingsCubit.get(context).languageCode);
 
 
 
@@ -153,7 +154,7 @@ class CarRegisterScreen extends StatelessWidget {
                   color: Theme.of(context).canvasColor,
                 ),
                 Text("Attach at least 3 photos, one of the inside".tr(context),
-                    style: taj11MedBlue())
+                    style:med11(context))
               ],
             )).paddingSV(context, 0.03),
 
@@ -186,19 +187,19 @@ class CarRegisterScreen extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        Text('Property Type'.tr(context), style: taj12RegGree()),
+        Text('Property Type'.tr(context), style: reg12(context).copyWith(color: Recolor.rowColor)),
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             _buildRadio(cubit, false,context),
-            Text("ownership".tr(context), style: taj12RegGree()),
+            Text("ownership".tr(context), style: reg12(context).copyWith(color: Recolor.rowColor)),
           ],
         ),
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             _buildRadio(cubit, true,context),
-            Text("rent".tr(context), style: taj12RegGree()),
+            Text("rent".tr(context), style:reg12(context).copyWith(color: Recolor.rowColor)),
           ],
         ),
       ],
@@ -249,7 +250,7 @@ class CarRegisterScreen extends StatelessWidget {
                 ),
               ),).then((value) {
             if(RegisterCubit.get(context).selectedCarModel!=null){
-              RegisterCubit.get(context).getCarsDataModels(id:RegisterCubit.get(context).selectedCarModel!.id! );
+              RegisterCubit.get(context).getCarsDataModels(id:RegisterCubit.get(context).selectedCarModel!.id!,lang: MainSettingsCubit.get(context).languageCode );
             }});
         },
         title: Text(cubit.selectedCarModel==null?'Manufacture'.tr(context):cubit.selectedCarModel!.name!) ,
@@ -296,7 +297,7 @@ class CarRegisterScreen extends StatelessWidget {
             ),).then((value) {
               if(RegisterCubit.get(context).selectedCarDataModel!=null){
 
-                RegisterCubit.get(context).getCarsDataModels(id:RegisterCubit.get(context).selectedCarModel!.id! );
+                RegisterCubit.get(context).getCarsDataModels(id:RegisterCubit.get(context).selectedCarModel!.id! ,lang: MainSettingsCubit.get(context).languageCode);
               }
 
           });
@@ -330,7 +331,7 @@ class CarRegisterScreen extends StatelessWidget {
                   ),).then((value) {
               if(RegisterCubit.get(context).selectedCarDataModel!=null){
 
-              RegisterCubit.get(context).getCarsDataModels(id:RegisterCubit.get(context).selectedCarModel!.id! );
+              RegisterCubit.get(context).getCarsDataModels(id:RegisterCubit.get(context).selectedCarModel!.id!,lang: MainSettingsCubit.get(context).languageCode );
               }
 
               });

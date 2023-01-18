@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 
 abstract class DowamiCaptainRepo{
 
-  Future<Either<Failure, int>> first({required String x});
+  Future<Either<Failure, int>> first({required String x,required String lang});
 }
 
 class DowamiCaptainRepoImpel implements DowamiCaptainRepo {
@@ -17,10 +17,10 @@ class DowamiCaptainRepoImpel implements DowamiCaptainRepo {
   DowamiCaptainRepoImpel({required this.dio});
 
   @override
-  Future<Either<Failure, int>> first({required String x})async {
+  Future<Either<Failure, int>> first({required String x,required String lang})async {
 
     try {
-      Response res = await dio.postData(url: '', data: {'mobile': ''});
+      Response res = await dio.postData(url: '', data: {'mobile': ''},lang:lang );
       return Right(res.data['code']);
     }on DioError catch (e) {
       // debugPrint(e.response.toString());

@@ -35,11 +35,11 @@ class LoginCubit extends Cubit<LoginState> {
 
 
 
-  sendOtp({required String phoneNum}) async {
+  sendOtp({required String phoneNum,required String lang}) async {
     emit(StartSendOtpLoginState());
     timerCutDown();
     second = 50;
-    final failureOrSmsCode = await repo.sendOtpLogin(phone: phoneNum);
+    final failureOrSmsCode = await repo.sendOtpLogin(phone: phoneNum,lang: lang);
 
     emit(_mapFailureOrSmsCodeToLoginState(failureOrSmsCode));
   }
@@ -51,13 +51,13 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
 
-  verifyCode(int code) async {
+  verifyCode({required int code,required String lang}) async {
     emit(StartVerifyCodeLoginState());
     print(phoneCode);
     print(phoneNumber);
     final checkCode = await repo.verifyCodeLogin(
       code: code, phoneNum: //phoneCode +
-        phoneNumber,);
+        phoneNumber,lang: lang);
     emit(_mapFailureOrCodeTrueLoginState(checkCode));
   }
 

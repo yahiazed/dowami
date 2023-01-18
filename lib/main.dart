@@ -83,8 +83,8 @@ class MyApp extends StatelessWidget {
                           statusBarIconBrightness: Brightness.dark)),
                   bottomNavigationBarTheme: BottomNavigationBarThemeData(
                     backgroundColor:Recolor.whiteColor ,
-                      selectedLabelStyle: taj12RegBlue(),
-                      unselectedLabelStyle: taj12RegGree())),
+                      selectedLabelStyle: reg12(context),
+                      unselectedLabelStyle: reg12(context).copyWith(color: Recolor.rowColor))),
 
 
 
@@ -115,7 +115,7 @@ class MyApp extends StatelessWidget {
               home:
               const SplashScreen()
                  // HomeScreen()
-                 // SelectLog(),
+                  //SelectLog(),
              // LoginScreen2(),
              // RegisterStepTwoScreen()
               // CarRegisterScreen()

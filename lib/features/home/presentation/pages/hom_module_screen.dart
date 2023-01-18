@@ -48,7 +48,7 @@ class HomeModuleScreen extends StatelessWidget {
     return Column(
       children: [
         Text(tripName, style: med18(context).copyWith(  color: Theme.of(context).primaryColor,)).paddingT(context, 0.009),
-        Text('Captain will come through'.tr(context), style: taj11MedBlue())
+        Text('Captain will come through'.tr(context), style: med11(context))
             .paddingSV(context, 0.01),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -80,7 +80,7 @@ class HomeModuleScreen extends StatelessWidget {
         children: [
           Text(
             headText.tr(context),
-            style: taj7MedGrey(),
+            style: med7(context).copyWith(color: Recolor.txtGreyColor),
           ),
           Text(time, style:  med16(context).copyWith(  color: Theme.of(context).primaryColor,)),
         ],
@@ -96,7 +96,7 @@ class HomeModuleScreen extends StatelessWidget {
       children: [
         Text("WADINITRIPS".tr(context), style: eBold16(context))
             .paddingB(context, 0.01),
-        Text("NOMESHOAR".tr(context), style: taj11MedGreeHint()),
+        Text("NOMESHOAR".tr(context), style: med11(context).copyWith(color: Recolor.hintColor)),
         Center(
           child: sharedElevatedButton2(
             context: context,
@@ -129,7 +129,7 @@ class HomeModuleScreen extends StatelessWidget {
       children: [
         Text("DAWAMITRIPS".tr(context), style: eBold16(context))
             .paddingB(context, 0.01),
-        Text("NOSUBSCRIPTION".tr(context), style: taj11MedGreeHint()),
+        Text("NOSUBSCRIPTION".tr(context), style: med11(context).copyWith(color: Recolor.hintColor)),
         Center(
           child: sharedElevatedButton2(
             context: context,

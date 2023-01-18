@@ -99,7 +99,7 @@ class OpenLocationDialog extends StatelessWidget {
         Navigator.pop(context,myLatLng);
       },
       txt: 'Confirm'.tr(context),
-      textStyle: taj19BoldWhite(),
+      textStyle: eBold19(context).copyWith(color: Recolor.whiteColor),
       radius: 9,
       color: Theme.of(context).primaryColor,
       horizontalPadding: 0.05.widthX(context),
@@ -114,7 +114,7 @@ class OpenLocationDialog extends StatelessWidget {
         Navigator.pop(context,null);
       },
       txt: 'back'.tr(context),
-      textStyle: taj19BoldWhite(),
+      textStyle: eBold19(context).copyWith(color: Recolor.whiteColor),
       radius: 9,
       color: Theme.of(context).primaryColor,
       horizontalPadding: 0.05.widthX(context),

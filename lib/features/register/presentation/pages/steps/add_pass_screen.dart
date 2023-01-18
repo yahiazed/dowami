@@ -58,7 +58,7 @@ class AddPasswordScreen extends StatelessWidget {
                   controller: passController,
                   isPassword: showPass,
                   hintText: "enterPass".tr(context),
-                  hintStyle: taj14MedGree(),
+                  hintStyle:med14(context).copyWith(color: Recolor.row2Color),
                   keyboardType: TextInputType.visiblePassword,
                   suffix: IconButton(
                       onPressed: () {
@@ -78,7 +78,7 @@ class AddPasswordScreen extends StatelessWidget {
                   controller: rePassController,
                   isPassword: showPass,
                   hintText: "erEnterPass".tr(context),
-                  hintStyle: taj14MedGree(),
+                  hintStyle: med14(context).copyWith(color: Recolor.row2Color),
                   keyboardType:  TextInputType.visiblePassword,
                   suffix: IconButton(
                       onPressed: () {
@@ -104,9 +104,9 @@ class AddPasswordScreen extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text("add password".tr(context), style: med12(context)),
-        Text("our end! Verified".tr(context), style: taj25BoldBlue2()),
+        Text("our end! Verified".tr(context), style: eBold25(context)),
         Text("Now enter and confirm the password".tr(context),
-            style: taj14MedBlue()),
+            style: med14(context)),
       ],
     ).paddingSV(context, 0.08);
   }

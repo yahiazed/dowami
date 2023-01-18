@@ -3,10 +3,12 @@ import 'package:dowami/constant/extensions/media_extension.dart';
 import 'package:dowami/constant/extensions/round_extension.dart';
 import 'package:dowami/constant/shared_colors/shared_colors.dart';
 import 'package:dowami/constant/shared_function/navigator.dart';
+import 'package:dowami/constant/shared_widgets/shared_appbar.dart';
 import 'package:dowami/constant/shared_widgets/toast.dart';
 import 'package:dowami/constant/text_style/text_style.dart';
 import 'package:dowami/features/login/cubit/login_cubit.dart';
 import 'package:dowami/features/login/presentation/pages/login_screen2.dart';
+import 'package:dowami/features/main_settings/cubit/main_settings_cubit.dart';
 import 'package:dowami/features/register/presentation/pages/select_register_screen.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +45,7 @@ class LogInScreen1 extends StatelessWidget {
           var cubit = LoginCubit.get(context);
         return Scaffold(
           backgroundColor: Recolor.whiteColor,
+          appBar: sharedAppBar(context),
           body: Center(
             child: Form(
               key: loginFormKey,
@@ -52,7 +55,7 @@ class LogInScreen1 extends StatelessWidget {
                 children: [
                   Text(
                     'welcome back'.tr(context),
-                    style: taj25BoldBlue(),
+                    style: reg25(context),
                   ).paddingB(context, 0.03),
                   _buildPhoneInput(context),
 
@@ -104,13 +107,13 @@ class LogInScreen1 extends StatelessWidget {
         LoginCubit.get(context).phoneCode = phoneCode;
         LoginCubit.get(context).phoneNumber = phoneController.text;
         LoginCubit.get(context).sendOtp(phoneNum: //phoneCode +
-            phoneController.text);
+            phoneController.text,lang: MainSettingsCubit.get(context).languageCode);
 
       },
         txt: "goon".tr(context),
         color: Theme.of(context).primaryColor,
         radius: 6,
-        textStyle: taj19BoldWhite(),
+        textStyle: eBold19(context).copyWith(color: Recolor.whiteColor),
         horizontalPadding: .2.widthX(context),
         verticalPadding: .02.heightX(context))
         .paddingT(context, 0.025)

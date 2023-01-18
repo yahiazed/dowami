@@ -1,5 +1,6 @@
 import 'package:dowami/constant/extensions/media_extension.dart';
 import 'package:dowami/constant/extensions/round_extension.dart';
+import 'package:dowami/constant/shared_colors/shared_colors.dart';
 import 'package:dowami/constant/shared_function/navigator.dart';
 import 'package:dowami/constant/shared_widgets/shard_elevated_button.dart';
 import 'package:dowami/constant/shared_widgets/shared_appbar.dart';
@@ -37,7 +38,7 @@ class RegisterFinalScreen extends StatelessWidget {
 
                   },
                   txt: 'skip'.tr(context),
-                  textStyle: taj16BoldWhite(),
+                  textStyle: eBold16(context).copyWith(color: Recolor.whiteColor),
                   radius: 9,
                   verticalPadding: 0.025.heightX(context),
                   horizontalPadding: 0.2.widthX(context))
@@ -57,11 +58,11 @@ class RegisterFinalScreen extends StatelessWidget {
           Text("Congratulation".tr(context), style: med12(context)),
           RichText(
               text: TextSpan(children: [
-            TextSpan(text: "Welcome".tr(context), style: taj25BoldBlue()),
-            TextSpan(text: "Dawami".tr(context), style: taj25BoldAmber()),
+            TextSpan(text: "Welcome".tr(context), style: reg25(context)),
+            TextSpan(text: "Dawami".tr(context), style: eBold25(context).copyWith(color: Theme.of(context).primaryColor)),
           ])).paddingB(context, 0.07),
           Text("showVideo".tr(context),
-              textAlign: TextAlign.center, style: taj11MedBlue()),
+              textAlign: TextAlign.center, style: med11(context)),
         ],
       ).paddingS(context, 0.1, 0.06),
     );

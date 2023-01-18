@@ -9,6 +9,7 @@ import 'package:dowami/constant/shared_widgets/shared_appbar.dart';
 import 'package:dowami/constant/shared_widgets/shared_card_input.dart';
 import 'package:dowami/constant/shared_widgets/toast.dart';
 import 'package:dowami/constant/text_style/text_style.dart';
+import 'package:dowami/features/main_settings/cubit/main_settings_cubit.dart';
 import 'package:dowami/features/maps/helper/permission.dart';
 import 'package:dowami/features/register/cubit/register_cubit.dart';
 
@@ -59,7 +60,8 @@ class FillUserRegisterDataScreen extends StatelessWidget {
           { navigateTo(context,const RegisterFinalScreen()); }
           else{
 
-            RegisterCubit.get(context). getCarsModels();
+
+            RegisterCubit.get(context). getCarsModels( lang: MainSettingsCubit.get(context).languageCode);
           }
 
 
@@ -117,7 +119,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
                       //  isCaptain
                       if (!cubit.isCaptain) _buildIBANCaptain(context,  ),
                       _buildAcceptTermsRow( context,cubit,),
-                      _buildErrorsMessages()
+                      _buildErrorsMessages(context)
                           .cardAll(elevation: 1, radius: 0)
                           .paddingSV(context,0.01),
                       _buildOnSubmitButton(context)
@@ -151,9 +153,9 @@ class FillUserRegisterDataScreen extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text("Few steps left".tr(context), style: med12(context)),
-        Text("Let's get to know you".tr(context), style: taj25BoldBlue()),
+        Text("Let's get to know you".tr(context), style: reg25(context)),
         Text("informationProvided".tr(context),
-            textAlign: TextAlign.center, style: taj11MedBlue()),
+            textAlign: TextAlign.center, style: med11(context)),
       ],
     ).paddingS(context, 0.1, 0.06);
   }
@@ -242,13 +244,13 @@ class FillUserRegisterDataScreen extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text("Date of Birth".tr(context), style: taj12RegGreeHint()),
+            Text("Date of Birth".tr(context), style: reg12(context).copyWith(color: Recolor.hintColor)),
             sharedCardInput(
               context,
               controller: dateController,
               hintText: '?',
               keyboardType: TextInputType.none,
-              txtStyle: taj12RegGree().copyWith( fontSize: 8),
+              txtStyle: reg12(context).copyWith(color: Recolor.rowColor,fontSize: 8),
               onTap: () async {
                 DateTime? pickedDate = await showDatePicker(
                     context: context,
@@ -279,11 +281,11 @@ class FillUserRegisterDataScreen extends StatelessWidget {
 
         Row(
           children: [
-            Text("Gender".tr(context), style: taj12RegGreeHint()).paddingSH(context, 0.015),
+            Text("Gender".tr(context), style: reg12(context).copyWith(color: Recolor.hintColor)).paddingSH(context, 0.015),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('male'.tr(context), style: taj12RegGree()),
+                Text('male'.tr(context), style: reg12(context).copyWith(color: Recolor.rowColor)),
                 Radio(
                   fillColor: MaterialStatePropertyAll(Theme.of(context).primaryColor),
                   value: true,
@@ -296,7 +298,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('female'.tr(context), style: taj12RegGree()),
+                Text('female'.tr(context), style: reg12(context).copyWith(color: Recolor.rowColor)),
                 Radio(
                   fillColor: MaterialStatePropertyAll(Theme.of(context).primaryColor),
                   value: false,
@@ -374,7 +376,8 @@ class FillUserRegisterDataScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text('select on the map'.tr(context),
-                    style: taj11RegGreeHintUnderLine()),
+                    style: reg11(context).copyWith(color: Recolor.hintColor, decoration: TextDecoration.underline)
+                ),
                 Icon(Icons.place_outlined, color: Recolor.hintColor, size: 15),
               ],
             ))
@@ -393,13 +396,13 @@ class FillUserRegisterDataScreen extends StatelessWidget {
     ;
   }
    List<dynamic> errors=[];
-  Widget _buildErrorsMessages(){
+  Widget _buildErrorsMessages(context){
     return Column(
 
 
       crossAxisAlignment: CrossAxisAlignment.end,
       children:errors.map((e) =>
-          Text('$e  * ',style: taj11MedGreeHint().copyWith(color: Colors.red) ,)
+          Text('$e  * ',style: med11(context).copyWith(color: Colors.red) ,)
       ).toList() ,
     );
   }
@@ -434,7 +437,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
               //regionController.text
               ,
               district:'1'
-             //  neighborhoodController.text
+               //neighborhoodController.text
                ,
               gender: RegisterCubit.get(context).isMale?'Male':'Female',
               nationalId: nNumController.text,
@@ -446,8 +449,8 @@ class FillUserRegisterDataScreen extends StatelessWidget {
 
 
           );
-
-            await RegisterCubit.get(context).sendCompleteProfileData(userModel: userModel);
+          print( MainSettingsCubit.get(context).languageCode);
+            await RegisterCubit.get(context).sendCompleteProfileData(userModel: userModel, lang: MainSettingsCubit.get(context).languageCode);
 
 
 
@@ -455,7 +458,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
         }
       },
       txt: 'Confirm'.tr(context),
-      textStyle: taj19BoldWhite(),
+      textStyle: eBold19(context).copyWith(color: Recolor.whiteColor),
       radius: 9,
       color: Theme.of(context).primaryColor,
       horizontalPadding: 0.25.widthX(context),

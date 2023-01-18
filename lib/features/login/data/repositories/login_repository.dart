@@ -7,8 +7,8 @@ import 'package:dowami/helpers/dio_helper.dart';
 import 'package:flutter/material.dart';
 
 abstract class LoginRepo {
-  Future<Either<Failure, int>> sendOtpLogin({required String phone});
-  Future<Either<Failure, Map<String,dynamic>>> verifyCodeLogin({required int code, required String phoneNum});
+  Future<Either<Failure, int>> sendOtpLogin({required String phone,required String lang});
+  Future<Either<Failure, Map<String,dynamic>>> verifyCodeLogin({required int code, required String phoneNum,required String lang});
 
 
 }
@@ -19,9 +19,9 @@ class LoginRepoImpel implements LoginRepo {
   LoginRepoImpel({required this.dio});
 
   @override
-  Future<Either<Failure, int>> sendOtpLogin({required String phone}) async {
+  Future<Either<Failure, int>> sendOtpLogin({required String phone,required String lang}) async {
     try {
-      Response res = await dio.postData(url: sendOtpLoginUrl, data: {'mobile': phone});
+      Response res = await dio.postData(url: sendOtpLoginUrl, data: {'mobile': phone},lang: lang);
 
       return Right(res.data['code']);
     }on DioError catch (e) {
@@ -40,9 +40,9 @@ class LoginRepoImpel implements LoginRepo {
 
 
   @override
-  Future<Either<Failure, Map<String,dynamic>>> verifyCodeLogin({required int code, required String phoneNum,}) async {
+  Future<Either<Failure, Map<String,dynamic>>> verifyCodeLogin({required int code, required String phoneNum,required String lang,}) async {
     try {
-     var res= await dio.postData(url: verifyCodeLoginUrl, data: {'mobile': phoneNum, "code": code,});
+     var res= await dio.postData(url: verifyCodeLoginUrl, data: {'mobile': phoneNum, "code": code,},lang: lang);
 
       var responseMap= res.data as Map<String,dynamic>;
      debugPrint(responseMap.toString());

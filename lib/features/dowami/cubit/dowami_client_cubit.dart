@@ -36,9 +36,9 @@ class DowamiClientCubit extends Cubit<DowamiClientState> {
 
 
   ///{1}------------------------------------------------------------------------
-  makeJobDowami({required DowamiJobModel dowamiJobModel,required String token}) async {
+  makeJobDowami({required DowamiJobModel dowamiJobModel,required String token,required String lang}) async {
     emit(StartMakeJobState());
-    final makeJobResponse = await repo.makeJobDowami(dowamiJobModel: dowamiJobModel,token: token );
+    final makeJobResponse = await repo.makeJobDowami(dowamiJobModel: dowamiJobModel,token: token,lang:lang );
     emit(_makeJobToState(makeJobResponse));
   }
 

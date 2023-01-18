@@ -64,9 +64,9 @@ class SelectAccountKind extends StatelessWidget {
                   RichText(
                       text: TextSpan(
                           children: [
-                    TextSpan(text: "Happy".tr(context), style: taj25BoldBlue2()),
-                    TextSpan(text: '${"join".tr(context)}\t', style: taj25BoldBlue2().copyWith(color:Theme.of(context).primaryColor),),
-                    TextSpan(text: "us".tr(context), style: taj25BoldBlue2()),
+                    TextSpan(text: "Happy".tr(context), style: eBold25(context)),
+                    TextSpan(text: '${"join".tr(context)}\t', style: eBold25(context).copyWith(color:Theme.of(context).primaryColor),),
+                    TextSpan(text: "us".tr(context), style: eBold25(context)),
 
                           ],
                       ),

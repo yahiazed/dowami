@@ -19,7 +19,7 @@ class ServiceTerms extends StatelessWidget {
         automaticallyImplyLeading: false,
         title: Text(
           "Terms of Service".tr(context),
-          style: taj19BoldBlue(),
+          style: eBold19(context),
         ),
         actions: [
           TextButton(

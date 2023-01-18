@@ -23,11 +23,13 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
 
   getSettings()async{
-await MainSettingsCubit.get(context).getMainSettings();
+    await MainSettingsCubit.get(context).getLanguageFromPrefs();
+    if(!mounted)return;
+await MainSettingsCubit.get(context).getMainSettings(lang:MainSettingsCubit.get(context).languageCode );
 if(!mounted)return;
 await LoginCubit.get(context).getDataFromPrefs();
-if(!mounted)return;
-await MainSettingsCubit.get(context).getLanguageFromPrefs();
+
+
 
 Timer(const Duration(seconds: 5), () {
 
