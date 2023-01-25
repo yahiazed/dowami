@@ -78,7 +78,7 @@ class CarRegisterScreen extends StatelessWidget {
         }
 
             return Scaffold(
-              appBar: sharedAppBar(context: context,onTap: (){navigateRem(context, HomeScreen());}),
+              appBar: sharedAppBar(context: context,onTap: (){navigateRem(context, const HomeScreen());}),
               body://state is SuccessGetCarsModelsState ?
                 SingleChildScrollView(
                 child: Column(
@@ -281,108 +281,10 @@ class CarRegisterScreen extends StatelessWidget {
 
 
 
-  Widget _buildManufactureCompany(){
-
-    return
-      BlocConsumer<RegisterCubit, RegisterState>(
-          listenWhen: (previous, current) =>current is EndSelectCarModelState  ,
-          buildWhen: (previous, current) =>current is EndSelectCarModelState ,
-          listener: (context, state) {},
-          builder: (context, state) {
-            var cubit=RegisterCubit.get(context);
-          return ListTile(
-            onTap: ()async{
-              await showDialog(context: context, builder: (context) =>
-                  Dialog(
-                    child: SizedBox(
-                      child: ListView.builder(
-                        itemCount:cubit.carsModels.length ,
-                          physics:BouncingScrollPhysics(),
-                          itemBuilder: (context, index) =>  ListTile(
-                          title:  Text(cubit.carsModels[index].name!),
-                          trailing:CachedNetworkImage(
-                            imageUrl:cubit.carsModels[index].carLogo??
-                            "https://img.lovepik.com/element/40143/4180.png_300.png",
-                            // progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress),
-                            errorWidget: (context, url, error) => Icon(Icons.error),
-                            height: 50,width: 50,
-                          ) ,
-                          onTap:(){
-                            cubit.onSelectCarModel(cubit.carsModels[index]);
-                            Navigator.pop(context);
-                          } ,
-                        ),
-                      )
-                    ),
-                  ),).then((value) {
-                if(cubit.selectedCarModel!=null){
-                  cubit.getCarsDataModels(id:cubit.selectedCarModel!.id!,lang: MainSettingsCubit.get(context).languageCode );
-                }});
-            },
-            title: Text(cubit.selectedCarModel==null?'Manufacture'.tr(context):cubit.selectedCarModel!.name!) ,
-            trailing:cubit.selectedCarModel==null?const SizedBox():CachedNetworkImage(
-              imageUrl:cubit.selectedCarModel!.carLogo!??
-                  "https://img.lovepik.com/element/40143/4180.png_300.png",
-             // progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress,color: Colors.red),
-              errorWidget: (context, url, error) => const Icon(Icons.error),
-              height: 50,width: 50,
-            )  ,
-          );
-        }
-      )
-      ;
-
-  }
 
 
-  Widget _buildVehicleName( ){
-
-    return
-      BlocConsumer<RegisterCubit, RegisterState>(
-        listenWhen: (previous, current) =>current is EndSelectCarDataModelState ||current is EndSelectCarModelState ,
-    buildWhen: (previous, current) =>current is EndSelectCarDataModelState ||current is EndSelectCarModelState,
-    listener: (context, state) {},
-    builder: (context, state) {
-      var cubit = RegisterCubit.get(context);
-
-        return ListTile(
-          style: ListTileStyle.drawer,
-          title: Text(
-              cubit.selectedCarDataModel == null ? 'Vehicle name'.tr(
-                  context) : cubit.selectedCarDataModel!.model!),
-            trailing:Text(cubit.selectedCarDataModel == null ? '' : cubit
-                .selectedCarDataModel!.category!),
-
-          onTap: () async {
-           if (cubit.carsDataModels.isNotEmpty) {
-                await showDialog(
-                    context: context,
-                    builder: (context) => Dialog(
-                            child: ListView.builder(
-                          itemCount: cubit.carsDataModels.length,
-                          physics: const BouncingScrollPhysics(),
-                          itemBuilder: (context, index) => ListTile(
-                            title: Text(cubit.carsDataModels[index].model!),
-                            trailing: Text(cubit.carsDataModels[index].category!),
-
-                            onTap: () {
-                              cubit.onSelectDataCarModel(
-                                  cubit.carsDataModels[index]);
-                              Navigator.pop(context);
-                            },
-                          ),
-                        )));
-              }
-
-          },
 
 
-        );
-      }
-    )
-      ;
-
-  }
 
 
   Widget _buildCarYear(context){

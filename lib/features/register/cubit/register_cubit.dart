@@ -262,7 +262,10 @@ class RegisterCubit extends Cubit<RegisterState> {
   RegisterState _sendDocumentsToState(Either<Failure,  Unit> either) {
     return either.fold(
           (failure) => ErrorSendRequiredDocumentsState(errorMsg: _failureToMessage(failure),errorModel: (failure as DioResponseFailure).errorModel!),
-          (requiredDocs) {return  const SuccessSendRequiredDocumentsState( );},
+          (lol) {
+            docImagesPicked=[];
+            docImagesFiles=[];
+            return  const SuccessSendRequiredDocumentsState( );},
     );
   }
 

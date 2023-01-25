@@ -31,9 +31,6 @@ class LoginCubit extends Cubit<LoginState> {
 
   bool isCaptain=false;
   String? token;
-
-    //  "11|KJGMhHH8gRn6DLbAMoR2iWF0hoSm6Aa7vypZFxEG"
-
  int? userId;
   UserModel? userData;
 bool showPass=true;
@@ -142,6 +139,7 @@ Future<bool> getDataFromPrefs()async{
     phoneNumber=phoneNumber1;
     password=password1;
     phoneCode=phoneCode1;
+    isCaptain=userData!.userType=='captain'?true:false;
 
     print(userId);
     print(UserModel.fromJson(userData1).nickName!);

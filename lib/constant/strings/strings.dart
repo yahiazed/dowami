@@ -17,6 +17,7 @@ const String carsDataUrl = '/cars-data/';
 const String sendCaptainVehicleUrl = '/store-captain-vehicle';
 const String requiredDocumentsUrl = '/required-documents';
 const String uploadDocumentsUrl = '/upload-documents';
+const String checkDocApprovalUrl = '/check-approval-documents';
 
 const String makeJobDowamiUrl = '/make-request';
 const String mainSettingsUrl = '/main-settings';
@@ -26,7 +27,8 @@ const String clientOfferingRequestsUrl = '';
 const String citiesUrl = '/cities';
 const String areasUrl = '/areas/';
 const String districtsUrl = '/districts/';
-const String checkApprovalUrl = '/check-approval-documents';
+
+const String checkUserApprovalUrl = '/user-approval';
 
 
 

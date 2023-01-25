@@ -6,6 +6,8 @@ import 'package:dowami/features/login/data/repositories/login_repository.dart';
 import 'package:dowami/features/main_settings/cubit/main_settings_cubit.dart';
 import 'package:dowami/features/main_settings/data/main_settings_repository/main_settings_repository.dart';
 import 'package:dowami/features/maps/cubit/map_cubit.dart';
+import 'package:dowami/features/profile/cubit/profile_cubit.dart';
+import 'package:dowami/features/profile/data/repositories/profile_repository.dart';
 import 'package:dowami/features/register/data/repositories/register_repository.dart';
 import 'package:dowami/features/register/cubit/register_cubit.dart';
 import 'package:dowami/helpers/dio_helper.dart';
@@ -27,6 +29,12 @@ Future<void> init() async {
   sl.registerFactory(() => BottomBarCubit());
   sl.registerFactory(() => MapCubit());
   sl.registerFactory(() => ResetPassCubit(repo: sl()));
+  sl.registerFactory(() => ProfileCubit(repo: sl()));
+
+
+
+
+
   sl.registerLazySingleton<RegisterRepo>(() => RegisterRepoImpel(dio: sl()));
   sl.registerLazySingleton<LoginRepo>(() => LoginRepoImpel(dio: sl()));
   sl.registerLazySingleton<DioHelper>(() => DioHelperImpl());
@@ -34,4 +42,5 @@ Future<void> init() async {
   sl.registerLazySingleton<DowamiClientRepo>(() => DowamiClientRepoImpel(dio: sl()));
   sl.registerLazySingleton<MainSettingsRepo>(() => MainSettingsRepoImpel(dio: sl()));
   sl.registerLazySingleton<ForgetPassRepo>(() => ForgetPassRepoImpel(dio: sl()));
+  sl.registerLazySingleton<ProfileRepo>(() => ProfileRepoImpel(dio: sl()));
 }

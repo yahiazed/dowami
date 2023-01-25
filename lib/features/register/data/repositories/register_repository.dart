@@ -273,7 +273,7 @@ class RegisterRepoImpel implements RegisterRepo {
   Future<Either<Failure, int>> checkApprovalDoc({required String userId, required String docId, required String lang}) async{
     try {
 
-      Response res =  await dio.postData(url: checkApprovalUrl ,lang: lang,data: {'user_id': userId, "document_id": docId,});
+      Response res =  await dio.postData(url: checkDocApprovalUrl ,lang: lang,data: {'user_id': userId, "document_id": docId,});
       debugPrint('success');
       var dataMap=res.data as Map<String,dynamic>   ;
       var status=dataMap['status'] as int  ;

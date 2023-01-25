@@ -4,74 +4,47 @@ import 'package:dowami/constant/extensions/file_extention.dart';
 import 'package:dowami/constant/extensions/media_extension.dart';
 import 'package:dowami/constant/extensions/round_extension.dart';
 import 'package:dowami/constant/shared_colors/shared_colors.dart';
+import 'package:dowami/constant/shared_function/navigator.dart';
 import 'package:dowami/constant/shared_widgets/shard_elevated_button.dart';
+import 'package:dowami/constant/shared_widgets/shared_accept_terms.dart';
 import 'package:dowami/constant/shared_widgets/shared_appbar.dart';
-import 'package:dowami/constant/shared_widgets/shared_card_input.dart';
 import 'package:dowami/constant/shared_widgets/toast.dart';
+import 'package:dowami/constant/text_style/text_style.dart';
 import 'package:dowami/features/home/presentation/pages/home_screen.dart';
-import 'package:dowami/features/login/cubit/login_cubit.dart';
 import 'package:dowami/features/main_settings/cubit/main_settings_cubit.dart';
+import 'package:dowami/features/profile/data/models/user_approval_doc_model.dart';
+import 'package:dowami/features/register/cubit/register_cubit.dart';
 import 'package:dowami/features/register/data/models/required_doc_model.dart';
 import 'package:dowami/features/register/data/models/user_doc_model.dart';
-import 'package:dowami/features/register/cubit/register_cubit.dart';
-import 'package:dowami/features/register/presentation/pages/steps/register_final_screen.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 
-import '../../../../../../constant/shared_function/navigator.dart';
-import '../../../../../../constant/shared_widgets/shared_accept_terms.dart';
-import '../../../../../../constant/text_style/text_style.dart';
+class ProfileDocsScreen extends StatelessWidget {
+  final List<UserApprovalDocModel> docs;
 
-class RegisterCarPaperScreen extends StatelessWidget {
-  RegisterCarPaperScreen({super.key});
-
+  ProfileDocsScreen({Key? key, required this.docs}) : super(key: key);
   final carDocsFormKey = GlobalKey<FormState>();
-
-
-
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<RegisterCubit, RegisterState>(
-     /* listenWhen: (previous, current) =>
-          current is ErrorSendRequiredDocumentsState ||
-          current is SuccessSendRequiredDocumentsState ||
-          current is SuccessGetRequiredDocumentsState ||
-          current is EndStartingPageState ||
-          current is ErrorGetRequiredDocumentsState,
-      buildWhen: (previous, current) =>
-          current is ErrorSendRequiredDocumentsState ||
-          current is SuccessSendRequiredDocumentsState ||
-          current is SuccessGetRequiredDocumentsState ||
-          current is ErrorGetRequiredDocumentsState,*/
       listener: (context, state) {
-        if(state is EndStartingPageState){
-          print('getting docs required');
-          RegisterCubit.get(context).getRequiredDocs(lang: MainSettingsCubit.get(context).languageCode) ;
-        }
-
-        if (state is ErrorGetRequiredDocumentsState) {
-          showErrorToast(message: state.errorMsg);
-        }
-
-
         if (state is ErrorSendRequiredDocumentsState) {
           showErrorToast(message: state.errorMsg);
         }
         if (state is SuccessSendRequiredDocumentsState) {
-        //  Future.delayed(Duration(seconds: 5)).then((value) => navigateTo(context, const RegisterFinalScreen()));
+          //  Future.delayed(Duration(seconds: 5)).then((value) => navigateTo(context, const RegisterFinalScreen()));
 
         }
-        if(state is SuccessSendAllDocState){
-          RegisterCubit.get(context).getStatusOfDocs(lang: MainSettingsCubit.get(context).languageCode);
+        if (state is SuccessSendAllDocState) {
+          RegisterCubit.get(context).getStatusOfDocs(
+              lang: MainSettingsCubit.get(context).languageCode);
         }
 
-        if(state is SuccessGetAllDocStatusState){
-          RegisterCubit.get(context).finishCarPaperPage=true;
+        if (state is SuccessGetAllDocStatusState) {
+          RegisterCubit.get(context).finishCarPaperPage = true;
         }
       },
       builder: (context, state) {
@@ -82,61 +55,69 @@ class RegisterCarPaperScreen extends StatelessWidget {
         }
 
         return Scaffold(
-          appBar: sharedAppBar(context: context,onTap: (){navigateRem(context, HomeScreen());}),
-          body: FutureBuilder<void>(
-            future: cubit.onStartPage(state is RegisterInitial),
-            builder: (context, snapshot) {
-              return SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _buildTopTextColumn(context),
-                    Form(
-                      key: carDocsFormKey,
-                      child: Column(
-                          children: cubit.requiredDocuments
-                              .map(
-                                (e) => _buildDocItem(
-                                    index: cubit.requiredDocuments.indexOf(e),
-                                    requiredDocModel: e,
-                                  statusColor:cubit.docsStatusColors.length!= cubit.requiredDocuments.length
-                                      ? Colors.white
-                                      : cubit.docsStatusColors.elementAt(cubit.requiredDocuments.indexOf(e))
-
-                                ),
-                              )
-                              .toList()),
-                    ),
-                    _buildTotalRowOperationColor(context),
-                    _terms(),
-                    cubit.loading?const Center(child: CircularProgressIndicator()):  cubit.finishCarPaperPage?_finishButton(context): _confirmButton(context),
-                  ],
-                ),
-              );
-            }
-          ),
-
-        );
+            appBar: sharedAppBar(
+                context: context,
+                onTap: () {
+                  navigateRem(context, HomeScreen());
+                }),
+            body: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _buildTopTextColumn(context),
+                  Form(
+                    key: carDocsFormKey,
+                    child: Column(
+                        children: docs
+                            .map(
+                              (e) => _buildDocItem(
+                                  index: docs.indexOf(e),
+                                  userApprovalDocModel: e,
+                                  statusColor: getStatusColor(int.parse(e.approveStatus!))
+                              ),
+                            )
+                            .toList()),
+                  ),
+                  _buildTotalRowOperationColor(context),
+                  _terms(),
+                  cubit.loading
+                      ? const Center(child: CircularProgressIndicator())
+                      : cubit.finishCarPaperPage
+                          ? _finishButton(context)
+                          : _confirmButton(context),
+                ],
+              ),
+            ));
       },
     );
   }
 
-  Widget _finishButton(context){
-    return
-      sharedElevatedButton(
-          onPressed: (){navigateRem(context, const RegisterFinalScreen());},
-          txt: 'finish',
-          context: context,
-        color: Theme.of(context).canvasColor,
-        textStyle: bold16(context).copyWith(color: Recolor.whiteColor),
-
-    radius: 9,
-    verticalPadding: 0.025.heightX(context),
-    horizontalPadding: 0.2.widthX(context),
-
-      )
-      ;
+  Widget _finishButton(context) {
+    return sharedElevatedButton(
+      onPressed: () {
+        //navigateRem(context, const RegisterFinalScreen());
+      },
+      txt: 'finish',
+      context: context,
+      color: Theme.of(context).canvasColor,
+      textStyle: bold16(context).copyWith(color: Recolor.whiteColor),
+      radius: 9,
+      verticalPadding: 0.025.heightX(context),
+      horizontalPadding: 0.2.widthX(context),
+    );
   }
+
+
+  Color getStatusColor(int i){
+    switch(i){
+      case 0:return (Recolor.amberColor);
+      case 1:return (Recolor.onlineColor);
+      case 2:return (Recolor.txtRefuseColor);
+      default :return (Recolor.whiteColor);
+
+    }
+  }
+
   Widget _buildTopTextColumn(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -150,18 +131,11 @@ class RegisterCarPaperScreen extends StatelessWidget {
   }
 
   Widget _buildDocItem(
-      {required int index, required RequiredDocModel requiredDocModel,required Color statusColor}) {
+      {required int index,
+      required UserApprovalDocModel userApprovalDocModel,
+      required Color statusColor}) {
     return BlocConsumer<RegisterCubit, RegisterState>(
-        listenWhen: (previous, current) =>
-            current is SuccessPickImageState
-                || current is ErrorPickImageState
-                || current is EndSelectExpiredDateState
-                || current is ErrorPickImageState
-        ,
-        buildWhen: (previous, current) =>
-            current is SuccessPickImageState
-                || current is ErrorPickImageState
-                || current is ErrorPickImageState,
+
         listener: (context, state) {},
         builder: (context, state) {
           var cubit = RegisterCubit.get(context);
@@ -183,8 +157,8 @@ class RegisterCarPaperScreen extends StatelessWidget {
                           padding: EdgeInsetsDirectional.only(
                             start: 0.90.widthX(context) * .1,
                           ),
-                          child:
-                              Text(requiredDocModel.name!, style: eBold16(context)),
+                          child: Text(userApprovalDocModel.id!.toString(),
+                              style: eBold16(context)),
                         ),
                         Container(
                           width: 0.90.widthX(context) * .2,
@@ -195,7 +169,8 @@ class RegisterCarPaperScreen extends StatelessWidget {
                               ? const BoxDecoration()
                               : BoxDecoration(
                                   image: DecorationImage(
-                                  image: FileImage(cubit.docImagesFiles[index]!),
+                                  image:
+                                      FileImage(cubit.docImagesFiles[index]!),
                                   fit: BoxFit.contain,
                                 )),
                           child: cubit.docImagesFiles[index] == null ||
@@ -207,11 +182,12 @@ class RegisterCarPaperScreen extends StatelessWidget {
                                 )
                               : const SizedBox(),
                         ),
-
                       ],
                     ).paddingSV(context, .01),
-                   if(cubit.docImagesFiles[index]!.path.isNotEmpty&&(getFileSize(cubit.docImagesFiles[index]!)>1023.0)) _errorMess(context)
-                   /* Column(children: [
+                    if (cubit.docImagesFiles[index]!.path.isNotEmpty &&
+                        (getFileSize(cubit.docImagesFiles[index]!) > 1023.0))
+                      _errorMess(context)
+                    /* Column(children: [
                       if (requiredDocModel.hasExpiredDate == '1')
                         sharedCardInput(
                           context,
@@ -274,12 +250,13 @@ class RegisterCarPaperScreen extends StatelessWidget {
                             .paddingS(context, .01, .01),
                     ]).paddingB(context, .02),*/
                   ],
-                )
-
-                    ,
+                ),
               ),
             ).paddingL(context, 0.075),
-          ).cardAll(cardColor: Recolor.whiteColor, elevation: 9, radius: 9).paddingSH(context, .05).paddingB(context, .05) ;
+          )
+              .cardAll(cardColor: Recolor.whiteColor, elevation: 9, radius: 9)
+              .paddingSH(context, .05)
+              .paddingB(context, .05);
         });
   }
 
@@ -287,8 +264,8 @@ class RegisterCarPaperScreen extends StatelessWidget {
     return sharedElevatedButton(
         context: context,
         onPressed: () async {
-          await onConfirmButtonFunc(context: context, cubit: RegisterCubit.get(context));
-
+          await onConfirmButtonFunc(
+              context: context, cubit: RegisterCubit.get(context));
         },
         txt: 'Confirm'.tr(context),
         textStyle: eBold16(context).copyWith(color: Recolor.whiteColor),
@@ -298,28 +275,32 @@ class RegisterCarPaperScreen extends StatelessWidget {
         color: Theme.of(context).primaryColor);
   }
 
-Widget _errorMess(context){
-    return
-      Text("BeSurePaper".tr(context),style: reg12(context).copyWith(color: Recolor.redColor),)
-      ;
-}
-  onConfirmButtonFunc({required RegisterCubit cubit, required BuildContext context}) async {
+  Widget _errorMess(context) {
+    return Text(
+      "BeSurePaper".tr(context),
+      style: reg12(context).copyWith(color: Recolor.redColor),
+    );
+  }
 
-
-
-
+  onConfirmButtonFunc(
+      {required RegisterCubit cubit, required BuildContext context}) async {
     if (!cubit.isAcceptTerms) {
       showErrorToast(message: 'terms');
       return;
     }
-    if (!carDocsFormKey.currentState!.validate()) {return;}
+    if (!carDocsFormKey.currentState!.validate()) {
+      return;
+    }
     List<RequiredDocModel> requiredDocsList = cubit.requiredDocuments;
-    cubit.loading=true;
-    for(var file in  cubit.docImagesFiles){
-      if(getFileSize(file!)>1023.0){ cubit.loading=false;return;}
+    cubit.loading = true;
+    for (var file in cubit.docImagesFiles) {
+      if (getFileSize(file!) > 1023.0) {
+        cubit.loading = false;
+        return;
+      }
     }
 
-    print( RegisterCubit.get(context).userId.toString());
+    print(RegisterCubit.get(context).userId.toString());
 
     for (var requiredDoc in requiredDocsList) {
       int index = requiredDocsList.indexOf(requiredDoc);
@@ -327,47 +308,37 @@ Widget _errorMess(context){
           cubit.docImagesPicked[index] == XFile('') ||
           cubit.docImagesPicked[index]!.path.isEmpty) {
         showErrorToast(message: 'selectAllImages'.tr(context));
-        cubit.loading=false;
+        cubit.loading = false;
         return;
       }
 
       var userDocModel = UserDocModel(
-          userId: RegisterCubit.get(context).userId.toString(),
-          docId: requiredDoc.id.toString(),
-
+        userId: RegisterCubit.get(context).userId.toString(),
+        docId: requiredDoc.id.toString(),
       );
 
       XFile? picked = cubit.docImagesPicked[index];
-       await cubit.sendDocuments(
+      await cubit.sendDocuments(
           userDocModel: userDocModel,
           xFile: picked!,
           lang: MainSettingsCubit.get(context).languageCode);
-       if(cubit.state is ErrorSendRequiredDocumentsState ){
-         cubit.loading=false;
-         return;
-       }
-
-
+      if (cubit.state is ErrorSendRequiredDocumentsState) {
+        cubit.loading = false;
+        return;
+      }
     }
 
-    cubit.loading=false;
-    if(cubit.state is SuccessSendRequiredDocumentsState ){
-      cubit.loading=true;
+    cubit.loading = false;
+    if (cubit.state is SuccessSendRequiredDocumentsState) {
+      cubit.loading = true;
       cubit.successGetSendALLDocs();
-      cubit.loading=false;
+      cubit.loading = false;
     }
-
-
-
   }
-
-
-
 
   Widget _terms() {
     return BlocConsumer<RegisterCubit, RegisterState>(
-        listenWhen: (previous, current) =>
-            current is EndChangeAcceptTermsState,
+        listenWhen: (previous, current) => current is EndChangeAcceptTermsState,
         buildWhen: (previous, current) => current is EndChangeAcceptTermsState,
         listener: (context, state) {},
         builder: (context, state) {
@@ -375,8 +346,6 @@ Widget _errorMess(context){
           return buildAcceptsTermsRow(cubit.isAcceptTerms, context);
         });
   }
-
-
 
   Widget _buildTotalRowOperationColor(BuildContext context) {
     return Row(
@@ -394,14 +363,15 @@ Widget _errorMess(context){
 
   Row _buildRowOperationColor(
       {required BuildContext context,
-        required String txt,
-        required Color color}) {
+      required String txt,
+      required Color color}) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         _buildDotCircleColor(color),
         const SizedBox(width: 5),
-        Text(txt.tr(context), style: reg12(context).copyWith(color: Recolor.txtGreyColor))
+        Text(txt.tr(context),
+            style: reg12(context).copyWith(color: Recolor.txtGreyColor))
       ],
     );
   }

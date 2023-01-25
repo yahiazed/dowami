@@ -13,6 +13,9 @@ import 'package:dowami/features/login/presentation/pages/login_screen2.dart';
 import 'package:dowami/features/main_settings/cubit/main_settings_cubit.dart';
 import 'package:dowami/features/main_settings/cubit/main_settings_state.dart';
 import 'package:dowami/features/maps/cubit/map_cubit.dart';
+import 'package:dowami/features/profile/cubit/profile_cubit.dart';
+import 'package:dowami/features/profile/presentation/pages/car_screen.dart';
+import 'package:dowami/features/profile/presentation/pages/wait_car_accept_screen.dart';
 import 'package:dowami/features/register/cubit/register_cubit.dart';
 import 'package:dowami/features/register/presentation/pages/steps/captain/car_paper_screen.dart';
 import 'package:dowami/features/register/presentation/pages/steps/captain/car_register_screen.dart';
@@ -56,6 +59,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => di.sl<DowamiClientCubit>()),
           BlocProvider(create: (context) => di.sl<MainSettingsCubit>()),
           BlocProvider(create: (context) => di.sl<ResetPassCubit>()),
+          BlocProvider(create: (context) => di.sl<ProfileCubit>()),
           BlocProvider(create: (context) => BottomBarCubit()),
           BlocProvider(create: (context) => MapCubit()),
           BlocProvider(create: (context) => HomeCubit()),
@@ -121,7 +125,7 @@ class MyApp extends StatelessWidget {
                     const Locale('ar') ,
 
               home:
-
+             // const ProfileCarWaitingAccept()
             //  CarRegisterScreen()
                  const SplashScreen()
               //SelectLog(),
@@ -135,7 +139,7 @@ class MyApp extends StatelessWidget {
              // RegisterCarPaperScreen()
               // CarRegisterScreen()
                // RegisterCarPaperScreen()
-                //FillUserRegisterDataScreen(),
+               // FillUserRegisterDataScreen(),
                   // RegisterCarPaperScreen(),
              // SettingCaptainDowamiScreen()
             );

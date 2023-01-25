@@ -16,6 +16,7 @@ class DowamiClientHome extends StatelessWidget {
         listener: (context, state) {},
         builder: (context,state) {
         return   Scaffold(
+
             body:DowamiClientCubit.get(context).pagePreview
 
 

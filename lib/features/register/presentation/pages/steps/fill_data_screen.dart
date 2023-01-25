@@ -529,6 +529,7 @@ class FillUserRegisterDataScreen extends StatelessWidget {
 
           );
           print(userModel);
+          print(userModel.toMap(userModel: userModel));
 
             await cubit.sendCompleteProfileData(userModel: userModel, lang: MainSettingsCubit.get(context).languageCode);
 
