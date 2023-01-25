@@ -36,8 +36,8 @@ class AddJobClient extends StatelessWidget {
 
   Widget preview(context) {
     return BlocConsumer<DowamiClientCubit,DowamiClientState>(
-       listenWhen: (previous, current)=> current==const SuccessMakeJobState(),
-       buildWhen: (previous, current) =>current==const SuccessMakeJobState() ,
+       listenWhen: (previous, current)=> current== SuccessMakeJobState(),
+       buildWhen: (previous, current) =>current== SuccessMakeJobState() ,
         listener: (context, state) {},
         builder: (context,state){
          if(state is SuccessMakeJobState){
@@ -53,10 +53,32 @@ class AddJobClient extends StatelessWidget {
 
   Widget successPreview(context) {
     return Center(
-      child: Text('good',style: eBold30(context),),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text('${'trip'.tr(context)} ( ${DowamiClientCubit.get(context).nameController.text} )',style: med24(context),),
+
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text('orderAdded'.tr(context),style: eBold28(context),).paddingB(context, .02),
+              Text('offersWillBeDisplay'.tr(context),style: reg18(context),textAlign: TextAlign.center,).roundWidget(width: .6.widthX(context)).paddingB(context, .05),
+              Text('youCanFollow'.tr(context),style: med18(context),).paddingB(context, .005),
+              Text('Dawami'.tr(context),style: eBold18(context).copyWith(color: Theme.of(context).primaryColor),),
+            ],
+          ),
+
+          Text(' ' ,style: eBold30(context),),
+        ],
+      ),
     );
 
   }
+
+
+
+
 
  Widget makeJobPreview(context, ) {
 
@@ -571,8 +593,8 @@ class AddJobClient extends StatelessWidget {
 
     return
       BlocConsumer<DowamiClientCubit,DowamiClientState>(
-          listenWhen: (previous, current) {return current==const SuccessMakeJobState();},
-          buildWhen: (previous, current) =>current==const SuccessMakeJobState() ,
+          listenWhen: (previous, current) {return current== SuccessMakeJobState();},
+          buildWhen: (previous, current) =>current== SuccessMakeJobState() ,
           listener: (context, state) {
             if(state is ErrorMakeJobState){
               showErrorToast(message: state.errorMsg);

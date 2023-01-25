@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:dowami/constant/strings/strings.dart';
 import 'package:dowami/core/error_model.dart';
+import 'package:dowami/core/errors/exceptions.dart';
 import 'package:dowami/core/errors/failure.dart';
 import 'package:dowami/helpers/dio_helper.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 abstract class LoginRepo {
   Future<Either<Failure, int>> sendOtpLogin({required String phone,required String lang});
   Future<Either<Failure, Map<String,dynamic>>> verifyCodeLogin({required int code, required String phoneNum,required String lang});
+  Future<Either<Failure, Map<String,dynamic>>> login({required String password, required String phoneNum,required String lang});
 
 
 }
@@ -55,6 +57,21 @@ class LoginRepoImpel implements LoginRepo {
         return Left(ServerFailure());
       }
       else{ return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data!  as Map<String,dynamic>  )));}
+    }
+  }
+
+  @override
+  Future<Either<Failure, Map<String, dynamic>>> login({required String password, required String phoneNum, required String lang}) async{
+    try {
+
+      Response res =  await dio.postData(url: loginUrl ,lang: lang,data: {'mobile': phoneNum, "password": password,});
+      var responseMap= res.data as Map<String,dynamic>;
+      debugPrint(responseMap.toString());
+
+      return     Right(responseMap);
+    }on DioError catch (e) {
+      debugPrint(e.response.toString());
+      return left(implementDioError(e));
     }
   }
 

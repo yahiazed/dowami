@@ -57,6 +57,8 @@
     "Vehicle name": "اسم المركبة",
     "year of release": "سنة الإصدار",
     "Plate Number": "رقم اللوحة",
+    "PlateNumberCharacters": "رقم اللوحة    (حروف)",
+    "PlateNumberNumbers":    "رقم اللوحة    (أرقام)",
     "Property Type": "نوع الملكية : ",
     "ownership": "ملك",
     "rent": "ايجار",
@@ -127,7 +129,31 @@
     "SUV": "SUV",
     "priceOffer": "عرض السعر",
     "R.S": "ر.س",
-    "Search": "بحث"
+    "Search": "بحث",
+
+
+    "trip": "رحلة",
+    "orderAdded": "تم إضافه طلبك",
+    "offersWillBeDisplay": "سيتم عرض طلبات الكابتن فى حال تلقى العروض",
+    "youCanFollow": "يمكنك متابعة حالة الطلب فى قسم",
+
+    "forgetPass":"هل نسيت كلمه المرور ؟",
+    "passNotIdentical":"كلمتان السر غير متطابقتين",
+    "enterPasswords":"أدخل كلمه السر",
+    "weakPassword":"كلمه السر ضعيفه",
+
+    "terms":"يجب الموافقه على الشروط",
+    "selectAllImages":"إختر جميع الصور",
+    "select3Images":"إختر جميع الصور",
+    "selectCar":"إختر سياره",
+    "numbersOnly":"أرقام",
+    "charactersOnly":"حروف",
+    "ResetSuccess":"تم تعيين كلمه السر بنجاح",
+    "reset":"إعاده تعيين",
+    "password":"كلمه المرور",
+    "enterPassNew":"أدخل كلمه المرور الجديده",
+    "reEnterPassNew":"أعد ادخال كلمه السر الجديده"
+
 
 
 }

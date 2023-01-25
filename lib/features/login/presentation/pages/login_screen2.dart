@@ -39,7 +39,7 @@ class LoginScreen2 extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<LoginCubit, LoginState>(
       listener: (context, state) {
-        if (state is SuccessCodeLoginState) {
+        if (state is SuccessLoginState) {
           LoginCubit.get(context).saveDataToPrefs();        }
 
         if (state is SuccessSaveDataState) {
@@ -48,13 +48,13 @@ class LoginScreen2 extends StatelessWidget {
         if (state is ErrorSaveDataState) {
           showErrorToast(message:'error connection');
         }
-        if (state is ErrorCodeLoginState) {
+        if (state is ErrorLoginState) {
           showErrorToast(message:state.errorMsg);
         }
       },
       builder: (context, state) {
         return Scaffold(
-          appBar: sharedAppBar(context),
+          appBar: sharedAppBar(context: context,onTap: (){Navigator.pop(context);}),
           body: Center(
             child: SingleChildScrollView(
               child: Column(
@@ -111,7 +111,7 @@ class LoginScreen2 extends StatelessWidget {
               state is TimeOutSendSmsCodeLoginState
                   ?const TextSpan():
               TextSpan(
-                text: '${LoginCubit.get(context).second} ثانية',
+                text: ' ثانية',
                 style: reg14(context).copyWith(color: Theme.of(context).primaryColor,
                     decoration: state is TimeOutSendSmsCodeLoginState
                         ? TextDecoration.underline
@@ -201,7 +201,7 @@ class LoginScreen2 extends StatelessWidget {
             digitController2.text +
             digitController1.text;
         int cod = int.parse(code);
-         LoginCubit.get(context).verifyCode(code:cod,lang: MainSettingsCubit.get(context).languageCode);
+        // LoginCubit.get(context).verifyCode(code:cod,lang: MainSettingsCubit.get(context).languageCode);
 
       //  if(cod==LoginCubit.get(context).smsCode){navigateTo(context, const HomeScreen());}
       //  else{showErrorToast(message: 'wrong code');}

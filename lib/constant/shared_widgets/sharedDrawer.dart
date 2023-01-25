@@ -1,6 +1,9 @@
 import 'package:dowami/constant/extensions/media_extension.dart';
 import 'package:dowami/constant/extensions/round_extension.dart';
+import 'package:dowami/constant/shared_function/navigator.dart';
 import 'package:dowami/constant/text_style/text_style.dart';
+import 'package:dowami/features/login/cubit/login_cubit.dart';
+import 'package:dowami/features/register/presentation/pages/select_register_screen.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
 import 'package:flutter/material.dart';
 
@@ -44,32 +47,35 @@ Drawer sharedDrawer(BuildContext context,
               TextButton(
                   onPressed: () {},
                   child: Text('SETTINGD'.tr(context),
-                      style: eBold20(context))),
+                      style: eBold20(context).copyWith(color: Theme.of(context).primaryColor))),
               TextButton(
                   onPressed: () {},
                   child:
-                      Text('WALLET'.tr(context), style: eBold20(context))),
+                      Text('WALLET'.tr(context), style: eBold20(context).copyWith(color: Theme.of(context).primaryColor))),
               TextButton(
                   onPressed: () {},
                   child: Text('NOTIFICATION'.tr(context),
-                      style: eBold20(context))),
+                      style: eBold20(context).copyWith(color: Theme.of(context).primaryColor))),
               TextButton(
                   onPressed: () {},
                   child: Text('promotion'.tr(context),
-                      style: eBold20(context))),
+                      style: eBold20(context).copyWith(color: Theme.of(context).primaryColor))),
               TextButton(
                   onPressed: () {},
                   child: Text('Help Center'.tr(context),
-                      style: eBold20(context))),
+                      style: eBold20(context).copyWith(color: Theme.of(context).primaryColor))),
               TextButton(
                   onPressed: () {},
                   child:
-                      Text('SETTING'.tr(context), style: eBold20(context))),
+                      Text('SETTING'.tr(context), style: eBold20(context).copyWith(color: Theme.of(context).primaryColor))),
               Spacer(),
               TextButton(
-                      onPressed: () {},
+                      onPressed: ()async {
+                        LoginCubit.get(context).clearCache();
+                        navigateRem(context,const SelectLog());
+                      },
                       child: Text("Log out".tr(context),
-                          style: eBold20(context)))
+                          style: eBold20(context).copyWith(color: Theme.of(context).primaryColor)))
                   .paddingB(context, 0.03),
             ],
           ),

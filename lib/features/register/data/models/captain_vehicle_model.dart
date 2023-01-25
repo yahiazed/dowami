@@ -7,12 +7,14 @@ class CaptainVehicleModel extends Equatable {
   final String? boardNumber;
   final String? ownershipType;
   final String? captainId;
+  final String? carYear;
 
   const CaptainVehicleModel({
     this.carDataId,
     this.boardNumber,
     this.ownershipType,
     this.captainId,
+    this.carYear,
   });
 
   factory CaptainVehicleModel.fromMap(Map<String,dynamic> map){
@@ -21,26 +23,28 @@ class CaptainVehicleModel extends Equatable {
       boardNumber: map['board_number'],
       ownershipType: map['ownership_type'],
       captainId: map['captain_id'],
+      carYear: map['car_year'],
      );
   }
 
-  Map<String,dynamic> toMap(CaptainVehicleModel captainVehicleModel){
+  Map<String,dynamic> toMap( ){
     return
       {
-        'car_data_id':captainVehicleModel.carDataId,
-        'board_number':captainVehicleModel.boardNumber,
-        'ownership_type':captainVehicleModel.ownershipType,
-        'captain_id':captainVehicleModel.captainId,
+        'car_data_id':carDataId,
+        'board_number':boardNumber,
+        'ownership_type':ownershipType,
+        'captain_id':captainId,
+        'car_year':carYear,
       }
     ;
   }
 
 
 
-  String toJson(CaptainVehicleModel captainVehicleModel) => json.encode(toMap(captainVehicleModel));
+  String toJson(CaptainVehicleModel captainVehicleModel) => json.encode(toMap());
 
   factory CaptainVehicleModel.fromJson(String source) => CaptainVehicleModel.fromMap(json.decode(source));
 
   @override
-  List<Object?> get props => [carDataId];
+  List<Object?> get props => [carDataId,boardNumber,ownershipType,captainId,carYear];
 }

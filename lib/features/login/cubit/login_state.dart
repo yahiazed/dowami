@@ -42,14 +42,14 @@ class ErrorSendOtpLoginState extends LoginState {
 
 ///[2] Verify CODE     [StartVerifyCodeLoginState]
 
-class StartVerifyCodeLoginState extends LoginState {}
-class SuccessCodeLoginState extends LoginState {
+class StartLoginState extends LoginState {}
+class SuccessLoginState extends LoginState {
 
-  const SuccessCodeLoginState();
+  const SuccessLoginState();
 }
-class ErrorCodeLoginState extends LoginState {
+class ErrorLoginState extends LoginState {
   final String errorMsg;
-  const ErrorCodeLoginState({required this.errorMsg,});
+  const ErrorLoginState({required this.errorMsg,});
 }
 
 
@@ -63,3 +63,6 @@ class EndTimeDownLoginState extends LoginState {}
 class StartSaveDataState extends LoginState {}
 class SuccessSaveDataState extends LoginState {}
 class ErrorSaveDataState extends LoginState {}
+
+class StartShowPassState extends LoginState {}
+class EndShowPassState extends LoginState {}

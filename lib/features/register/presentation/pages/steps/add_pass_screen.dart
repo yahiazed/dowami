@@ -4,6 +4,8 @@ import 'package:dowami/constant/shared_colors/shared_colors.dart';
 import 'package:dowami/constant/shared_widgets/shared_appbar.dart';
 import 'package:dowami/constant/shared_widgets/shared_card_input.dart';
 import 'package:dowami/constant/text_style/text_style.dart';
+import 'package:dowami/features/main_settings/cubit/main_settings_cubit.dart';
+import 'package:dowami/features/register/cubit/register_cubit.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,30 +13,33 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../constant/shared_function/navigator.dart';
 import '../../../../../constant/shared_widgets/shard_elevated_button.dart';
 import '../../../../../constant/shared_widgets/toast.dart';
-import '../../../cubit/register_cubit.dart';
 import 'fill_data_screen.dart';
 
 class AddPasswordScreen extends StatelessWidget {
- // String phoneNumber;
 
-  AddPasswordScreen({super.key,// required this.phoneNumber
-  });
-  TextEditingController passController = TextEditingController();
-  TextEditingController rePassController = TextEditingController();
+
+  AddPasswordScreen({super.key,});
+
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
-      appBar: sharedAppBar(context),
-      body: Center(
-        child: Column(
-          children: [
-            _buildTopTexts(context),
-            _buildInputPassField(context, passController, rePassController),
-            _buildButton(context)
-          ],
-        ),
-      ),
+    return BlocConsumer<RegisterCubit, RegisterState>(
+        listener: (context, state) {},
+        builder: (context, state) {
+          var cubit=RegisterCubit.get(context);
+        return Scaffold(
+          appBar: sharedAppBar(context: context,onTap: (){Navigator.pop(context);}),
+          body: Center(
+            child: Column(
+              children: [
+                _buildTopTexts(context),
+                _buildInputPassField(context,cubit),
+                _buildButton(context,cubit: cubit)
+              ],
+            ),
+          ),
+        );
+      }
     );
 
 
@@ -44,9 +49,8 @@ class AddPasswordScreen extends StatelessWidget {
 
   Widget _buildInputPassField(
       BuildContext context,
-      TextEditingController passController,
-      TextEditingController rePassController) {
-    bool showPass=false;
+      RegisterCubit cubit) {
+
     return StatefulBuilder(
       builder: (context, setState)  {
 
@@ -55,15 +59,16 @@ class AddPasswordScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               sharedCardInput(context,
-                  controller: passController,
-                  isPassword: showPass,
+                  controller:cubit. passController,
+                  isPassword: cubit.showPass,
                   hintText: "enterPass".tr(context),
-                  hintStyle:med14(context).copyWith(color: Recolor.row2Color),
+                  hintStyle: med14(context).copyWith(color: Recolor.hintColor),
                   keyboardType: TextInputType.visiblePassword,
                   suffix: IconButton(
                       onPressed: () {
-                       setState((){showPass=!showPass;});
-                       print(showPass);
+                        cubit.onChangeShowPass(!cubit.showPass);
+
+
                       },
                       icon: Icon(
                         Icons.remove_red_eye,
@@ -75,19 +80,20 @@ class AddPasswordScreen extends StatelessWidget {
                   elevation: 12, radius: 7, shadowColor: const Color(0xffF6F6F6))
                   .paddingB(context, 0.02),
               sharedCardInput(context,
-                  controller: rePassController,
-                  isPassword: showPass,
+                  controller:cubit. rePassController,
+                  isPassword: cubit.showPass,
                   hintText: "erEnterPass".tr(context),
-                  hintStyle: med14(context).copyWith(color: Recolor.row2Color),
+                  hintStyle: med14(context).copyWith(color: Recolor.hintColor),
                   keyboardType:  TextInputType.visiblePassword,
                   suffix: IconButton(
                       onPressed: () {
-                        setState((){showPass=!showPass;});
+                        cubit.onChangeShowPass(!cubit.showPass);
                         },
                       icon: Icon(
                         Icons.remove_red_eye,
                         color: Recolor.rowColor,
-                      )))
+                      ))
+              )
                   .roundWidget(
                   width: .9.widthX(context), height: 0.070.heightX(context))
                   .cardAll(
@@ -111,27 +117,34 @@ class AddPasswordScreen extends StatelessWidget {
     ).paddingSV(context, 0.08);
   }
 
-  Widget _buildButton(BuildContext context) {
+  Widget _buildButton(BuildContext context,{required RegisterCubit cubit}) {
     return sharedElevatedButton(
       context: context,
       txt: 'next'.tr(context),
       radius: 9,
       verticalPadding: 0.023.heightX(context),
       horizontalPadding: 0.15.widthX(context),
-      textStyle: bold16(context).copyWith(color:Theme.of(context).primaryColor),
-      onPressed: () {
+      textStyle: bold16(context).copyWith(color: Theme.of(context).primaryColor),
+      onPressed: ()async {
 
-        if( passController.text==rePassController.text){
-          if( passController.text.isEmpty||rePassController.text.isEmpty){ showErrorToast(message:'enter passwords');return;}
-          BlocProvider.of<RegisterCubit>(context,listen: false).userPassword=passController.text;
+        if(cubit. passController.text==cubit.rePassController.text){
 
-    navigateTo(context, FillUserRegisterDataScreen(//phoneNumber: phoneNumber
-    ));
+          if(cubit. passController.text.isEmpty||cubit.rePassController.text.isEmpty){ showErrorToast(message:'enterPasswords'.tr(context));return;}
+          if(cubit. passController.text.length<7){ showErrorToast(message:'weakPassword'.tr(context));return;}
+
+          cubit.userPassword=cubit.passController.text;
+       // await  cubit.getCities(lang: MainSettingsCubit.get(context).languageCode);
+               navigateTo(context, FillUserRegisterDataScreen( ));
+
+
+
+
+
         }
 
 
         else {
-          showErrorToast(message:'passwords are no identical');return;
+          showErrorToast(message:'passNotIdentical'.tr(context));return;
 
         }
 

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class UserModel extends Equatable{
@@ -19,12 +20,14 @@ class UserModel extends Equatable{
  final String? userType;
  final String? iBAN;
  final String? avatar;
+ final String? email;
 
  final int? id;
- final String? lat;
- final String? long;
+
  final String? mobile;
  final String? publish;
+ final String? password;
+
 
   const UserModel(
       {this.firstName,
@@ -39,13 +42,16 @@ class UserModel extends Equatable{
       this.id,
       this.userType,
       this.iBAN,
-      this.lat,
-      this.long,
+      this.email,
+
       this.mobile,
       this.avatar,
       this.publish,
+      this.password,
+
 
       });
+
 
  Map<String, dynamic> toMap({required UserModel userModel}){
 
@@ -56,24 +62,28 @@ class UserModel extends Equatable{
        'nick_name':userModel.nickName,
        'national_id':userModel.nationalId,
        'birth_date':userModel.birthDate,
-       'city':userModel.city,
-       'area':userModel.area,
-       'district':userModel.district,
+       'city_id':userModel.city,
+       'area_id':userModel.area,
+       'district_id':userModel.district,
        'gender':userModel.gender,
        'id':userModel.id,
        'type':userModel.userType,
        'iban':userModel.iBAN,
-       'lat':userModel.lat,
-       'long':userModel.long,
+       'email':userModel.email,
+
        'mobile':userModel.mobile,
        'avatar':userModel.avatar,
        'publish':userModel.publish,
+       'password':userModel.password,
+
 
 
 
 
      };
  }
+
+
 
  factory UserModel.fromMap(Map<String, dynamic> map){
    return
@@ -83,24 +93,32 @@ class UserModel extends Equatable{
        nickName :map['nick_name'],
        nationalId :map['national_id'],
        birthDate:map['birth_date'],
-       city :map['city'],
-       area:map['area'],
-       district :map['district'],
+       city :map['city_id'],
+       area:map['area_id'],
+       district :map['district_id'],
        gender :map['gender'],
        id :map['id'],
        userType :map['type'],
        iBAN :map['iban'],
-       lat :map['lat'],
-       long :map['long'],
+       email :map['email'],
+
        mobile:map['mobile'],
        avatar:map['avatar'],
        publish:map['publish'],
+       password:map['password'],
+
 
 
      )
 
      ;
  }
+
+
+
+
+
+
 
 
  String toJson(UserModel userModel) => json.encode(toMap(userModel:userModel));
@@ -113,5 +131,35 @@ class UserModel extends Equatable{
 
 
   @override
-  List<Object?> get props => [firstName,fatherName,nickName,nationalId,birthDate,city,area,district,gender,id];
+  List<Object?> get props => [firstName,fatherName,nickName,nationalId,birthDate,city,area,district,gender,password,userType,];
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -6,24 +6,26 @@ import 'package:dowami/constant/shared_function/navigator.dart';
 import 'package:dowami/constant/shared_widgets/shared_appbar.dart';
 import 'package:dowami/constant/shared_widgets/toast.dart';
 import 'package:dowami/constant/text_style/text_style.dart';
+import 'package:dowami/features/forget_password/presentation/forget_pass_sent_otp.dart';
 import 'package:dowami/features/login/cubit/login_cubit.dart';
 import 'package:dowami/features/login/presentation/pages/login_screen2.dart';
 import 'package:dowami/features/main_settings/cubit/main_settings_cubit.dart';
 import 'package:dowami/features/register/presentation/pages/select_register_screen.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 
 import '../../../../constant/shared_widgets/shard_elevated_button.dart';
 import '../../../../constant/shared_widgets/shared_card_input.dart';
 import '../../../../constant/shared_widgets/shared_flag_item.dart';
+import '../../../home/presentation/pages/home_screen.dart';
 import '../../../register/presentation/pages/select_user_kind.dart';
 
 class LogInScreen1 extends StatelessWidget {
   LogInScreen1({super.key});
-  var phoneController = TextEditingController();
-  var passController = TextEditingController();
+
   var loginFormKey = GlobalKey<FormState>();
   String phoneCode = '+966';
 
@@ -31,21 +33,25 @@ class LogInScreen1 extends StatelessWidget {
   Widget build(BuildContext context) {
     return  BlocConsumer<LoginCubit, LoginState>(
         listener: (context, state) {
-          if (state is ErrorSendOtpLoginState) {
-            showErrorToast(message: state.errorMsg);
+          if (state is SuccessLoginState) {
+            print('saving');
+            LoginCubit.get(context).saveDataToPrefs();        }
 
+          if (state is SuccessSaveDataState) {
+            navigateTo(context, const HomeScreen());
           }
-          if (state is SuccessSendOtpLoginState) {
-            LoginCubit.get(context).smsCode = state.smsCode;
-            print('smscode======================${state.smsCode}');
-            navigateTo(context, LoginScreen2());
+          if (state is ErrorSaveDataState) {
+            showErrorToast(message:'error connection');
+          }
+          if (state is ErrorLoginState) {
+            showErrorToast(message:state.errorMsg);
           }
         },
         builder: (context, state) {
           var cubit = LoginCubit.get(context);
         return Scaffold(
           backgroundColor: Recolor.whiteColor,
-          appBar: sharedAppBar(context),
+          appBar: sharedAppBar(context: context,onTap: (){Navigator.pop(context);}),
           body: Center(
             child: Form(
               key: loginFormKey,
@@ -58,9 +64,22 @@ class LogInScreen1 extends StatelessWidget {
                     style: reg25(context),
                   ).paddingB(context, 0.03),
                   _buildPhoneInput(context),
+                  _buildPassInput( context),
 
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton(
+                        onPressed: () {
+                          navigateTo(context, ForgetPassSendOtp());
+                        },
+                        child: Text(
+                          'forgetPass'.tr(context),
 
+                          style: reg12(context).copyWith( decoration: TextDecoration.underline,color: Colors.blue),
+                        )),
+                  ),
                   _buildButton( context),
+
 
                   TextButton(
                       onPressed: () {
@@ -68,11 +87,7 @@ class LogInScreen1 extends StatelessWidget {
                       },
                       child: Text(
                         'OrCreateNew'.tr(context),
-                        style: TextStyle(
-                            fontFamily: 'Tajawal',
-                            fontSize: 13,
-                            color: Theme.of(context).canvasColor,
-                            decoration: TextDecoration.underline),
+                        style:reg12(context).copyWith(decoration: TextDecoration.underline,color: Colors.blue),
                       )),
                 ],
               ),
@@ -84,8 +99,12 @@ class LogInScreen1 extends StatelessWidget {
   }
   Widget _buildPhoneInput(BuildContext context) {
     return sharedCardInput(context,
-        controller: phoneController,
+        controller:LoginCubit.get(context). phoneController,
         hintText: 'enterPhone'.tr(context),
+        keyboardType: TextInputType.number,
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.digitsOnly
+        ],
         suffix: buildFlag(
           cCode: phoneCode,
           onTap: (p0) {
@@ -97,17 +116,56 @@ class LogInScreen1 extends StatelessWidget {
     // .paddingSH(context, 0.05)
         .paddingB(context, 0.04);
   }
+  Widget _buildPassInput(BuildContext context) {
+    return BlocConsumer<LoginCubit, LoginState>(
+        listener: (context, state) {
+
+        },
+        builder: (context, state) {
+        return sharedCardInput(context,
+            controller:LoginCubit.get(context). passController,
+            hintText: 'enterPass'.tr(context),
+            isPassword: LoginCubit.get(context).showPass,
+          keyboardType: TextInputType.text,
+          /*  inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.digitsOnly
+            ],*/
+            suffix:
+                IconButton(
+                    onPressed: () {
+                      print('lol');
+                      LoginCubit.get(context).onShowPass();
+                    },
+                    icon: Icon(
+                      Icons.remove_red_eye,
+                      color: Recolor.rowColor,
+                    )
+
+            )
+
+        )
+            .roundWidget(width: .9.widthX(context), height: 0.070.heightX(context))
+            .cardAll(elevation: 12, radius: 7, shadowColor: const Color(0xffF6F6F6))
+        // .paddingSH(context, 0.05)
+            .paddingB(context, 0.04);
+      }
+    );
+  }
   Widget _buildButton(BuildContext context) {
     return sharedElevatedButton(
       context: context,
 
       onPressed: () {
-        if (!loginFormKey.currentState!.validate()) {showErrorToast(message: 'enter phone');}
+        if (!loginFormKey.currentState!.validate()) {showErrorToast(message: 'enterPhone'.tr(context));}
 
         LoginCubit.get(context).phoneCode = phoneCode;
-        LoginCubit.get(context).phoneNumber = phoneController.text;
-        LoginCubit.get(context).sendOtp(phoneNum: //phoneCode +
-            phoneController.text,lang: MainSettingsCubit.get(context).languageCode);
+        LoginCubit.get(context).phoneNumber = LoginCubit.get(context).phoneController.text;
+        LoginCubit.get(context).password = LoginCubit.get(context).passController.text;
+        LoginCubit.get(context).login(
+
+            lang: MainSettingsCubit.get(context).languageCode,
+
+        );
 
       },
         txt: "goon".tr(context),
@@ -122,30 +180,5 @@ class LogInScreen1 extends StatelessWidget {
   }
 
 
-  // CountryPickerDropdown buildFlag() {
-  //   return CountryPickerDropdown(
-  //     initialValue: 'SA',
-  //     icon: Icon(Icons.keyboard_arrow_down_rounded),
-  //     itemBuilder: _buildDropdownItem,
-  //     itemFilter: (c) =>
-  //         ['SA', 'AE', 'EG', 'OM', 'KW', 'QA'].contains(c.isoCode),
-  //     priorityList: [
-  //       CountryPickerUtils.getCountryByIsoCode('SA'),
-  //       CountryPickerUtils.getCountryByIsoCode('AE'),
-  //     ],
-  //     sortComparator: (Country a, Country b) => a.isoCode.compareTo(b.isoCode),
-  //     onValuePicked: (Country country) {
-  //       print("${country.name}");
-  //     },
-  //   );
-  // }
 
-  // Widget _buildDropdownItem(Country country) => Container(
-  //       child: Row(
-  //         children: <Widget>[
-  //           CountryPickerUtils.getDefaultFlagImage(country),
-  //           Text("+${country.phoneCode}"),
-  //         ],
-  //       ),
-  //     );
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dowami/constant/extensions/media_extension.dart';
+import 'package:dowami/constant/extensions/round_extension.dart';
 import 'package:dowami/constant/shared_colors/shared_colors.dart';
 import 'package:dowami/constant/shared_widgets/shard_elevated_button.dart';
 import 'package:dowami/constant/shared_widgets/shared_appbar.dart';
@@ -25,26 +26,26 @@ class OpenLocationDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: sharedAppBar(context),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              flex:7,
-              child: _buildGoogleMap(),),
+     // appBar: sharedAppBar(context),
+      body: Column(
+        children: [
+          Expanded(
+            flex:7,
+            child: _buildGoogleMap(),),
 
-            Expanded(
-              flex: 1,
-              child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  saveButton2(context),
-                  closeButton2(context)
-                ],
-              ),
-            )
-          ],
-        ),
+          Expanded(
+            flex: 1,
+            child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                saveButton2(context),
+                closeButton2(context)
+              ],
+            ),
+          )
+        ],
       ),
+    ).roundWidget(
+        radius: 20
     );
   }
 
@@ -53,20 +54,29 @@ class OpenLocationDialog extends StatelessWidget {
     return BlocConsumer<MapCubit, MapState>(
         listener:  (context, state){},
         builder:  (context, state) {
+          var cubit=MapCubit.get(context);
           return StatefulBuilder(
               builder: (context,setState) {
                 return GoogleMap(
                   mapType: MapType.normal,
                   initialCameraPosition: CameraPosition(
-                    target:  MapCubit.get(context).myLatLong!,
+                    target:  cubit.myLatLong!,
                     zoom: 18.4746,),
                   onMapCreated: (GoogleMapController controller) {_controller.complete(controller);},
-                  onTap: (L){
-                    setState(() {MapCubit.get(context).myLatLong=L;});
-
-
-                  },
-                  markers: {Marker(markerId: const MarkerId('m'), position: MapCubit.get(context).myLatLong!,)},
+                  onTap: (L){setState(() {cubit.myLatLong=L;});},
+                  myLocationEnabled: true,
+                  markers: {Marker(markerId: const MarkerId('m'), position: cubit.myLatLong!,)},
+                  circles: {
+                    Circle(
+                        circleId: const CircleId('gg'),
+                        radius: 20,
+                        fillColor: Colors.amber.withOpacity(.3),
+                        visible: true,
+                        center: cubit.myLatLong!,
+                        strokeColor: Colors.white,
+                        strokeWidth: 1,
+                        onTap: (){}
+                    )},
 
 
                 );
@@ -131,13 +141,21 @@ Future<LatLng?> openLocationDialog(context)async{
   if(!locationEnable){return null;}
   await Geolocator.getCurrentPosition().then((value) =>
   MapCubit.get(context).myLatLong=
-      const LatLng(30.592153682326554, 31.52264703065157)
-     // LatLng(value.latitude,value.longitude)
+      //const LatLng(30.592153682326554, 31.52264703065157)
+      LatLng(value.latitude,value.longitude)
 
   );
 
 
-  return await  showDialog<LatLng>(context: context, builder: (context) =>Dialog(child: OpenLocationDialog(),));
+  return await  showDialog<LatLng>(
+
+      context: context, builder: (context) =>Dialog(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            child: OpenLocationDialog()
+  ),
+
+
+  );
 
 
 

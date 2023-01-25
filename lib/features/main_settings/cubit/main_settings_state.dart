@@ -13,6 +13,8 @@ abstract class MainSettingsState extends Equatable {
 }
 
 class MainSettingsInitial extends MainSettingsState {}
+class StartingPageState extends MainSettingsState {}
+class EndStartingPageState extends MainSettingsState {}
 
 
 
@@ -39,3 +41,5 @@ class EndGetLanguageState extends MainSettingsState {}
 
 class StartChangeLanguageState extends MainSettingsState {}
 class EndChangeLanguageState extends MainSettingsState {}
+
+

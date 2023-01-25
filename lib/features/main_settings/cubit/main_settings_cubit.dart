@@ -31,10 +31,16 @@ class MainSettingsCubit extends Cubit<MainSettingsState> {
   String? splashScreen;
 
 Locale? language;
-String languageCode='ar0';
+String languageCode='ar';
 
 
-
+  onStartPage(bool value){
+    if(value){
+      emit(StartingPageState());
+      debugPrint('start');
+      emit(EndStartingPageState());
+      debugPrint('end');
+    }}
 
   getMainSettings({required String lang} ) async {
     emit(StartGetSettingsState());
@@ -81,6 +87,11 @@ onChangeLanguage(String value)async{
 
 
 
+}
+
+
+
+
 
 
   String _mapFailureToMessage(Failure failure) {
@@ -100,4 +111,3 @@ onChangeLanguage(String value)async{
 
 
 
-}

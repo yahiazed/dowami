@@ -58,18 +58,20 @@ abstract class RegisterState extends Equatable {
 
 
 class RegisterInitial extends RegisterState {}
+class StartingPageState extends RegisterState {}
+class EndStartingPageState extends RegisterState {}
 
 
 
-///[1] Send OTP                  [StartSendOtpState]
-///[2] Verify CODE            [StartVerifyCodeState]
-///[3] Timer                 [StartTimeDownState]
-///[4] Pick Image            [StartPickImageState]
-///[5] gender              [StartChangeGenderRadioState]
-///[6] date                  [StartSelectDateState]
-///[7] location              [StartPermissionsLocationState]
-///[8] terms       [StartChangeAcceptTermsState]
-///[9] sendProfileData       [StartSendProfileDataState]
+///[1] Send OTP                                                     [StartSendOtpState]
+///[2] Verify CODE                                               [StartVerifyCodeState]
+///[3] Timer                                                    [StartTimeDownState]
+///[4] Pick Image                                               [StartPickImageState]
+///[5] gender                                                 [StartChangeGenderRadioState]
+///[6] date                                                     [StartSelectDateState]
+///[7] Address(city,area,district) and location              [StartPermissionsLocationState]
+///[8] terms                                                  [StartChangeAcceptTermsState]
+///[9] sendProfileData                                        [StartSendProfileDataState]
 
 
 
@@ -87,6 +89,19 @@ class ErrorSendOtpState extends RegisterState {
   final String errorMsg;
 
   const ErrorSendOtpState({required this.errorMsg});
+}
+//-----------
+
+///[1] Send OTP
+class StartResendOtpState extends RegisterState {}
+class SuccessResendOtpState extends RegisterState {
+  final int smsCode;
+  const SuccessResendOtpState({required this.smsCode,});
+}
+class ErrorResendOtpState extends RegisterState {
+  final String errorMsg;
+
+  const ErrorResendOtpState({required this.errorMsg});
 }
 //-----------
 
@@ -132,12 +147,43 @@ class EndChangeGenderRadioState extends RegisterState {}
 //-----
 
 
-///[7] location
-class StartPermissionsLocationState extends RegisterState {}
-class SuccessPermissionsLocationState extends RegisterState {}
-class ErrorPermissionsLocationState extends RegisterState {
+///[7] Address and location
+
+
+class StartGetCitiesState extends RegisterState {}
+class SuccessGetCitiesState extends RegisterState {
+  final List<City>cities;
+  const SuccessGetCitiesState({required this.cities});
+}
+class ErrorGetCitiesState extends RegisterState {
   final String errorMsg;
-  const ErrorPermissionsLocationState({required this.errorMsg});
+
+
+  const ErrorGetCitiesState({required this.errorMsg });
+}
+
+class StartGetAreasState extends RegisterState {}
+class SuccessGetAreasState extends RegisterState {
+  final List<Area>areas;
+  const SuccessGetAreasState({required this.areas});
+}
+class ErrorGetAreasState extends RegisterState {
+  final String errorMsg;
+
+
+  const ErrorGetAreasState({required this.errorMsg });
+}
+
+class StartGetDistrictsState extends RegisterState {}
+class SuccessGetDistrictsState extends RegisterState {
+  final List<District>districts;
+  const SuccessGetDistrictsState({required this.districts});
+}
+class ErrorGetDistrictsState extends RegisterState {
+  final String errorMsg;
+
+
+  const ErrorGetDistrictsState({required this.errorMsg });
 }
 //-----
 
@@ -169,7 +215,16 @@ class ErrorProfileDataState extends RegisterState {
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------
 
+///select Address<City,Area,District>
 
+class StartSelectCityState extends RegisterState {}
+class EndSelectCityState extends RegisterState {}
+
+class StartSelectAreaState extends RegisterState {}
+class EndSelectAreaState extends RegisterState {}
+
+class StartSelectDistrictState extends RegisterState {}
+class EndSelectDistrictState extends RegisterState {}
 
 
 
@@ -297,3 +352,26 @@ class EndSelectExpiredDateState extends RegisterState {
 
   const EndSelectExpiredDateState();
 }
+
+
+///[10] get  Doc status
+class StartGetDocStatusState extends RegisterState {}
+class SuccessGetDocStatusState extends RegisterState {
+
+  const SuccessGetDocStatusState();
+}
+class ErrorGetDocStatusState extends RegisterState {
+  final String errorMsg;
+
+
+  const ErrorGetDocStatusState({required this.errorMsg});
+}
+//----------
+
+class SuccessSendAllDocState extends RegisterState {}
+
+class SuccessGetAllDocStatusState extends RegisterState {}
+
+
+class StartChangeShowPassState extends RegisterState {}
+class EndChangeShowPassState extends RegisterState {}

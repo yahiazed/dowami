@@ -6,6 +6,7 @@ import 'package:dowami/core/errors/failure.dart';
 import 'package:dowami/features/login/data/repositories/login_repository.dart';
 import 'package:dowami/features/register/data/models/user_model.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,12 +18,16 @@ class LoginCubit extends Cubit<LoginState> {
   static LoginCubit get(context) => BlocProvider.of(context);
   final LoginRepo repo;
 
+
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController passController = TextEditingController();
+
   bool isAcceptTerms = false;
   String phoneCode = '';
   int smsCode = 0;
   String phoneNumber = '';
-  int second = 50;
-  late Timer timer;
+  String password = '';
+
 
   bool isCaptain=false;
   String? token;
@@ -31,14 +36,20 @@ class LoginCubit extends Cubit<LoginState> {
 
  int? userId;
   UserModel? userData;
+bool showPass=true;
 
 
+onShowPass(){
+  emit(StartShowPassState());
+  showPass=!showPass;
+  emit(EndShowPassState());
+}
 
 
   sendOtp({required String phoneNum,required String lang}) async {
     emit(StartSendOtpLoginState());
-    timerCutDown();
-    second = 50;
+
+
     final failureOrSmsCode = await repo.sendOtpLogin(phone: phoneNum,lang: lang);
 
     emit(_mapFailureOrSmsCodeToLoginState(failureOrSmsCode));
@@ -51,31 +62,36 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
 
-  verifyCode({required int code,required String lang}) async {
-    emit(StartVerifyCodeLoginState());
+  login({required String lang}) async {
+    emit(StartLoginState());
     print(phoneCode);
     print(phoneNumber);
-    final checkCode = await repo.verifyCodeLogin(
-      code: code, phoneNum: //phoneCode +
-        phoneNumber,lang: lang);
-    emit(_mapFailureOrCodeTrueLoginState(checkCode));
+    final loginRes = await repo.login(
+       phoneNum:
+       phoneNumber.contains('+')?phoneNumber: phoneCode + phoneNumber,
+      lang: lang,
+      password: password
+
+    );
+    emit(_mapFailureLoginState(loginRes));
   }
 
-  LoginState _mapFailureOrCodeTrueLoginState(Either<Failure, Map<String,dynamic>> either) {
+  LoginState _mapFailureLoginState(Either<Failure, Map<String,dynamic>> either) {
     return either.fold(
-          (failure) => ErrorCodeLoginState(errorMsg: _mapFailureToMessage(failure)),
-          (map) {timer.cancel();
+          (failure) => ErrorLoginState(errorMsg: _mapFailureToMessage(failure)),
+          (map) {
 
             token=map['token'];
             userId=map['user_id'];
           userData=UserModel.fromMap(map['user']);
 
-           // print('token =  $token');
-           // print('user_id =  $userId');
-           // print('user =  $userData');
-          saveDataToPrefs();
-
-            return const SuccessCodeLoginState();} ,
+            print('token =  $token');
+            print('user_id =  $userId');
+            print('user =  $userData');
+         // saveDataToPrefs();
+            phoneController.clear();
+            passController.clear();
+            return const SuccessLoginState();} ,
     );
   }
 
@@ -87,14 +103,20 @@ class LoginCubit extends Cubit<LoginState> {
     emit(StartSaveDataState());
   final prefs = await SharedPreferences.getInstance();
   if(userData==null||token==null||userId==null){
+    print('save error');
     emit(ErrorSaveDataState());
 
   }
   else{
     await prefs.setString('user', const UserModel().toJson(userData!));
     await prefs.setString('token',token!);
+    await prefs.setString('phoneNumber',phoneCode+phoneNumber);
+    await prefs.setString('password',password);
+    await prefs.setString('phoneCode',phoneCode);
     await prefs.setInt('user_id',userId!);
+    print('save success');
     emit(SuccessSaveDataState());
+
 
   }
 
@@ -107,19 +129,40 @@ Future<bool> getDataFromPrefs()async{
   var userData1=  prefs.getString('user');
   var userId1=  prefs.getInt('user_id');
   var token1=  prefs.getString('token');
-  if(userData1==null||token1==null||userId1==null){
+  var phoneNumber1=  prefs.getString('phoneNumber');
+  var password1=  prefs.getString('password');
+  var phoneCode1=  prefs.getString('phoneCode');
+  if(userData1==null||token1==null||userId1==null||phoneNumber1==null||password1==null||phoneCode1==null){
     return false;
   }
   else{
     userData=UserModel.fromJson(userData1);
     userId=userId1;
     token=token1;
+    phoneNumber=phoneNumber1;
+    password=password1;
+    phoneCode=phoneCode1;
 
     print(userId);
     print(UserModel.fromJson(userData1).nickName!);
     print(token);
+    print(phoneNumber);
+    print(password);
     return true;
   }
+
+}
+ clearCache()async{
+  final prefs = await SharedPreferences.getInstance();
+prefs.remove('token');
+prefs.remove('user_id');
+prefs.remove('phoneNumber');
+prefs.remove('password');
+prefs.remove('phoneCode');
+
+token=null;
+userId=null;
+
 
 }
 
@@ -146,18 +189,6 @@ Future<bool> getDataFromPrefs()async{
 
 
 
-  void timerCutDown() {
-    timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (second <= 0) {
-        timer.cancel();
-        emit(TimeOutSendSmsCodeLoginState());
-      }else{
-        emit(StartTimeDownLoginState());
-        second--;
-        emit(EndTimeDownLoginState());
-      }
-    });
 
-  }
 
 }

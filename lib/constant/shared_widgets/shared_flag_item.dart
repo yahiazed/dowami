@@ -8,27 +8,28 @@ CountryPickerDropdown buildFlag(
   return CountryPickerDropdown(
     initialValue: 'SA',
     icon: const Icon(Icons.keyboard_arrow_down_rounded),
+
     itemBuilder: _buildDropdownItem,
     itemFilter: (c) => ['SA', 'AE', 'EG', 'OM', 'KW', 'QA'].contains(c.isoCode),
     priorityList: [
       CountryPickerUtils.getCountryByIsoCode('SA'),
       CountryPickerUtils.getCountryByIsoCode('AE'),
     ],
+    dropdownColor: Colors.white,
+
     sortComparator: (Country a, Country b) => a.isoCode.compareTo(b.isoCode),
     onValuePicked: onTap ??
         (Country country) {
-          print("${country.name}");
+         // print(country.name);
           cCode = country.phoneCode;
-          print(cCode);
+         // print(cCode);
         },
   );
 }
 
-Widget _buildDropdownItem(Country country) => Container(
-      child: Row(
-        children: <Widget>[
-          CountryPickerUtils.getDefaultFlagImage(country),
-          Text("+${country.phoneCode}"),
-        ],
-      ),
-    );
+Widget _buildDropdownItem(Country country) => Row(textDirection: TextDirection.rtl,
+  children: <Widget>[
+    CountryPickerUtils.getDefaultFlagImage(country),
+    Text("+${country.phoneCode}"),
+  ],
+);

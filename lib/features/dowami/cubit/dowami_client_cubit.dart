@@ -6,6 +6,7 @@ import 'package:dowami/features/dowami/data/models/dowami_job_model.dart';
 
 import 'package:dowami/features/dowami/cubit/dowami_client_state.dart';
 import 'package:dowami/features/dowami/data/repositories/dowami_client_repository.dart';
+import 'package:dowami/features/dowami/presentation/dowami_client/pages/home_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -29,11 +30,28 @@ class DowamiClientCubit extends Cubit<DowamiClientState> {
   List<String>selectedDaysIds=[];
 
   String selectedSize='Sedan';
+  List<DowamiJobModel> canceledRequests=[];
+  List<DowamiJobModel> activatedRequests=[];
+  List<DowamiJobModel> offeringRequests=[];
+
+  Widget pagePreview=DowamiClientHomePreview();
 
 
+  onStartPage(bool value){
+    if(value){
+      emit(StartingPageState());
+      debugPrint('start');
+      emit(EndStartingPageState());
+      debugPrint('end');
+    }}
+  onChangePreview(Widget newPagePreview){
+
+      emit(StartingChangePagePreviewState());
+      pagePreview=newPagePreview;
+      emit(EndChangePagePreviewState());
 
 
-
+  }
 
   ///{1}------------------------------------------------------------------------
   makeJobDowami({required DowamiJobModel dowamiJobModel,required String token,required String lang}) async {
@@ -46,14 +64,75 @@ class DowamiClientCubit extends Cubit<DowamiClientState> {
   DowamiClientState _makeJobToState(Either<Failure, Unit> either) {
     return either.fold(
           (failure) => ErrorMakeJobState(errorMsg: _failureToMessage(failure),errorModel:(failure as DioResponseFailure).errorModel! ),
-          (lol) => const SuccessMakeJobState(),
+          (lol) =>  SuccessMakeJobState(),
     );
   }
 
 
+
+
+  ///{1}------------------------------------------------------------------------
+  getAllCanceledRequests({required String token,required String lang}) async {
+    emit(StartGetAllCanceledRequestsState());
+    final getAllCanceledRequestsResponse  = await repo.getAllCanceledRequests(token: token,lang:lang );
+    emit(_getAllCanceledRequestsToState(getAllCanceledRequestsResponse));
+  }
+
+
+  DowamiClientState _getAllCanceledRequestsToState(Either<Failure, List<DowamiJobModel>> either) {
+    return either.fold(
+          (failure) => ErrorGetAllCanceledRequestsState(errorMsg: _failureToMessage(failure),  ),
+          (canceledRequests) {
+              this.canceledRequests=canceledRequests;
+              return SuccessGetAllCanceledRequestsState();}
+    );
+  }
+
+
+  ///{2}------------------------------------------------------------------------
+  getAllActivatedRequests({required String token,required String lang}) async {
+    emit(StartGetAllActivatedRequestsState());
+     final getAllActivatedRequestsResponse =await repo.getAllActivatedRequests( token: token,lang:lang );
+     emit(_getAllActivatedRequestsToState(getAllActivatedRequestsResponse));
+  }
+
+
+  DowamiClientState _getAllActivatedRequestsToState(Either<Failure, List<DowamiJobModel>> either) {
+    return either.fold(
+            (failure) => ErrorGetAllActivatedRequestsState(errorMsg: _failureToMessage(failure),  ),
+            (activatedRequests) {
+          this.activatedRequests=activatedRequests;
+          return SuccessGetAllActivatedRequestsState();}
+    );
+  }
+
+
+
+  ///{3}------------------------------------------------------------------------
+  getAllOfferingRequests({required String token,required String lang}) async {
+    emit(StartGetAllOfferingRequestsState());
+     final getAllOfferingRequestsResponse= await repo.getAllOfferingRequests( token: token,lang:lang );
+     emit(_getAllOfferingRequestsToState(getAllOfferingRequestsResponse));
+  }
+
+
+  DowamiClientState _getAllOfferingRequestsToState(Either<Failure, List<DowamiJobModel>> either) {
+    return either.fold(
+            (failure) => ErrorGetAllOfferingRequestsState(errorMsg: _failureToMessage(failure),  ),
+            (offeringRequests) {
+          this.offeringRequests=offeringRequests;
+          return SuccessGetAllOfferingRequestsState();}
+    );
+  }
+
+
+
+
+
+
   onChangeMakeDowami(){
     emit(StartMakeJobState());
-    emit(const SuccessMakeJobState());
+    emit( SuccessMakeJobState());
   }
 
 
@@ -97,6 +176,13 @@ onChangeIsGoingAndComing(value){
   onChangeCarSize(String value){
     emit(StartChangeCarSizeState());
     selectedSize=value;
+    emit(EndChangeCarSizeState());
+  }
+
+  bool expansionValue=false;
+  onChangeExpansion(bool value){
+    emit(StartChangeCarSizeState());
+    expansionValue=value;
     emit(EndChangeCarSizeState());
   }
 

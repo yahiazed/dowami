@@ -8,7 +8,8 @@ abstract class DowamiCaptainState extends Equatable {
 }
 
 class DowamiCaptainInitial extends DowamiCaptainState {}
-
+class StartingPageState extends DowamiCaptainState {}
+class EndStartingPageState extends DowamiCaptainState {}
 
 
 

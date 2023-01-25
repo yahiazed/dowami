@@ -8,8 +8,7 @@ import 'package:dowami/helpers/localization/app_localization.dart';
 import 'package:dowami/features/register/presentation/pages/steps/register_verify_code.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../constant/shared_colors/shared_colors.dart';
@@ -44,7 +43,7 @@ class RegisterSendOtpScreen extends StatelessWidget {
       builder: (context, state) {
         var cubit = RegisterCubit.get(context);
         return Scaffold(
-          appBar: sharedAppBar(context),
+          appBar: sharedAppBar(context: context,onTap: (){Navigator.pop(context);}),
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -75,11 +74,16 @@ class RegisterSendOtpScreen extends StatelessWidget {
       verticalPadding: 0.023.heightX(context),
       horizontalPadding: 0.2.widthX(context),
       textStyle:bold16(context).copyWith(color: Theme.of(context).primaryColor),
-      onPressed: () {
+      onPressed: ()async {
         RegisterCubit.get(context).phoneCode = phoneCode;
         RegisterCubit.get(context).phoneNumber = phoneController.text;
 
-        RegisterCubit.get(context).sendOtp(phoneNum: phoneCode + phoneController.text, lang: MainSettingsCubit.get(context).languageCode);
+        if(RegisterCubit.get(context).second!=0){navigateTo(context, RegisterVerifyCodeScreen());}
+        else{
+          await  RegisterCubit.get(context).sendOtp(phoneNum: phoneCode + phoneController.text, lang: MainSettingsCubit.get(context).languageCode);
+        }
+
+
       },
     );
   }
@@ -116,6 +120,9 @@ class RegisterSendOtpScreen extends StatelessWidget {
     return sharedCardInput(context,
             controller: phoneController,
             hintText: 'enterPhone'.tr(context),
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.digitsOnly
+        ],
             suffix: buildFlag(
               cCode: phoneCode,
               onTap: (p0) {

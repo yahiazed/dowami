@@ -14,6 +14,7 @@ Widget sharedCardInput(context,
         TextStyle? txtStyle,
         Widget? suffix,
         bool? isPassword,
+        bool? readOnly,
         FocusNode? focusNode,
         TextAlign? textAlign,
         TextInputAction? textInputAction,
@@ -23,7 +24,7 @@ Widget sharedCardInput(context,
         String? Function(String?)? validator}) =>
     TextFormField(
       controller: controller,
-      keyboardType: keyboardType ?? TextInputType.number,
+      keyboardType: keyboardType ?? TextInputType.text,
       obscureText: isPassword ?? false,
       style: txtStyle ?? reg18Pop(),
       textAlign: textAlign ?? TextAlign.start,
@@ -40,6 +41,7 @@ Widget sharedCardInput(context,
       ),
       onTap: onTap,
       onChanged: onChanged,
+      readOnly:readOnly??false ,
       validator: validator ??
           (value) {
             if (value != null && value.isNotEmpty) {
@@ -61,13 +63,17 @@ Widget sharedUnderLineInput(context,
         TextStyle? labelStyle,
         Widget? suffix,
         bool? isPassword,
+          bool? readOnly,
         TextAlign? textAlign,
+          void Function()? onTap,
+          List<TextInputFormatter>? inputFormatters,
         String? Function(String?)? validator}) =>
     TextFormField(
       controller: controller,
       keyboardType: keyboardType ?? TextInputType.text,
       obscureText: isPassword ?? false,
       textAlign: textAlign ?? TextAlign.start,
+      inputFormatters: inputFormatters,
       decoration: InputDecoration(
         border: UnderlineInputBorder(
             borderSide: BorderSide(color: Recolor.underLineColor)),
@@ -79,11 +85,13 @@ Widget sharedUnderLineInput(context,
         labelText: labelText,
         suffixIcon: suffix,
       ),
+      readOnly:readOnly ?? false ,
+      onTap: onTap,
       validator: validator ??
           (value) {
-            if (value != null && value.isNotEmpty)
+            if (value != null && value.isNotEmpty) {
               return null;
-            else {
+            } else {
               return 'Invalid'.tr(context);
             }
           },

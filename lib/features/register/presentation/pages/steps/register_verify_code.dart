@@ -7,6 +7,7 @@ import 'package:dowami/constant/shared_widgets/shared_card_input.dart';
 import 'package:dowami/constant/shared_widgets/toast.dart';
 import 'package:dowami/features/main_settings/cubit/main_settings_cubit.dart';
 import 'package:dowami/features/register/cubit/register_cubit.dart';
+import 'package:dowami/features/register/presentation/pages/steps/add_pass_screen.dart';
 import 'package:dowami/features/register/presentation/pages/steps/fill_data_screen.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
 import 'package:flutter/gestures.dart';
@@ -39,31 +40,43 @@ class RegisterVerifyCodeScreen extends StatelessWidget {
     return BlocConsumer<RegisterCubit, RegisterState>(
       listener: (context, state) {
         if (state is SuccessCodeState) {
-          navigateTo(context, FillUserRegisterDataScreen());}
+          navigateRep(context, AddPasswordScreen());}
         if (state is ErrorCodeState) {
           showErrorToast(message:state.errorMsg);
+        }
+        if (state is ErrorResendOtpState) {
+          showErrorToast(message: state.errorMsg);
+
+        }
+        if (state is SuccessResendOtpState) {
+          RegisterCubit.get(context).smsCode = state.smsCode;
+          print('smscode======================${state.smsCode}');
+
         }
       },
       builder: (context, state) {
         return Scaffold(
-          appBar: sharedAppBar(context),
+          appBar: sharedAppBar(context: context,onTap: (){Navigator.pop(context);}),
           body: Center(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _build4LineText(context,RegisterCubit.get(context)),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildPinCodeItem(context, digitController1, nod1),
-                    _buildPinCodeItem(context, digitController2, nod2),
-                    _buildPinCodeItem(context, digitController3, nod3),
-                    _buildPinCodeItem(context, digitController4, nod4),
-                    _buildPinCodeItem(context, digitController5, nod5),
-                    _buildPinCodeItem(context, digitController6, nod6),
-                  ],
-                ).paddingB(context, 0.05),
+                Directionality(
+                  textDirection: Localizations.localeOf(context).languageCode=='en' ? TextDirection.rtl :TextDirection.rtl,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildPinCodeItem(context, digitController1, nod1),
+                      _buildPinCodeItem(context, digitController2, nod2),
+                      _buildPinCodeItem(context, digitController3, nod3),
+                      _buildPinCodeItem(context, digitController4, nod4),
+                      _buildPinCodeItem(context, digitController5, nod5),
+                      _buildPinCodeItem(context, digitController6, nod6),
+                    ],
+                  ).paddingB(context, 0.05),
+                ),
                 _buildResendTextButton(context, state),
                 _buildCodeSms(context),
                 _buildButton(context)
@@ -74,6 +87,7 @@ class RegisterVerifyCodeScreen extends StatelessWidget {
       },
     );
   }
+
   Widget _buildCodeSms(context){
     return Text(RegisterCubit.get(context).smsCode.toString()
     ).paddingSV(context, 0.01);
@@ -85,7 +99,7 @@ class RegisterVerifyCodeScreen extends StatelessWidget {
     return InkWell(
       onTap: state is TimeOutSendSmsCodeState
           ? () {
-              cubit.sendOtp(phoneNum: cubit.phoneCode + cubit.phoneNumber, lang: MainSettingsCubit.get(context).languageCode);
+              cubit.resendOtp(phoneNum: cubit.phoneCode + cubit.phoneNumber, lang: MainSettingsCubit.get(context).languageCode);
             }
           : null,
       child: Center(

@@ -5,23 +5,20 @@ import 'package:equatable/equatable.dart';
 class UserDocModel extends Equatable {
   final String? docId;
   final String? userId;
-  final String? expiredDate;
-  final String? idNumber;
+
 
 
   const UserDocModel({
     this.docId,
     this.userId,
-    this.expiredDate,
-    this.idNumber,
+
   });
 
   factory UserDocModel.fromMap(Map<String,dynamic> map){
     return UserDocModel(
       docId: map['document_id'],
       userId: map['user_id'],
-      expiredDate: map['expire_date'],
-      idNumber: map['id_number'],
+
     );
   }
 
@@ -30,8 +27,7 @@ class UserDocModel extends Equatable {
       {
         'document_id':userDocModel.docId,
         'user_id':userDocModel.userId,
-        'expire_date':userDocModel.expiredDate,
-        'id_number':userDocModel.idNumber,
+
       }
     ;
   }

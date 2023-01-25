@@ -3,15 +3,18 @@ import 'package:dowami/constant/extensions/media_extension.dart';
 import 'package:dowami/constant/extensions/round_extension.dart';
 import 'package:dowami/constant/shared_colors/shared_colors.dart';
 import 'package:dowami/constant/shared_function/navigator.dart';
+import 'package:dowami/constant/shared_widgets/loading_widget.dart';
 import 'package:dowami/constant/shared_widgets/shard_elevated_button.dart';
 import 'package:dowami/constant/shared_widgets/shared_appbar.dart';
 import 'package:dowami/constant/shared_widgets/shared_card_input.dart';
 import 'package:dowami/constant/shared_widgets/toast.dart';
+import 'package:dowami/features/home/presentation/pages/home_screen.dart';
 import 'package:dowami/features/main_settings/cubit/main_settings_cubit.dart';
 import 'package:dowami/features/register/data/models/captain_vehicle_model.dart';
 import 'package:dowami/features/register/cubit/register_cubit.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,19 +27,31 @@ class CarRegisterScreen extends StatelessWidget {
   var manufactureController = TextEditingController();
   var vehicleNameController = TextEditingController();
   var yearOfReleaseController = TextEditingController();
-  var plateNumberController = TextEditingController();
+  var plateNumber1Controller = TextEditingController();
+  var plateNumber2Controller = TextEditingController();
   var carRegisterFormKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<RegisterCubit, RegisterState>(
+     /* listenWhen: (previous, current) =>
+      current is SuccessSendCaptainVehicleDataState
+          || current is ErrorSendCaptainVehicleDataState
+          || current is EndStartingPageState
+          ||current is SuccessGetCarsModelsState,
+      buildWhen: (previous, current) =>
+      current is SuccessSendCaptainVehicleDataState
+          ||current is ErrorSendCaptainVehicleDataState
+          ||current is EndStartingPageState
+          ||current is SuccessGetCarsModelsState,*/
+
       listener: (context, state) {
-        //if(state is RegisterState){ RegisterCubit.get(context).getCarsModels();}
+        if(state is EndStartingPageState){
+          print('getting CarsModels');
+          RegisterCubit.get(context).getCarsModels(lang: MainSettingsCubit.get(context).languageCode) ;
 
-        if(state is SuccessGetCarsModelsState){
-          print(state.cars);
+
         }
-
 
         if(state is SuccessSendCaptainVehicleDataState){
           RegisterCubit.get(context).getRequiredDocs( lang: MainSettingsCubit.get(context).languageCode);
@@ -47,46 +62,73 @@ class CarRegisterScreen extends StatelessWidget {
         showErrorToast(message:state.errorMsg );
 
         }
+        if(state is ErrorGetCarsModelsState){
+          showErrorToast(message: state.errorMsg);
 
+        }
 
       },
       builder: (context, state) {
-        var cubit = RegisterCubit.get(context);
-        if(cubit.carsModels.isEmpty){ RegisterCubit.get(context).getCarsModels(lang: MainSettingsCubit.get(context).languageCode);}
-        print(state);
-
-        return Scaffold(
-          appBar: sharedAppBar(context),
-          body: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              // mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildTopTextColumn(context),
-                Form(
-                  key: carRegisterFormKey,
-                  child: Column(
-                    children: [
-                      _buildManufactureCompany(context,RegisterCubit.get(context)),
-                      _buildVehicleName(context,RegisterCubit.get(context)),
 
 
-                      sharedUnderLineInput(context,
-                          controller: plateNumberController,
-                          labelText: 'Plate Number'.tr(context)),
-                      _buildRowRentRadio(context, cubit),
-                      _buildButtonAttach3CarPhoto(context),
-                      _buildButtonNext(context),
-                    ],
-                  ).paddingSH(context, 0.03),
-                )
-              ],
-            ),
-          ),
-        );
+        if( RegisterCubit.get(context).carsModels.isEmpty){
+          print('here');
+          RegisterCubit.get(context).getCarsModels(lang: MainSettingsCubit.get(context).languageCode) ;
+
+        }
+
+            return Scaffold(
+              appBar: sharedAppBar(context: context,onTap: (){navigateRem(context, HomeScreen());}),
+              body://state is SuccessGetCarsModelsState ?
+                SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  // mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildTopTextColumn(context),
+                    Form(
+                      key: carRegisterFormKey,
+                      child: Column(
+                        children: [
+                         // _buildManufactureCompany(),
+                          _buildManufactureCompany2().paddingB(context, .01),
+                         // _buildVehicleName(),
+                          _buildVehicleName2( ).paddingB(context, .01),
+
+
+
+                          _buildCarYear(context).paddingB(context, .01),
+
+
+
+
+
+
+                          SizedBox(height: .01.heightX(context),),
+
+
+
+                          _buildPlateNumber(context),
+                          _buildRowRentRadio( ),
+                          _buildButtonAttach3CarPhoto( ),
+                          RegisterCubit.get(context).loading?const Center(child: CircularProgressIndicator()): _buildButtonNext(context),
+                        ],
+                      ).paddingSH(context, 0.03),
+                    )
+                  ],
+                ),
+              )
+                  //: loadingWidget(context),
+            );
+
+
       },
     );
   }
+
+
+
+
   Widget _buildTopTextColumn(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -107,24 +149,30 @@ class CarRegisterScreen extends StatelessWidget {
 
          var  cubit=RegisterCubit.get(context);
          if(cubit.carImagesPicked.isEmpty||cubit.carImagesPicked.length<3){
-           showErrorToast(message:'select 3 images ' );
+           showErrorToast(message:'select3Images'.tr(context) );
            return;}
 
          if(cubit.selectedCarDataModel==null||cubit.selectedCarModel==null){
-           showErrorToast(message:'select car' );
+           showErrorToast(message:'selectCar'.tr(context) );
            return;
          }
 
           if (carRegisterFormKey.currentState!.validate()) {
+
+            cubit.loading=true;
             var vehicleCaptain=CaptainVehicleModel(
-              boardNumber: plateNumberController.text,
+              boardNumber: plateNumber1Controller.text+plateNumber1Controller.text,
               captainId: cubit.userId!.toString(),
               carDataId: cubit.selectedCarDataModel!.carId!,
-              ownershipType: cubit.isRent?'0':'1'
+              ownershipType: cubit.isRent?'0':'1',
+              carYear: yearOfReleaseController.text
+
 
             );
-           await cubit.sendCaptainVehicleData(captainVehicleModel: vehicleCaptain,lang: MainSettingsCubit.get(context).languageCode);
 
+
+           await cubit.sendCaptainVehicleData(captainVehicleModel: vehicleCaptain,lang: MainSettingsCubit.get(context).languageCode);
+            cubit.loading=false;
 
 
 
@@ -137,73 +185,90 @@ class CarRegisterScreen extends StatelessWidget {
         textStyle: bold16(context).copyWith( color: Theme.of(context).primaryColor,));
   }
 
-  Widget _buildButtonAttach3CarPhoto(BuildContext context) {
-    return Column(
-      children: [
-        TextButton(
-            onPressed: ()async {
+  Widget _buildButtonAttach3CarPhoto( ) {
+    return   BlocConsumer<RegisterCubit, RegisterState>(
+        listenWhen: (previous, current) =>current is SuccessPickImageState ||current is ErrorPickImageState ,
+        buildWhen: (previous, current) =>current is SuccessPickImageState||current is ErrorPickImageState ,
+        listener: (context, state) {},
+        builder: (context, state) {
+          var cubit = RegisterCubit.get(context);
+        return Column(
+          children: [
+            TextButton(
+                onPressed: ()async {
 
-             await BlocProvider.of<RegisterCubit>(context,listen: false).pickImageFromGallery(photoType: '');
-            },
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.camera_alt_outlined,
-                  color: Theme.of(context).canvasColor,
-                ),
-                Text("Attach at least 3 photos, one of the inside".tr(context),
-                    style:med11(context))
-              ],
-            )).paddingSV(context, 0.03),
+                 await cubit.pickImageFromGallery(photoType: '');
+                },
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.camera_alt_outlined,
+                      color:  Recolor.hintColor,
+                      size: .05.widthX(context),
+                    ),
+                    Text('  ${"Attach at least 3 photos, one of the inside".tr(context)}',
+                        style:reg16(context).copyWith(color: Recolor.hintColor))
+                  ],
+                )).paddingSV(context, 0.03),
 
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: BlocProvider.of<RegisterCubit>(context,listen: false).carImagesFiles.map((e) =>
-                Container(
-                  width: 0.90.widthX(context) * .15,
-                  height: .05.heightX(context),
-                  decoration: BoxDecoration(
-                    color: Recolor.txtGreyColor.withOpacity(.2),
-                    image: DecorationImage(
-                      image: FileImage(e),
-                      fit: BoxFit.fill
-                    )
-                  ),
-                ).paddingSH(context,.01)
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: cubit.carImagesFiles.map((e) =>
+                    Container(
+                      width: 0.90.widthX(context) * .15,
+                      height: .05.heightX(context),
+                      decoration: BoxDecoration(
+                        color: Recolor.txtGreyColor.withOpacity(.2),
+                        image: DecorationImage(
+                          image: FileImage(e),
+                          fit: BoxFit.fill
+                        )
+                      ),
+                    ).paddingSH(context,.01)
 
 
-            ).toList(),
-          ),
-        )
-      ],
-    ).paddingB(context, 0.05);
+                ).toList(),
+              ),
+            )
+          ],
+        ).paddingB(context, 0.05);
+      }
+    );
   }
 
-  Widget _buildRowRentRadio(BuildContext context, RegisterCubit cubit) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        Text('Property Type'.tr(context), style: reg12(context).copyWith(color: Recolor.rowColor)),
-        Row(
-          mainAxisSize: MainAxisSize.min,
+  Widget _buildRowRentRadio( ) {
+    return   BlocConsumer<RegisterCubit, RegisterState>(
+        listenWhen: (previous, current) =>current is EndChangeRadioRentState  ,
+        buildWhen: (previous, current) =>current is EndChangeRadioRentState ,
+        listener: (context, state) {},
+        builder: (context, state) {
+          var cubit = RegisterCubit.get(context);
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildRadio(cubit, false,context),
-            Text("ownership".tr(context), style: reg12(context).copyWith(color: Recolor.rowColor)),
+            Text('Property Type'.tr(context), style: reg12(context).copyWith(color: Recolor.rowColor)),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildRadio(cubit, false,context),
+                Text("ownership".tr(context), style: reg12(context).copyWith(color: Recolor.rowColor)),
+              ],
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildRadio(cubit, true,context),
+                Text("rent".tr(context), style:reg12(context).copyWith(color: Recolor.rowColor)),
+              ],
+            ),
           ],
-        ),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildRadio(cubit, true,context),
-            Text("rent".tr(context), style:reg12(context).copyWith(color: Recolor.rowColor)),
-          ],
-        ),
-      ],
-    ).paddingT(context, 0.025);
+        ).paddingT(context, 0.025);
+      }
+    );
   }
 
   Radio<bool> _buildRadio(RegisterCubit cubit, bool value,context) {
@@ -216,135 +281,290 @@ class CarRegisterScreen extends StatelessWidget {
 
 
 
-  Widget _buildManufactureCompany(BuildContext context,RegisterCubit cubit){
+  Widget _buildManufactureCompany(){
 
     return
-      ListTile(
-        onTap: ()async{
-          await showDialog(context: context, builder: (context) =>
-              Dialog(
-                child: SizedBox(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children:RegisterCubit.get(context).carsModels.map((e) =>
-                          InkWell(
-                              onTap: (){
-                                RegisterCubit.get(context).onSelectCarModel(e);
-                                Navigator.pop(context);
-                              },
-
-                              child: ListTile(
-                                title:  Text(e.name!),
-                                trailing:CachedNetworkImage(
-                                  imageUrl://e.carLogo??
-                                      "https://cdn-icons-png.flaticon.com/512/595/595067.png",
-                                 // progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress),
-                                  errorWidget: (context, url, error) => Icon(Icons.error),
-                                  height: 20,
-                                ) ,
-
-
-                              ))).toList() ,
-                    ),
-                  ),
-                ),
-              ),).then((value) {
-            if(RegisterCubit.get(context).selectedCarModel!=null){
-              RegisterCubit.get(context).getCarsDataModels(id:RegisterCubit.get(context).selectedCarModel!.id!,lang: MainSettingsCubit.get(context).languageCode );
-            }});
-        },
-        title: Text(cubit.selectedCarModel==null?'Manufacture'.tr(context):cubit.selectedCarModel!.name!) ,
-        trailing:cubit.selectedCarModel==null?const SizedBox():CachedNetworkImage(
-          imageUrl://cubit.selectedCarModel!.carLogo??
-              "https://cdn-icons-png.flaticon.com/512/595/595067.png",
-         // progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress,color: Colors.red),
-          errorWidget: (context, url, error) => const Icon(Icons.error),
-          height: 25,
-        )  ,
-      )
-      ;
-
-  }
-
-
-  Widget _buildVehicleName(BuildContext context,RegisterCubit cubit){
-
-    return
-      InkWell(
-
-        onTap: ()async{
-          print('s');
-          await showDialog(context: context, builder: (context) =>
-            Dialog(
-              child: SizedBox(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children:RegisterCubit.get(context).carsDataModels.map((e) =>
-                        ListTile(
-                          title:  Text(e.model!),
-                          trailing:Text(e.year!) ,
-                          subtitle: Text(e.category!),
-                          onTap: (){
-                            RegisterCubit.get(context).onSelectDataCarModel(e);
-                            Navigator.pop(context);
-                          },
-
-
-                        )).toList() ,
-                  ),
-                ),
-              ),
-            ),).then((value) {
-              if(RegisterCubit.get(context).selectedCarDataModel!=null){
-
-                RegisterCubit.get(context).getCarsDataModels(id:RegisterCubit.get(context).selectedCarModel!.id! ,lang: MainSettingsCubit.get(context).languageCode);
-              }
-
-          });
-        },
-        child:// Text(RegisterCubit.get(context,).selectedCarDataModel==null?'Vehicle name'.tr(context):RegisterCubit.get(context,).selectedCarDataModel!.model!).paddingS(context, .05, .05),
-          ListTile(
-            title:  Text(cubit.selectedCarDataModel==null?'Vehicle name'.tr(context):cubit.selectedCarDataModel!.model!),
-            trailing:Text(cubit.selectedCarDataModel==null?'':cubit.selectedCarDataModel!.year!) ,
-            subtitle: Text(cubit.selectedCarDataModel==null?'':cubit.selectedCarDataModel!.category!),
+      BlocConsumer<RegisterCubit, RegisterState>(
+          listenWhen: (previous, current) =>current is EndSelectCarModelState  ,
+          buildWhen: (previous, current) =>current is EndSelectCarModelState ,
+          listener: (context, state) {},
+          builder: (context, state) {
+            var cubit=RegisterCubit.get(context);
+          return ListTile(
             onTap: ()async{
               await showDialog(context: context, builder: (context) =>
                   Dialog(
                     child: SizedBox(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children:RegisterCubit.get(context).carsDataModels.map((e) =>
-                              ListTile(
-                                title:  Text(e.model!),
-                                trailing:Text(e.year!) ,
-                                subtitle: Text(e.category!),
-                                onTap: (){
-                                  RegisterCubit.get(context).onSelectDataCarModel(e);
-                                  Navigator.pop(context);
-                                },
-
-
-                              )).toList() ,
+                      child: ListView.builder(
+                        itemCount:cubit.carsModels.length ,
+                          physics:BouncingScrollPhysics(),
+                          itemBuilder: (context, index) =>  ListTile(
+                          title:  Text(cubit.carsModels[index].name!),
+                          trailing:CachedNetworkImage(
+                            imageUrl:cubit.carsModels[index].carLogo??
+                            "https://img.lovepik.com/element/40143/4180.png_300.png",
+                            // progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress),
+                            errorWidget: (context, url, error) => Icon(Icons.error),
+                            height: 50,width: 50,
+                          ) ,
+                          onTap:(){
+                            cubit.onSelectCarModel(cubit.carsModels[index]);
+                            Navigator.pop(context);
+                          } ,
                         ),
-                      ),
+                      )
                     ),
                   ),).then((value) {
-              if(RegisterCubit.get(context).selectedCarDataModel!=null){
-
-              RegisterCubit.get(context).getCarsDataModels(id:RegisterCubit.get(context).selectedCarModel!.id!,lang: MainSettingsCubit.get(context).languageCode );
-              }
-
-              });
+                if(cubit.selectedCarModel!=null){
+                  cubit.getCarsDataModels(id:cubit.selectedCarModel!.id!,lang: MainSettingsCubit.get(context).languageCode );
+                }});
             },
-
-
-          )
-
+            title: Text(cubit.selectedCarModel==null?'Manufacture'.tr(context):cubit.selectedCarModel!.name!) ,
+            trailing:cubit.selectedCarModel==null?const SizedBox():CachedNetworkImage(
+              imageUrl:cubit.selectedCarModel!.carLogo!??
+                  "https://img.lovepik.com/element/40143/4180.png_300.png",
+             // progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress,color: Colors.red),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+              height: 50,width: 50,
+            )  ,
+          );
+        }
       )
       ;
 
   }
 
+
+  Widget _buildVehicleName( ){
+
+    return
+      BlocConsumer<RegisterCubit, RegisterState>(
+        listenWhen: (previous, current) =>current is EndSelectCarDataModelState ||current is EndSelectCarModelState ,
+    buildWhen: (previous, current) =>current is EndSelectCarDataModelState ||current is EndSelectCarModelState,
+    listener: (context, state) {},
+    builder: (context, state) {
+      var cubit = RegisterCubit.get(context);
+
+        return ListTile(
+          style: ListTileStyle.drawer,
+          title: Text(
+              cubit.selectedCarDataModel == null ? 'Vehicle name'.tr(
+                  context) : cubit.selectedCarDataModel!.model!),
+            trailing:Text(cubit.selectedCarDataModel == null ? '' : cubit
+                .selectedCarDataModel!.category!),
+
+          onTap: () async {
+           if (cubit.carsDataModels.isNotEmpty) {
+                await showDialog(
+                    context: context,
+                    builder: (context) => Dialog(
+                            child: ListView.builder(
+                          itemCount: cubit.carsDataModels.length,
+                          physics: const BouncingScrollPhysics(),
+                          itemBuilder: (context, index) => ListTile(
+                            title: Text(cubit.carsDataModels[index].model!),
+                            trailing: Text(cubit.carsDataModels[index].category!),
+
+                            onTap: () {
+                              cubit.onSelectDataCarModel(
+                                  cubit.carsDataModels[index]);
+                              Navigator.pop(context);
+                            },
+                          ),
+                        )));
+              }
+
+          },
+
+
+        );
+      }
+    )
+      ;
+
+  }
+
+
+  Widget _buildCarYear(context){
+    return   sharedUnderLineInput(context,
+        controller: yearOfReleaseController,
+       /* inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.digitsOnly
+        ],*/
+        labelText: 'year of release'.tr(context),
+        labelStyle: reg16(context).copyWith(color: Recolor.hintColor),
+        textAlign: TextAlign.left,
+        readOnly: true,
+        onTap: (){
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Select Year"),
+            content: Container( // Need to use container to add size constraint.
+              width: 300,
+              height: 300,
+              child: YearPicker(
+                firstDate: DateTime(2000,1),
+                lastDate: DateTime(DateTime.now().year,2),
+                initialDate: DateTime.now(),
+                // save the selected date to _selectedDate DateTime variable.
+                // It's used to set the previous selected date when
+                // re-showing the dialog.
+                selectedDate:DateTime.now() ,
+                onChanged: (DateTime dateTime) {
+                  yearOfReleaseController.text=dateTime.year.toString();
+                  Navigator.pop(context);
+
+
+                },
+              ),
+            ),
+          );
+        },
+      );
+
+    });
+  }
+  Widget _buildManufactureCompany2(){
+    return    BlocConsumer<RegisterCubit, RegisterState>(
+        listenWhen: (previous, current) =>current is EndSelectCarModelState  ,
+        buildWhen: (previous, current) =>current is EndSelectCarModelState ,
+        listener: (context, state) {},
+        builder: (context, state) {
+          var cubit=RegisterCubit.get(context);
+        return sharedUnderLineInput(context,
+            controller: manufactureController,
+           /* inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.digitsOnly
+            ],*/
+            labelText: 'Manufacture'.tr(context),
+            labelStyle: reg16(context).copyWith(color: Recolor.hintColor),
+            textAlign: TextAlign.left,
+
+            readOnly: true,
+            onTap: ()async{
+              await showDialog(context: context, builder: (context) =>
+                  Dialog(
+                    child: SizedBox(
+                        child: ListView.builder(
+                          itemCount:cubit.carsModels.length ,
+                          physics:BouncingScrollPhysics(),
+                          itemBuilder: (context, index) =>  ListTile(
+                            title:  Text(cubit.carsModels[index].name!),
+                            trailing:CachedNetworkImage(
+                              imageUrl:cubit.carsModels[index].carLogo??
+                                  "https://img.lovepik.com/element/40143/4180.png_300.png",
+                              // progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress),
+                              errorWidget: (context, url, error) => const Icon(Icons.error),
+                              height: 50,width: 50,
+                            ) ,
+                            onTap:(){
+                              cubit.onSelectCarModel(cubit.carsModels[index]);
+                              manufactureController.text=cubit.carsModels[index].name!;
+                              Navigator.pop(context);
+                            } ,
+                          ),
+                        )
+                    ),
+                  ),).then((value) {
+                if(cubit.selectedCarModel!=null){
+                  cubit.getCarsDataModels(id:cubit.selectedCarModel!.id!,lang: MainSettingsCubit.get(context).languageCode );
+
+
+                }});
+            });
+      }
+    );
+  }
+
+  Widget _buildVehicleName2( ){
+
+    return    BlocConsumer<RegisterCubit, RegisterState>(
+        listenWhen: (previous, current) =>current is EndSelectCarDataModelState ||current is EndSelectCarModelState ,
+        buildWhen: (previous, current) =>current is EndSelectCarDataModelState ||current is EndSelectCarModelState,
+        listener: (context, state) {},
+        builder: (context, state) {
+          var cubit = RegisterCubit.get(context);
+          return sharedUnderLineInput(context,
+              controller: vehicleNameController,
+              /* inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.digitsOnly
+            ],*/
+              labelText: 'Vehicle name'.tr(context),
+              labelStyle: reg16(context).copyWith(color: Recolor.hintColor),
+              textAlign: TextAlign.left,
+              readOnly: true,
+              onTap: ()async {
+                if (cubit.carsDataModels.isNotEmpty) {
+                  await showDialog(
+                      context: context,
+                      builder: (context) => Dialog(
+                          child: ListView.builder(
+                            itemCount: cubit.carsDataModels.length,
+                            physics: const BouncingScrollPhysics(),
+                            itemBuilder: (context, index) => ListTile(
+                              title: Text(cubit.carsDataModels[index].model!),
+                              trailing: Text(cubit.carsDataModels[index].category!),
+
+                              onTap: () {
+                                cubit.onSelectDataCarModel(
+                                    cubit.carsDataModels[index]);
+                                vehicleNameController.text='${cubit.carsDataModels[index].category!}       ${cubit.carsDataModels[index].model!}';
+                                Navigator.pop(context);
+                              },
+                            ),
+                          )));
+                }
+
+              });
+        }
+    );
+
+  }
+
+
+  Widget _buildPlateNumber(context){
+    return
+
+      Row(
+
+        children: [
+          sharedUnderLineInput(context,
+              controller: plateNumber1Controller,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(4)
+              ],
+              labelText: 'PlateNumberNumbers'.tr(context),
+             labelStyle:  reg14(context).copyWith(color: Recolor.hintColor),
+            textAlign: TextAlign.left,
+          ).paddingSH(context, .03).expandedWidget(flex: 1),
+
+          sharedUnderLineInput(context,
+              controller: plateNumber2Controller,
+              keyboardType: TextInputType.text,
+              inputFormatters: <TextInputFormatter>[
+               // FilteringTextInputFormatter(RegExp("^[u0621-u064A040]+"), allow: true),
+
+
+                LengthLimitingTextInputFormatter(3)
+              ],
+              labelText: 'PlateNumberCharacters'.tr(context),
+              labelStyle:  reg14(context).copyWith(color: Recolor.hintColor),
+            textAlign: TextAlign.left,
+
+
+          ).paddingSH(context, .03).expandedWidget(flex: 1),
+
+
+
+
+
+        ],
+      )
+      ;
+  }
 
 
 }

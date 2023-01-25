@@ -9,7 +9,8 @@ abstract class DowamiClientState extends Equatable {
 }
 
 class DowamiClientInitial extends DowamiClientState {}
-
+class StartingPageState extends DowamiClientState {}
+class EndStartingPageState extends DowamiClientState {}
 
 
 
@@ -18,7 +19,6 @@ class DowamiClientInitial extends DowamiClientState {}
 ///
 class StartMakeJobState extends DowamiClientState {}
 class SuccessMakeJobState extends DowamiClientState {
-  const SuccessMakeJobState();
 }
 class ErrorMakeJobState extends DowamiClientState {
   final String errorMsg;
@@ -27,6 +27,10 @@ class ErrorMakeJobState extends DowamiClientState {
 }
 //-----------
 
+
+
+class StartingChangePagePreviewState extends DowamiClientState {}
+class EndChangePagePreviewState extends DowamiClientState {}
 
 
 
@@ -61,5 +65,34 @@ class StartAddStopPointState extends DowamiClientState {}
 class EndAddStopPointState extends DowamiClientState {}
 
 
+
+
+
 class StartChangeIsGoingAndComingState extends DowamiClientState {}
 class EndChangeIsGoingAndComingState extends DowamiClientState {}
+
+class StartChangeExpansionState extends DowamiClientState {}
+class EndChangeExpansionState extends DowamiClientState {}
+
+
+
+class StartGetAllCanceledRequestsState extends DowamiClientState {}
+class SuccessGetAllCanceledRequestsState extends DowamiClientState {}
+class ErrorGetAllCanceledRequestsState extends DowamiClientState {
+  final String errorMsg;
+  const ErrorGetAllCanceledRequestsState({required this.errorMsg});
+}
+
+class StartGetAllActivatedRequestsState extends DowamiClientState {}
+class SuccessGetAllActivatedRequestsState extends DowamiClientState {}
+class ErrorGetAllActivatedRequestsState extends DowamiClientState {
+  final String errorMsg;
+  const ErrorGetAllActivatedRequestsState({required this.errorMsg});
+}
+
+class StartGetAllOfferingRequestsState extends DowamiClientState {}
+class SuccessGetAllOfferingRequestsState extends DowamiClientState {}
+class ErrorGetAllOfferingRequestsState extends DowamiClientState {
+  final String errorMsg;
+  const ErrorGetAllOfferingRequestsState({required this.errorMsg});
+}

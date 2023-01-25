@@ -7,14 +7,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../strings/strings.dart';
 import '../text_style/text_style.dart';
 
-AppBar sharedAppBar(context) => AppBar(
+AppBar sharedAppBar({required BuildContext context, required VoidCallback onTap}) => AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
       actions: [
         TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
+            onPressed: onTap,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [

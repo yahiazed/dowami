@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:dowami/constant/strings/strings.dart';
 import 'package:dowami/core/error_model.dart';
 import 'package:dowami/core/errors/exceptions.dart';
+import 'package:dowami/features/register/data/models/address_model.dart';
 import 'package:dowami/features/register/data/models/captain_vehicle_model.dart';
 import 'package:dowami/features/register/data/models/car_model.dart';
 import 'package:dowami/features/register/data/models/required_doc_model.dart';
@@ -20,12 +21,16 @@ import '../models/user_model.dart';
 abstract class RegisterRepo {
   Future<Either<Failure, int>> sendOtp({required String phone,required String lang});
   Future<Either<Failure, Unit>> verifyCode({required int code, required String phoneNum,required String lang});
-  Future<Either<Failure,  Map<String,dynamic> >> sendCompleteProfileData( {required UserModel userModel,required XFile xFile,required String lang});
+  Future<Either<Failure,  Map<String,dynamic> >> sendCompleteProfileData( {required UserModel userModel,required XFile? xFile,required String lang});
   Future<Either<Failure,  List<CarModel> >> getCarModels({required String lang} );
   Future<Either<Failure,  List<CarDataModel> >> getCarDataModels({required int  id,required String lang} );
   Future<Either<Failure,Unit>> sendCaptainVehicle({required CaptainVehicleModel captainVehicleModel,required List<XFile>xFiles,required String lang });
   Future<Either<Failure,List<RequiredDocModel>>> getRequiredDocs({required String lang});
   Future<Either<Failure,Unit>> sendDocuments({required UserDocModel userDocModel,required XFile xFile,required String lang });
+  Future<Either<Failure,List<City>>> getCities({required String lang });
+  Future<Either<Failure,List<Area>>> getAreas({required String cityId,required String lang });
+  Future<Either<Failure,List<District>>> getDistricts({required String areaId,required String lang });
+  Future<Either<Failure,int>> checkApprovalDoc({required String userId,required String docId,required String lang });
 }
 
 class RegisterRepoImpel implements RegisterRepo {
@@ -39,13 +44,8 @@ class RegisterRepoImpel implements RegisterRepo {
       Response res = await dio.postData(url: sendOtpRegisterUrl, data: {'mobile': phone},lang:lang);
       return Right(res.data['code']);
     }on DioError catch (e) {
-     // debugPrint(e.response.toString());
-     // debugPrint(e.response!.statusCode.toString());
-      if(e.response!.statusCode==500){
-        debugPrint(e.response!.statusCode.toString());
-        return Left(ServerFailure());
-      }
-      else{ return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data!  as Map<String,dynamic>  )));}
+      debugPrint(e.response.toString());
+      return left(implementDioError(e));
 
     }
   }
@@ -61,11 +61,7 @@ class RegisterRepoImpel implements RegisterRepo {
       return   const Right(unit);
     }on DioError catch (e) {
       debugPrint(e.response.toString());
-      if(e.response!.statusCode==500){
-        debugPrint(e.response!.statusCode.toString());
-        return Left(ServerFailure());
-      }
-      else{ return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data!  as Map<String,dynamic>  )));}
+      return left(implementDioError(e));
     }
   }
 
@@ -74,7 +70,7 @@ class RegisterRepoImpel implements RegisterRepo {
 
 
   @override
-  Future<Either<Failure, Map<String,dynamic>>> sendCompleteProfileData( {required UserModel userModel,required XFile xFile,required String lang}) async{
+  Future<Either<Failure, Map<String,dynamic>>> sendCompleteProfileData( {required UserModel userModel,required XFile? xFile,required String lang}) async{
     try {
       debugPrint(userModel.toString());
       Response res = await dio.postDataWithFile(url: sendCompleteProfileDataUrl, data:   userModel.toMap(userModel: userModel) , xFile: xFile, name: 'avatar',lang: lang);
@@ -89,13 +85,9 @@ class RegisterRepoImpel implements RegisterRepo {
 
       );
     }on DioError catch (e) {
-      debugPrint('failure');
+
       debugPrint(e.response.toString());
-      if(e.response!.statusCode==500){
-        debugPrint(e.response!.statusCode.toString());
-        return Left(ServerFailure());
-      }
-      else{ return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data!  as Map<String,dynamic>  )));}
+      return left(implementDioError(e));
     }
 
 
@@ -120,13 +112,8 @@ class RegisterRepoImpel implements RegisterRepo {
 
       return   Right( carsModels );
     }on DioError catch (e) {
-      debugPrint('failure');
-      debugPrint(e.response.toString());
-      if(e.response!.statusCode==500){
-        debugPrint(e.response!.statusCode.toString());
-        return Left(ServerFailure());
-      }
-      else{ return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data!  as Map<String,dynamic>  )));}
+      return left(implementDioError(e));
+
     }
 
   }
@@ -149,13 +136,8 @@ class RegisterRepoImpel implements RegisterRepo {
 
       return   Right( carsDataModels );
     }on DioError catch (e) {
-      debugPrint('failure');
       debugPrint(e.response.toString());
-      if(e.response!.statusCode==500){
-        debugPrint(e.response!.statusCode.toString());
-        return Left(ServerFailure());
-      }
-      else{ return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data!  as Map<String,dynamic>  )));}
+      return left(implementDioError(e));
     }
   }
 
@@ -163,21 +145,15 @@ class RegisterRepoImpel implements RegisterRepo {
   Future<Either<Failure,Unit>> sendCaptainVehicle({required CaptainVehicleModel captainVehicleModel,required List<XFile>xFiles,required String lang } ) async{
     try {
 
-      await dio.postDataWithFiles(url: sendCaptainVehicleUrl,name: 'gallery',data:captainVehicleModel.toMap(captainVehicleModel) ,xFiles: xFiles,lang: lang  );
+      await dio.postDataWithFiles(url: sendCaptainVehicleUrl,name: 'gallery',data:captainVehicleModel.toMap() ,xFiles: xFiles,lang: lang  );
       debugPrint('\n \n ');
 
       debugPrint('\n \n ');
       debugPrint('success');
       return   const Right( unit );
     }on DioError catch (e) {
-      debugPrint('failure');
-
       debugPrint(e.response.toString());
-      if(e.response!.statusCode==500){
-        debugPrint(e.response!.statusCode.toString());
-        return Left(ServerFailure());
-      }
-      else{ return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data!  as Map<String,dynamic>  )));}
+      return left(implementDioError(e));
     }
   }
 
@@ -200,14 +176,8 @@ class RegisterRepoImpel implements RegisterRepo {
 
       return    Right( requiredDocsModels );
     }on DioError catch (e) {
-      debugPrint('failure');
-
       debugPrint(e.response.toString());
-      if(e.response!.statusCode==500){
-        debugPrint(e.response!.statusCode.toString());
-        return Left(ServerFailure());
-      }
-      else{ return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data!  as Map<String,dynamic>  )));}
+      return left(implementDioError(e));
     }
   }
 
@@ -223,14 +193,98 @@ class RegisterRepoImpel implements RegisterRepo {
      debugPrint(res.data.toString());
       return   const Right( unit );
     }on DioError catch (e) {
-      debugPrint('failure');
-
       debugPrint(e.response.toString());
-      if(e.response!.statusCode==500){
-        debugPrint(e.response!.statusCode.toString());
-        return Left(ServerFailure());
-      }else{ return Left(DioResponseFailure(errorModel: ErrorModel.fromMap(e.response!.data!  as Map<String,dynamic>  )));}
+      return left(implementDioError(e));
 
+    }
+  }
+
+
+
+
+
+  @override
+  Future<Either<Failure, List<City>>> getCities({required String lang}) async{
+    try {
+
+      Response res =  await dio.getData(url: citiesUrl ,lang: lang);
+      debugPrint('success');
+
+      List<City>requiredCityModels=[];
+      var dataMap=res.data as Map<String,dynamic>   ;
+      var list=dataMap['data'] as List<dynamic>   ;
+
+      for(var data in list){requiredCityModels.add(City.fromMap(map:data));}
+
+
+      return    Right( requiredCityModels );
+    }on DioError catch (e) {
+      debugPrint(e.response.toString());
+      return left(implementDioError(e));
+    }
+  }
+
+ // '$carsDataUrl$id'
+  @override
+  Future<Either<Failure, List<Area>>> getAreas({required String cityId, required String lang})async {
+    try {
+
+      Response res =  await dio.getData(url: '$areasUrl$cityId' ,lang: lang);
+      debugPrint('success');
+
+      List<Area>requiredAreaModels=[];
+      var dataMap=res.data as Map<String,dynamic>   ;
+      var list=dataMap['data'] as List<dynamic>   ;
+
+      for(var data in list){requiredAreaModels.add(Area.fromMap(map:data));}
+
+
+      return    Right( requiredAreaModels );
+    }on DioError catch (e) {
+      debugPrint(e.response.toString());
+      return left(implementDioError(e));
+    }
+  }
+
+
+
+  @override
+  Future<Either<Failure,  List<District>>> getDistricts({required String areaId, required String lang}) async{
+    try {
+
+      Response res =  await dio.getData(url: '$districtsUrl$areaId' ,lang: lang);
+      debugPrint('success');
+
+      List<District>requiredDistrictModels=[];
+      var dataMap=res.data as Map<String,dynamic>   ;
+      var list=dataMap['data'] as List<dynamic>   ;
+
+      for(var data in list){requiredDistrictModels.add(District.fromMap(map:data));}
+
+
+      return    Right( requiredDistrictModels );
+    }on DioError catch (e) {
+      debugPrint(e.response.toString());
+      return left(implementDioError(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, int>> checkApprovalDoc({required String userId, required String docId, required String lang}) async{
+    try {
+
+      Response res =  await dio.postData(url: checkApprovalUrl ,lang: lang,data: {'user_id': userId, "document_id": docId,});
+      debugPrint('success');
+      var dataMap=res.data as Map<String,dynamic>   ;
+      var status=dataMap['status'] as int  ;
+
+
+
+
+      return    Right( status );
+    }on DioError catch (e) {
+      debugPrint(e.response.toString());
+      return left(implementDioError(e));
     }
   }
 

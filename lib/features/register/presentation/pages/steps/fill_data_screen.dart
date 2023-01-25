@@ -1,5 +1,6 @@
 
 
+import 'package:dowami/constant/extensions/lat_lng_extension.dart';
 import 'package:dowami/constant/extensions/media_extension.dart';
 import 'package:dowami/constant/extensions/round_extension.dart';
 import 'package:dowami/constant/shared_colors/shared_colors.dart';
@@ -9,21 +10,25 @@ import 'package:dowami/constant/shared_widgets/shared_appbar.dart';
 import 'package:dowami/constant/shared_widgets/shared_card_input.dart';
 import 'package:dowami/constant/shared_widgets/toast.dart';
 import 'package:dowami/constant/text_style/text_style.dart';
+import 'package:dowami/features/login/cubit/login_cubit.dart';
 import 'package:dowami/features/main_settings/cubit/main_settings_cubit.dart';
 import 'package:dowami/features/maps/helper/permission.dart';
+import 'package:dowami/features/maps/map_widget/location_dialog.dart';
 import 'package:dowami/features/register/cubit/register_cubit.dart';
+import 'package:dowami/features/register/presentation/pages/select_register_screen.dart';
 
 import 'package:dowami/helpers/localization/app_localization.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
  import '../../../../../constant/shared_widgets/shared_accept_terms.dart';
 import '../../../data/models/user_model.dart';
 import 'captain/car_register_screen.dart';
-import 'get_location_dialog.dart';
 import 'register_final_screen.dart';
 
 class FillUserRegisterDataScreen extends StatelessWidget {
@@ -38,69 +43,97 @@ class FillUserRegisterDataScreen extends StatelessWidget {
   final TextEditingController surNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController nNumController = TextEditingController();
-  final TextEditingController cityController = TextEditingController();
-  final TextEditingController regionController = TextEditingController();
-  final TextEditingController neighborhoodController = TextEditingController();
+
   final TextEditingController dateController = TextEditingController();
   final TextEditingController captainController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<RegisterCubit, RegisterState>(
-      listener: (context, state) {
+      listenWhen: (previous, current) =>current is !StartTimeDownState||current is !EndTimeDownState||current is !TimeOutSendSmsCodeState ,
+      buildWhen: (previous, current) =>current is !StartTimeDownState||current is !EndTimeDownState||current is !TimeOutSendSmsCodeState ,
+ /*     listenWhen: (previous, current) =>
+      current is SuccessProfileDataState
+          || current is ErrorProfileDataState
+          ||current is ErrorGetCarsModelsState
+          ||current is SuccessGetCarsModelsState
+          ||current is SuccessGetCitiesState
+          ||current is EndStartingPageState
+          ||current is SuccessCodeState
+      ,
+
+
+      buildWhen: (previous, current) =>
+      current is SuccessProfileDataState
+          ||current is ErrorProfileDataState
+          ||current is SuccessGetCitiesState
+          ||current is EndStartingPageState
+          ||current is SuccessCodeState
+
+      ,*/
+      listener: (context, state) async{
+
 
         if(state is SuccessProfileDataState ){
+         var registerCubit= RegisterCubit.get(context);
+         var loginCubit=LoginCubit.get(context);
 
-          RegisterCubit.get(context).token=state.token;
-          RegisterCubit.get(context).userId=state.userId;
-          debugPrint(RegisterCubit.get(context).userId.toString());
-          debugPrint(RegisterCubit.get(context).token.toString());
+         registerCubit.token=state.token;
+         registerCubit.userId=state.userId;
 
-          if(RegisterCubit.get(context).userType=='client')
-          { navigateTo(context,const RegisterFinalScreen()); }
-          else{
+         loginCubit.phoneCode = registerCubit.phoneCode;
+         loginCubit.phoneNumber = registerCubit.phoneNumber;
+         loginCubit.password = registerCubit.userPassword;
+         await loginCubit.login( lang: MainSettingsCubit.get(context).languageCode,);
+         if(loginCubit.state is ErrorLoginState){navigateRem(context,const SelectLog());}
+        print('saving');
+        await loginCubit.saveDataToPrefs();
+         print(' loginCubit state is ${loginCubit.state}');
+
+         if(!registerCubit.isCaptain)
+         {
+           if(loginCubit.state is SuccessSaveDataState){
+
+             navigateRem(context,const RegisterFinalScreen());}
+
+           print('client loginCubit state is ${loginCubit.state}');
+         }
+         else{
+           if(loginCubit.state is SuccessSaveDataState){
+
+             navigateRem(context, CarRegisterScreen());}
+
+           print('captain loginCubit state is ${loginCubit.state}');
 
 
-            RegisterCubit.get(context). getCarsModels( lang: MainSettingsCubit.get(context).languageCode);
-          }
 
-
-
-
-
-
-
-
+         }
 
 
         }
         if(state is ErrorProfileDataState){
           showErrorToast(message: state.errorMsg);
-         // errors=(state.errorModel.errors!.values).toList() ;
+
           errors=List<String> .from(state.errorModel.errors!.values.map((e) => e[0])).toList();
 
 
 
         }
 
-        if(state is ErrorGetCarsModelsState){
-          showErrorToast(message: state.errorMsg);
 
-        }
-        if(state is SuccessGetCarsModelsState){
-          navigateTo(context, CarRegisterScreen());
 
-        }
+
 
 
 
       },
       builder: (context, state) {
         var cubit = RegisterCubit.get(context);
+
         print(state);
         return Scaffold(
-          appBar: sharedAppBar(context),
-          body: SingleChildScrollView(
+          appBar: sharedAppBar(context: context,onTap: (){Navigator.pop(context);}),
+          body:  SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -110,25 +143,26 @@ class FillUserRegisterDataScreen extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      _buildFirstNameAndPhotoRow(context,  cubit),
+                      _buildFirstNameAndPhotoRow(),
                       _buildFatherAndNickNameRow(context,  ),
                       _buildEmailRow(context, ),
                       _buildNationalNumRow(context ),
-                      _buildBirthDateAndGenderRow(context, ),
-                      _buildAddressAndLocation(context,cubit),
+                      _buildBirthDateAndGenderRow(  ),
+                      _buildAddressAndLocation(),
                       //  isCaptain
-                      if (!cubit.isCaptain) _buildIBANCaptain(context,  ),
-                      _buildAcceptTermsRow( context,cubit,),
+                      if (cubit.isCaptain) _buildIBANCaptain(context,  ),
+                      _buildAcceptTermsRow( ),
                       _buildErrorsMessages(context)
                           .cardAll(elevation: 1, radius: 0)
                           .paddingSV(context,0.01),
-                      _buildOnSubmitButton(context)
+                      cubit.loading?Center(child: CircularProgressIndicator()): _buildOnSubmitButton(context)
                     ],
                   ).paddingSH(context, 0.04),
                 ),
               ],
             ),
           ),
+
         );
       },
     );
@@ -159,49 +193,58 @@ class FillUserRegisterDataScreen extends StatelessWidget {
       ],
     ).paddingS(context, 0.1, 0.06);
   }
-  Row    _buildFirstNameAndPhotoRow(BuildContext context,RegisterCubit cubit) {
-    return Row(
-      children: [
-        Expanded(
-          child: sharedUnderLineInput(context,
-              controller: nameController,
-              labelText: 'name'.tr(context),
-              keyboardType: TextInputType.text),
-        ),
-        InkWell(
-          onTap: ()async{
-            await cubit.pickImageFromGallery(photoType: 'avatar');
 
-          },
-          child:  cubit.avatarImageFile ==null ? Container(
-              width: 0.35.widthX(context),
-              height: 0.1.heightX(context),
-              decoration: BoxDecoration(
-                border: Border.all(color: Theme.of(context).canvasColor, width: 2),
-                color: Recolor.underLineColor,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.camera_alt_outlined,
-                color: Theme.of(context).canvasColor,)
-          )
-
-
-              :
-          Container(
-            width: 0.35.widthX(context),
-            height: 0.1.heightX(context),
-            decoration: BoxDecoration(
-                border: Border.all(color: Theme.of(context).canvasColor, width: 2),
-                color: Recolor.underLineColor,
-                shape: BoxShape.circle,
-                image: DecorationImage(image:   FileImage(cubit.avatarImageFile!),fit: BoxFit.contain,)
+  Widget    _buildFirstNameAndPhotoRow() {
+    return BlocConsumer<RegisterCubit, RegisterState>(
+        listenWhen: (previous, current) =>current is ErrorPickImageState ||current is SuccessPickImageState ,
+        buildWhen: (previous, current) =>current is ErrorPickImageState ||current is SuccessPickImageState,
+        listener: (context, state) {},
+        builder: (context, state) {
+          var cubit=RegisterCubit.get(context);
+        return Row(
+          children: [
+            Expanded(
+              child: sharedUnderLineInput(context,
+                  controller: nameController,
+                  labelText: 'name'.tr(context),
+                  keyboardType: TextInputType.text),
             ),
-          )
+            InkWell(
+              onTap: ()async{
+                await cubit.pickImageFromGallery(photoType: 'avatar');
 
-          ,
-        )
-      ],
+              },
+              child:  cubit.avatarImageFile ==null ? Container(
+                  width: 0.35.widthX(context),
+                  height: 0.1.heightX(context),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Theme.of(context).canvasColor, width: 2),
+                    color: Recolor.underLineColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.camera_alt_outlined,
+                    color: Theme.of(context).canvasColor,)
+              )
+
+
+                  :
+              Container(
+                width: 0.35.widthX(context),
+                height: 0.1.heightX(context),
+                decoration: BoxDecoration(
+                    border: Border.all(color: Theme.of(context).canvasColor, width: 2),
+                    color: Recolor.underLineColor,
+                    shape: BoxShape.circle,
+                    image: DecorationImage(image:   FileImage(cubit.avatarImageFile!),fit: BoxFit.contain,)
+                ),
+              )
+
+              ,
+            )
+          ],
+        );
+      }
     );
   }
   Row     _buildFatherAndNickNameRow(BuildContext context) {
@@ -234,154 +277,188 @@ class FillUserRegisterDataScreen extends StatelessWidget {
   Widget _buildNationalNumRow(BuildContext context) {
     return sharedUnderLineInput(context,
         controller: nNumController,
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.digitsOnly
+        ],
         labelText: 'National number'.tr(context))
         .paddingB(context, 0.019);
   }
-  Column     _buildBirthDateAndGenderRow (BuildContext context,) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Row(
+
+
+  Widget _buildBirthDateAndGenderRow () {
+    return BlocConsumer<RegisterCubit, RegisterState>(
+        listenWhen: (previous, current) =>current is EndSelectDateState ||current is EndChangeGenderRadioState ,
+        buildWhen: (previous, current) =>current is EndSelectDateState ||current is EndChangeGenderRadioState,
+        listener: (context, state) {},
+        builder: (context, state) {
+          var cubit=RegisterCubit.get(context);
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Date of Birth".tr(context), style: reg12(context).copyWith(color: Recolor.hintColor)),
-            sharedCardInput(
-              context,
-              controller: dateController,
-              hintText: '?',
-              keyboardType: TextInputType.none,
-              txtStyle: reg12(context).copyWith(color: Recolor.rowColor,fontSize: 8),
-              onTap: () async {
-                DateTime? pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now().subtract(const Duration(days: 19*365)),
-                    firstDate:  DateTime(1950),
-                    lastDate:  DateTime.now().subtract(const Duration(days: 19*365)));
-
-                if (pickedDate != null) {
-                  print(pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
-                  String formattedDate =
-                  DateFormat('yyyy-MM-dd').format(pickedDate);
-                  print(formattedDate);
-                  dateController.text = formattedDate;
-                  RegisterCubit.get(context).onSelectDate(formattedDate);
-
-                } else {debugPrint('null in date');}
-              },
-            )
-                .roundWidget(
-                width: 0.20.widthX(context),
-                height: 0.045.heightX(context),
-                radius: 9)
-                .cardAll(elevation: 7, radius: 10)
-                .paddingSH(context, 0.01),
-
-          ],
-        ),
-
-        Row(
-          children: [
-            Text("Gender".tr(context), style: reg12(context).copyWith(color: Recolor.hintColor)).paddingSH(context, 0.015),
             Row(
-              mainAxisSize: MainAxisSize.min,
               children: [
-                Text('male'.tr(context), style: reg12(context).copyWith(color: Recolor.rowColor)),
-                Radio(
-                  fillColor: MaterialStatePropertyAll(Theme.of(context).primaryColor),
-                  value: true,
-                  groupValue: RegisterCubit.get(context).isMale,
-                  onChanged: (value) =>
-                      RegisterCubit.get(context).onChangedGenderRadio(value),
+                Text("Date of Birth".tr(context), style: reg12(context).copyWith(color: Recolor.hintColor)),
+                sharedCardInput(
+                  context,
+                  controller: dateController,
+                  hintText: '?',
+                  keyboardType: TextInputType.none,
+                  txtStyle: reg12(context).copyWith(color: Recolor.rowColor,fontSize: 8),
+                  onTap: () async {
+                    DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now().subtract(const Duration(days: 19*365)),
+                        firstDate:  DateTime(1950),
+                        lastDate:  DateTime.now().subtract(const Duration(days: 19*365)));
+
+                    if (pickedDate != null) {
+                      String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+                      dateController.text = formattedDate;
+                      cubit.onSelectDate(formattedDate);
+
+                    } else {debugPrint('null in date');}
+                  },
+                )
+                    .roundWidget(
+                    width: 0.20.widthX(context),
+                    height: 0.045.heightX(context),
+                    radius: 9)
+                    .cardAll(elevation: 7, radius: 10)
+                    .paddingSH(context, 0.01),
+
+              ],
+            ),
+
+            Row(
+              children: [
+                Text("Gender".tr(context), style: reg12(context).copyWith(color: Recolor.hintColor)).paddingSH(context, 0.015),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('male'.tr(context), style: reg12(context).copyWith(color: Recolor.rowColor)),
+                    Radio(
+                      fillColor: MaterialStatePropertyAll(Theme.of(context).primaryColor),
+                      value: true,
+                      groupValue: RegisterCubit.get(context).isMale,
+                      onChanged: (value) =>
+                          RegisterCubit.get(context).onChangedGenderRadio(value),
+                    )
+                  ],
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('female'.tr(context), style: reg12(context).copyWith(color: Recolor.rowColor)),
+                    Radio(
+                      fillColor: MaterialStatePropertyAll(Theme.of(context).primaryColor),
+                      value: false,
+                      groupValue: RegisterCubit.get(context).isMale,
+                      onChanged: (value) =>
+                          RegisterCubit.get(context).onChangedGenderRadio(value),
+                    )
+                  ],
                 )
               ],
             ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('female'.tr(context), style: reg12(context).copyWith(color: Recolor.rowColor)),
-                Radio(
-                  fillColor: MaterialStatePropertyAll(Theme.of(context).primaryColor),
-                  value: false,
-                  groupValue: RegisterCubit.get(context).isMale,
-                  onChanged: (value) =>
-                      RegisterCubit.get(context).onChangedGenderRadio(value),
-                )
-              ],
-            )
-          ],
-        ),
 
-      ],
+          ],
+        );
+      }
     );
   }
-  Column _buildAddressAndLocation( BuildContext context,RegisterCubit cubit){
+  Widget _buildAddressAndLocation(  ){
 
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: sharedUnderLineInput(context,
-                  controller: cityController,
-                  labelText: 'City'.tr(context),
-                  keyboardType: TextInputType.none),
-            ),
-            const SizedBox(
-              width: 8,
-            ),
-            Expanded(
-              child: sharedUnderLineInput(context,
-                  controller: regionController,
-                  labelText: 'Region'.tr(context),
-                  keyboardType: TextInputType.none),
-            ),
-            const SizedBox(
-              width: 8,
-            ),
-            Expanded(
-              child: sharedUnderLineInput(context,
-                  controller: neighborhoodController,
-                  labelText: 'Neighborhood'.tr(context),
-                  keyboardType: TextInputType.none),
-            ),
-          ],
-        ),
-        TextButton(
-            onPressed: () async{
+    return BlocConsumer<RegisterCubit, RegisterState>(
+        listenWhen: (previous, current) =>
+        current is SuccessGetCitiesState  ||
+        current is SuccessGetAreasState  ||
+        current is SuccessGetDistrictsState  ||
+        current is EndSelectCityState  ||
+        current is EndSelectAreaState  ||
+        current is EndSelectDistrictState
 
+        ,
+        buildWhen: (previous, current) =>
+        current is SuccessGetCitiesState||
+        current is SuccessGetAreasState||
+        current is SuccessGetDistrictsState||
+        current is EndSelectCityState||
+        current is EndSelectAreaState||
+        current is EndSelectDistrictState
+        ,
+        listener: (context, state) {},
+        builder: (context, state) {
+          var cubit=RegisterCubit.get(context);
+          if(RegisterCubit.get(context).cities.isEmpty){
+            RegisterCubit.get(context).getCities(lang:MainSettingsCubit.get(context).languageCode );
+            return const Center(child: CircularProgressIndicator());
 
-
-            bool locationEnable= await checkLocationPermissions();
-            if(locationEnable){
-              await Geolocator.getCurrentPosition().then((value) =>  cubit.latLng=LatLng(value.latitude,value.longitude) );
-
-              await  showDialog(context: context, builder: (context) =>Dialog(
-                child: GetLocationDialog(),
-              ) ,).then((value) {
-                if( RegisterCubit.get(context).city.isNotEmpty){cityController.text=RegisterCubit.get(context).city;}
-                if( RegisterCubit.get(context).area.isNotEmpty){regionController.text=RegisterCubit.get(context).area;}
-                if( RegisterCubit.get(context).district.isNotEmpty){neighborhoodController.text=RegisterCubit.get(context).district;}
-              } );
-            }
-
-
-
-
-
-
-            },
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
+          }
+          else{
+            return Row(
               children: [
-                Text('select on the map'.tr(context),
-                    style: reg11(context).copyWith(color: Recolor.hintColor, decoration: TextDecoration.underline)
+
+                Expanded(
+                  child: sharedCardInput(context,
+                    controller: cubit.cityController,
+                    hintText:  'City'.tr(context),
+                    keyboardType: TextInputType.none,
+                    txtStyle: bold16(context),
+                    readOnly: true,
+                    onTap: ()async{
+                      await showDialog(context: context, builder: (context) =>
+
+                      SelectAddressDialog(list:     cubit.cities,dialogType: DialogType.city,));
+                    },
+
+
+                  ),
                 ),
-                Icon(Icons.place_outlined, color: Recolor.hintColor, size: 15),
+                const SizedBox(
+                  width: 8,
+                ),
+                Expanded(
+                  child: sharedCardInput(context,
+                    controller: cubit.areaController,
+                    hintText:  'Region'.tr(context),
+                    keyboardType: TextInputType.none,
+                    txtStyle: bold16(context),
+                    readOnly: true,
+
+                    onTap: ()async{
+                      await showDialog(context: context, builder: (context) =>
+                          SelectAddressDialog(list:     cubit.areas,dialogType: DialogType.area,));
+                    },
+
+
+                  ),
+                ),
+                const SizedBox(
+                  width: 8,
+                ),
+                Expanded(
+                  child: sharedCardInput(context,
+                    controller:cubit. districtController,
+                    hintText:  'Neighborhood'.tr(context),
+                    keyboardType: TextInputType.none,
+                    txtStyle: bold16(context),
+
+                    readOnly: true,
+                    onTap: ()async{
+                      await showDialog(context: context, builder: (context) =>
+                          SelectAddressDialog(list:     cubit.districts,dialogType: DialogType.district,));
+                    },
+
+
+                  ),
+                ),
+
               ],
-            ))
-      ],
+            );
+          }
+
+      }
     );
   }
   Widget _buildIBANCaptain(BuildContext context, ) {
@@ -390,69 +467,72 @@ class FillUserRegisterDataScreen extends StatelessWidget {
         labelText: 'IBAN'.tr(context),
         keyboardType: TextInputType.text);
   }
-  Widget _buildAcceptTermsRow(BuildContext context,RegisterCubit cubit){
-    return
-      buildAcceptsTermsRow(cubit.isAcceptTerms, context)
-    ;
-  }
+  Widget _buildAcceptTermsRow( ){
+    return   BlocConsumer<RegisterCubit, RegisterState>(
+        listenWhen: (previous, current) =>current is EndChangeAcceptTermsState  ,
+        buildWhen: (previous, current) =>current is EndChangeAcceptTermsState ,
+        listener: (context, state) {},
+        builder: (context, state) {
+          var cubit = RegisterCubit.get(context);
+        return buildAcceptsTermsRow(cubit.isAcceptTerms, context);
+      }
+    );}
+
+
    List<dynamic> errors=[];
   Widget _buildErrorsMessages(context){
     return Column(
-
-
       crossAxisAlignment: CrossAxisAlignment.end,
       children:errors.map((e) =>
           Text('$e  * ',style: med11(context).copyWith(color: Colors.red) ,)
-      ).toList() ,
-    );
+      ).toList() ,);
   }
+
+
   Widget _buildOnSubmitButton(BuildContext context) {
     return sharedElevatedButton(
       context: context,
       onPressed: ()async {
-        if(!RegisterCubit.get(context).isAcceptTerms){
-          showErrorToast(message:'terms');
-          return;
 
-        }
+        var cubit=RegisterCubit.get(context);
+        if(!cubit.isAcceptTerms){
+          showErrorToast(message:'terms'.tr(context));
+          return;}
 
         if (registerDataFormKey.currentState!.validate()) {
-          if(RegisterCubit.get(context).avatarImageFile==null){
-            showErrorToast(message:' select image');
-            return;
+         /* if(cubit.avatarImageFile==null){
+            showErrorToast(message:'select image');
+            return;}*/
 
-          }
-
-
+          cubit.loading=true;
           var userModel=UserModel(
              // userId: 4,
               birthDate: dateController.text,
               nickName: surNameController.text,
               fatherName: fNameController.text,
               firstName: nameController.text,
-              city: '1'
-            //  cityController.text
-              ,
-              area:'2'
-              //regionController.text
-              ,
-              district:'1'
-               //neighborhoodController.text
-               ,
-              gender: RegisterCubit.get(context).isMale?'Male':'Female',
+              city:cubit.city!.id.toString(),
+              area:cubit.area!.id.toString(),
+              district:cubit.district!.id.toString(),
+              gender: cubit.isMale?'Male':'Female',
               nationalId: nNumController.text,
-              iBAN: captainController.text,
-              lat: RegisterCubit.get(context).latLng!.latitude.toString(),
-              long: RegisterCubit.get(context).latLng!.longitude.toString(),
-              userType: RegisterCubit.get(context).userType,
-            mobile: RegisterCubit.get(context).phoneCode+RegisterCubit.get(context).phoneNumber
+              iBAN:cubit.isCaptain? captainController.text:null,
+              email:emailController.text,
+
+              userType: cubit.userType,
+            mobile: cubit.phoneCode+
+                cubit.phoneNumber,
+            password: cubit.userPassword,
+
+
 
 
           );
-          print( MainSettingsCubit.get(context).languageCode);
-            await RegisterCubit.get(context).sendCompleteProfileData(userModel: userModel, lang: MainSettingsCubit.get(context).languageCode);
+          print(userModel);
 
+            await cubit.sendCompleteProfileData(userModel: userModel, lang: MainSettingsCubit.get(context).languageCode);
 
+          cubit.loading=false;
 
 
         }
@@ -465,7 +545,6 @@ class FillUserRegisterDataScreen extends StatelessWidget {
       verticalPadding: 0.025.heightX(context),
     );
   }
-
 
 
 
@@ -498,8 +577,64 @@ class FillUserRegisterDataScreen extends StatelessWidget {
 
 
 
+enum DialogType {city,area,district}
+
+class SelectAddressDialog extends StatelessWidget {
+  final DialogType dialogType;
+  final List list;
+  const SelectAddressDialog({Key? key,required this.dialogType,required this.list}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return   Dialog(
+      shape: RoundedRectangleBorder(borderRadius:BorderRadius.circular(10)),
+      child:ListView.builder(
+        itemCount:list.length ,
+        physics:BouncingScrollPhysics() ,
+        
+
+        itemBuilder: (context, index) => Row(
+        children: [
+          sharedElevatedButton(
+              txt:list[index].name! ,
+              context: context,
+              radius:10 ,
+              textStyle:  bold16(context).copyWith(color: Recolor.whiteColor),
+              //child:Text(e.name!,style: bold16(context),).roundWidget() ,
+              onPressed:()async{
+                String lang= MainSettingsCubit.get(context).languageCode;
+                Navigator.pop(context);
+
+                switch(dialogType){
+
+                  case DialogType.city:
+                    RegisterCubit.get(context).onSelectCity(city: list[index],   lang: lang);
+                    break;
+                  case DialogType.area:
+                    RegisterCubit.get(context).onSelectArea(area: list[index],   lang: lang);
+                    break;
+                  case DialogType.district:
+                    RegisterCubit.get(context).onSelectDistrict(district: list[index],   );
+                    break;
+                }
 
 
+
+
+
+              } ,
+              color: Theme.of(context).canvasColor
+
+
+          ).expandedWidget(flex: 1),
+        ],
+      ).paddingSH(context, .1) ,).roundWidget(height: .4.heightX(context),radius: 10).paddingSV(context, .05)
+
+
+
+    );
+  }
+}
 
 
 

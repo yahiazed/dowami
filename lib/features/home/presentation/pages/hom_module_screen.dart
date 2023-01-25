@@ -16,13 +16,23 @@ class HomeModuleScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          IconButton(onPressed: (){
-            MainSettingsCubit.get(context).onChangeLanguage('en');
-          }, icon: Icon(Icons.abc_outlined)),
 
-          IconButton(onPressed: (){
-            MainSettingsCubit.get(context).onChangeLanguage('ar');
-          }, icon: Icon(Icons.access_time_filled_sharp)),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              sharedElevatedButton(onPressed: (){ MainSettingsCubit.get(context).onChangeLanguage('ar');},
+                  txt: 'عربى',
+                  context: context),
+
+              sharedElevatedButton(onPressed: (){ MainSettingsCubit.get(context).onChangeLanguage('en');},
+                  txt: 'english',
+                  context: context),
+
+            ],
+          ),
+
+
 
 
 

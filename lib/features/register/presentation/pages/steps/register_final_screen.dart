@@ -19,7 +19,7 @@ class RegisterFinalScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: sharedAppBar(context),
+      appBar: sharedAppBar(context: context,onTap: (){navigateRem(context, HomeScreen());}),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -32,7 +32,7 @@ class RegisterFinalScreen extends StatelessWidget {
               context: context,
                   onPressed: () {
 
-                    navigateRem(context, LogInScreen1());
+                    navigateRem(context, HomeScreen());
 
 
 

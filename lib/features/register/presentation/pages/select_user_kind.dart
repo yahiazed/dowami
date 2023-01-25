@@ -80,6 +80,7 @@ class SelectAccountKind extends StatelessWidget {
                         context: context,
                           onPressed: () {
                             RegisterCubit.get(context).userType = 'client';
+                            RegisterCubit.get(context).isCaptain = false;
                             navigateTo(context, RegisterSendOtpScreen());
                           },
                           radius: 15,
@@ -103,6 +104,7 @@ class SelectAccountKind extends StatelessWidget {
                           context: context,
                           onPressed: () {
                             RegisterCubit.get(context).userType = 'captain';
+                            RegisterCubit.get(context).isCaptain =true;
                             navigateTo(context, RegisterSendOtpScreen());
                           },
                           radius: 15,

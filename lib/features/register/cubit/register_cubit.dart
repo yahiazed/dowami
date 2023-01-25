@@ -2,8 +2,11 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
+import 'package:dowami/constant/extensions/file_extention.dart';
+import 'package:dowami/constant/shared_colors/shared_colors.dart';
 import 'package:dowami/core/error_model.dart';
 import 'package:dowami/core/errors/failure.dart';
+import 'package:dowami/features/register/data/models/address_model.dart';
 import 'package:dowami/features/register/data/models/captain_vehicle_model.dart';
 import 'package:dowami/features/register/data/models/car_data_model.dart';
 import 'package:dowami/features/register/data/models/car_model.dart';
@@ -35,15 +38,15 @@ class RegisterCubit extends Cubit<RegisterState> {
   String userType = 'captain';
   String userPassword = '';
   bool isCaptain = false;
-  int second = 50;
+  int second = 0;
   late Timer timer;
   String expiredDate='';
   int? userId;
   String? token;
   LatLng? latLng;
-  String city='';
-  String area='';
-  String district='';
+  //String city='';
+  //String area='';
+ // String district='';
   List<CarModel>carsModels=[];
   List<CarDataModel>carsDataModels=[];
   CarModel? selectedCarModel;
@@ -51,11 +54,19 @@ class RegisterCubit extends Cubit<RegisterState> {
   String? selectedCarYear;
   List<RequiredDocModel>requiredDocuments=[];
 
+  bool showPass=true;
+  final TextEditingController passController = TextEditingController();
+  final TextEditingController rePassController = TextEditingController();
+  final TextEditingController cityController = TextEditingController();
+  final TextEditingController areaController = TextEditingController();
+  final TextEditingController districtController = TextEditingController();
+  List<City>cities=[];
+  List<Area>areas=[];
+  List<District>districts=[];
 
-
-
-
-
+  City? city;
+  Area? area;
+  District? district;
 
 
 
@@ -70,7 +81,13 @@ class RegisterCubit extends Cubit<RegisterState> {
 /// (8) [sendDocuments]
 
 
-
+  onStartPage(bool value){
+    if(value){
+      emit(StartingPageState());
+      debugPrint('start');
+      emit(EndStartingPageState());
+      debugPrint('end');
+    }}
 
 
 
@@ -78,8 +95,8 @@ class RegisterCubit extends Cubit<RegisterState> {
   ///{1}------------------------------------------------------------------------
   sendOtp({required String phoneNum,required String lang}) async {
     emit(StartSendOtpState());
-    timerCutDown();
-   second = 50;
+
+
     final failureOrSmsCode = await repo.sendOtp(phone: phoneNum,lang: lang);
 
     emit(_sendOtpToState(failureOrSmsCode));
@@ -87,7 +104,28 @@ class RegisterCubit extends Cubit<RegisterState> {
   RegisterState _sendOtpToState(Either<Failure, int> either) {
     return either.fold(
           (failure) => ErrorSendOtpState(errorMsg: _failureToMessage(failure)),
-          (code) => SuccessSendOtpState(smsCode: code),
+          (code) {
+            second = 50;
+            timerCutDown();
+            return SuccessSendOtpState(smsCode: code);},
+    );
+  }
+
+  ///{1}------------------------------------------------------------------------
+  resendOtp({required String phoneNum,required String lang}) async {
+    emit(StartResendOtpState());
+
+    final failureOrSmsCode = await repo.sendOtp(phone: phoneNum,lang: lang);
+
+    emit(_resendOtpToState(failureOrSmsCode));
+  }
+  RegisterState _resendOtpToState(Either<Failure, int> either) {
+    return either.fold(
+          (failure) => ErrorResendOtpState(errorMsg: _failureToMessage(failure)),
+          (code)  {
+            second = 50;
+            timerCutDown();
+            return SuccessResendOtpState(smsCode: code);},
     );
   }
 
@@ -102,7 +140,9 @@ class RegisterCubit extends Cubit<RegisterState> {
   RegisterState _verifyCodeToState(Either<Failure, Unit> either) {
     return either.fold(
       (failure) => ErrorCodeState(errorMsg: _failureToMessage(failure)),
-      (x) {timer.cancel();  return const SuccessCodeState();} ,
+      (x) {
+        //timer.cancel(); second=0;
+        return const SuccessCodeState();} ,
     );
   }
 
@@ -113,7 +153,8 @@ class RegisterCubit extends Cubit<RegisterState> {
 
    final profileDataResponse= await repo.sendCompleteProfileData(
       userModel: userModel,
-       xFile: avatarPicked!,
+       xFile: avatarPicked
+       ,
      lang: lang
         );
     emit(_sendCompleteProfileDataToState(profileDataResponse));
@@ -160,7 +201,8 @@ class RegisterCubit extends Cubit<RegisterState> {
   }
   RegisterState _getCarsDataModelsToState(Either<Failure, List<CarDataModel>> either) {
     return either.fold(
-          (failure) => ErrorGetCarsDataModelsState(errorMsg: _failureToMessage(failure),errorModel: (failure as DioResponseFailure).errorModel!),
+          (failure) => ErrorGetCarsDataModelsState(errorMsg: _failureToMessage(failure),errorModel:(failure as DioResponseFailure).errorModel!
+          ),
           (cars) {carsDataModels=cars; return SuccessGetCarsDataModelsState(carsData:cars  );},
     );
   }
@@ -203,7 +245,7 @@ class RegisterCubit extends Cubit<RegisterState> {
           (failure) => ErrorGetRequiredDocumentsState(errorMsg: _failureToMessage(failure),errorModel: (failure as DioResponseFailure).errorModel!),
           (requiredDocs) {
             requiredDocuments= requiredDocs;
-            createDocImagesLists(requiredDocsLength: requiredDocs.length);
+            createDocLists(requiredDocsLength: requiredDocs.length);
             return  SuccessGetRequiredDocumentsState(requiredDocs:requiredDocs );},
     );
   }
@@ -224,12 +266,145 @@ class RegisterCubit extends Cubit<RegisterState> {
     );
   }
 
+  successGetSendALLDocs(){
+    emit(SuccessSendAllDocState());
+  }
 
 
 
 
 
+  List<Color>docsStatusColors=[];
+  List<int>docsStatusIntegers=[];
 
+
+  getDocStatus({ required String docId, required String lang})async{
+    var res=await repo.checkApprovalDoc( lang: lang,userId:'7'// userId.toString()
+        ,docId: docId);
+    emit(StartGetDocStatusState());
+
+    emit(_getCheckApprovalToState(res));
+  }
+
+  RegisterState _getCheckApprovalToState(Either<Failure,  int> either) {
+    return either.fold(
+          (failure) => ErrorGetDocStatusState(errorMsg: _failureToMessage(failure)),
+          (status) {
+        docsStatusIntegers.add(status);
+        return  const SuccessGetDocStatusState( );},
+    );
+  }
+
+
+
+  getStatusOfDocs({required String lang})async{
+    docsStatusIntegers=[];
+    docsStatusColors=[];
+    List<RequiredDocModel> requiredDocsList = requiredDocuments;
+
+    for (var doc in requiredDocsList){
+      await  getDocStatus(lang:lang,docId: doc.id.toString() );
+
+    }
+    for(var i in docsStatusIntegers){
+
+      switch(i){
+        case 0:docsStatusColors.add(Recolor.amberColor);break;
+        case 1:docsStatusColors.add(Recolor.onlineColor);break;
+        case 2:docsStatusColors.add(Recolor.txtRefuseColor);break;
+        default :docsStatusColors.add(Recolor.whiteColor);break;
+
+      }
+    }
+
+    emit(SuccessGetAllDocStatusState());
+
+
+
+  }
+
+
+  bool finishCarPaperPage=false;
+  bool loading=false;
+
+
+
+
+  ///{9}------------------------------------------------------------------------
+  getCities({required String lang})async{
+    emit(StartGetCitiesState());
+    var cityResponse=await repo.getCities(lang: lang);
+    emit(_getCitiesToState(cityResponse));
+  }
+  RegisterState _getCitiesToState(Either<Failure,  List<City>> either) {
+    return either.fold(
+          (failure) => ErrorGetCitiesState(errorMsg: _failureToMessage(failure)),
+          (cities) {
+            this.cities=cities;
+            areas=[];
+            districts=[];
+
+            print(cities);
+        return  SuccessGetCitiesState(cities:cities );},
+    );
+  }
+
+  ///{10}------------------------------------------------------------------------
+  getAreas({required String lang,required String cityId})async{
+    emit(StartGetAreasState());
+    var areaResponse=await repo.getAreas(lang: lang,cityId:cityId );
+    emit(_getAreasToState(areaResponse));
+  }
+  RegisterState _getAreasToState(Either<Failure,  List<Area>> either) {
+    return either.fold(
+          (failure) => ErrorGetAreasState(errorMsg: _failureToMessage(failure)),
+          (areas) {
+        this.areas=areas;
+        districts=[];
+        return  SuccessGetAreasState(areas:areas );},
+    );
+  }
+
+  ///{11}------------------------------------------------------------------------
+  getDistricts({required String lang,required String areaId})async{
+    emit(StartGetDistrictsState());
+    var districtResponse=await repo.getDistricts(lang: lang,areaId:areaId );
+    emit(_getDistrictToState(districtResponse));
+  }
+  RegisterState _getDistrictToState(Either<Failure,  List<District>> either) {
+    return either.fold(
+          (failure) => ErrorGetDistrictsState(errorMsg: _failureToMessage(failure)),
+          (districts) {
+        this.districts=districts;
+        return  SuccessGetDistrictsState(districts:districts );},
+    );
+  }
+
+
+  onSelectCity({required City city,required String lang})async{
+    emit(StartSelectCityState());
+    this.city=city;
+    cityController.text=city.name!;
+    areaController.clear();
+    districtController.clear();
+    emit(EndSelectCityState());
+    await getAreas(lang: lang, cityId: city.id.toString());
+    print(areas);
+  }
+  onSelectArea({required Area area,required String lang})async{
+    emit(StartSelectAreaState());
+    this.area=area;
+    areaController.text=area.name!;
+    districtController.clear();
+    emit(EndSelectAreaState());
+    await getDistricts(lang: lang,areaId:area.id.toString() );
+  }
+  onSelectDistrict({required District district}){
+    emit(StartSelectDistrictState());
+    this.district=district;
+    districtController.text=district.name!;
+    emit(EndSelectDistrictState());
+  }
 
 
   String _failureToMessage(Failure failure) {
@@ -275,6 +450,7 @@ class RegisterCubit extends Cubit<RegisterState> {
     emit(StartSelectCarModelState());
     selectedCarModel = value;
     selectedCarDataModel=null;
+    carsDataModels=[];
     emit(EndSelectCarModelState());
   }
 
@@ -314,6 +490,14 @@ class RegisterCubit extends Cubit<RegisterState> {
     emit(EndChangeRadioRentState());
   }
 
+  void onChangeShowPass(val) {
+    emit(StartChangeShowPassState());
+    showPass = val;
+    emit(EndChangeShowPassState());
+  }
+
+
+
   void timerCutDown() {
     timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (second <= 0) {
@@ -348,8 +532,12 @@ class RegisterCubit extends Cubit<RegisterState> {
   XFile? avatarPicked;
   List<File>carImagesFiles=[];
   List<XFile>carImagesPicked=[];
+
   List<File?>docImagesFiles=[];
   List<XFile?>docImagesPicked=[];
+  List<TextEditingController> dateControllers =[];
+  List<TextEditingController> idNumbersControllers =[];
+
 
   Future<void>pickImageFromGallery({required String photoType})async{
     emit(StartPickImageState());
@@ -360,26 +548,11 @@ class RegisterCubit extends Cubit<RegisterState> {
         case 'avatar':
           avatarPicked=await picker.pickImage(source: ImageSource.gallery);
           avatarImageFile=File(avatarPicked!.path);
+
           emit(SuccessPickImageState(imageFile: avatarImageFile!,imagesFiles: []));
           break;
 
-   /*     case 'personalLicense':
-          personalLicensePicked=await picker.pickImage(source: ImageSource.gallery);
-          personalLicenseImageFile=File(personalLicensePicked!.path);
-          emit(SuccessPickImageState(imageFile: personalLicenseImageFile!,imagesFiles: []));
-          break;
 
-        case 'driveLicense':
-          driveLicensePicked=await picker.pickImage(source: ImageSource.gallery);
-          driveLicenseImageFile=File(driveLicensePicked!.path);
-          emit(SuccessPickImageState(imageFile: driveLicenseImageFile!,imagesFiles: []));
-          break;
-
-        case 'carLicenseOrDoc':
-          carLicenseOrDocPicked=await picker.pickImage(source: ImageSource.gallery);
-          carLicenseOrDocImageFile=File(carLicenseOrDocPicked!.path);
-          emit(SuccessPickImageState(imageFile: carLicenseOrDocImageFile!,imagesFiles: []));
-          break;*/
 
         default:
           carImagesPicked=await picker.pickMultiImage();
@@ -404,16 +577,23 @@ class RegisterCubit extends Cubit<RegisterState> {
     try{
       docImagesPicked[index]=await picker.pickImage(source: ImageSource.gallery);
       docImagesFiles[index]=File(docImagesPicked[index]!.path);
+      debugPrint(getFileSize(docImagesFiles[index]!)
+          //docImagesFiles[index]!.size()
+          .toString()
+    );
       emit(SuccessPickImageState(imageFile: docImagesFiles[index]!,imagesFiles:const []));
-      debugPrint('image got');
+      debugPrint('image got0');
     }on Exception catch(e){
       emit(const ErrorPickImageState(errorMsg: 'image not selected'));
       debugPrint(e.toString());}
   }
-  createDocImagesLists({required int requiredDocsLength}){
+  createDocLists({required int requiredDocsLength}){
     docImagesFiles=List.generate(requiredDocsLength, (index) => File(''));
     docImagesPicked=List.generate(requiredDocsLength, (index) => XFile(''));
+    dateControllers=List.generate(requiredDocsLength, (index) => TextEditingController());
+    idNumbersControllers=List.generate(requiredDocsLength, (index) => TextEditingController());
   }
+
 
 
 
@@ -423,17 +603,6 @@ class RegisterCubit extends Cubit<RegisterState> {
   XFile? driveLicensePicked;
   File? carLicenseOrDocImageFile;
   XFile? carLicenseOrDocPicked;*/
-
-
-
-
-
-
-
-
-
-
-
 
 
 

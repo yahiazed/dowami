@@ -1,7 +1,8 @@
 import 'package:dowami/features/bottom_bar/cubit/bottom_bar_state.dart';
 import 'package:dowami/features/dowami/presentation/dowami_captain/pages/dowami_captain.dart';
 import 'package:dowami/features/dowami/presentation/dowami_captain/pages/settings_captain_dowami.dart';
-import 'package:dowami/features/dowami/presentation/dowami_client/pages/add_job_client_screen.dart';
+import 'package:dowami/features/dowami/presentation/dowami_client/pages/add_job_preview.dart';
+import 'package:dowami/features/dowami/presentation/dowami_client/pages/home_screen.dart';
 import 'package:dowami/features/home/presentation/pages/hom_module_screen.dart';
  import 'package:dowami/features/messages/presentation/pages/message_screen.dart';
 import 'package:dowami/features/notification/presentation/pages/notifications_screen.dart';
@@ -35,7 +36,7 @@ class BottomBarCubit extends Cubit<BottomBarState> {
 
   List<Widget> clientScreens = [
     const HomeModuleScreen(),
-     AddJobClient(),
+     DowamiClientHome(),
     const WadinyScreen(),
     const MessageScreen(),
     const NotificationScreen()

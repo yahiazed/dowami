@@ -3,15 +3,20 @@ import 'package:dowami/constant/extensions/lat_lng_extension.dart';
 import 'package:dowami/constant/shared_colors/shared_colors.dart';
 import 'package:dowami/constant/text_style/text_style.dart';
 import 'package:dowami/features/bottom_bar/cubit/bottom_bar_cubit.dart';
+import 'package:dowami/features/forget_password/cubit/forget_pass_cubit.dart';
+import 'package:dowami/features/forget_password/presentation/forget_pass_sent_otp.dart';
 import 'package:dowami/features/home/cubit/home_cubit.dart';
 import 'package:dowami/features/home/presentation/pages/home_screen.dart';
 import 'package:dowami/features/login/cubit/login_cubit.dart';
+import 'package:dowami/features/login/presentation/pages/login_screen1.dart';
 import 'package:dowami/features/login/presentation/pages/login_screen2.dart';
 import 'package:dowami/features/main_settings/cubit/main_settings_cubit.dart';
 import 'package:dowami/features/main_settings/cubit/main_settings_state.dart';
 import 'package:dowami/features/maps/cubit/map_cubit.dart';
 import 'package:dowami/features/register/cubit/register_cubit.dart';
 import 'package:dowami/features/register/presentation/pages/steps/captain/car_paper_screen.dart';
+import 'package:dowami/features/register/presentation/pages/steps/captain/car_register_screen.dart';
+import 'package:dowami/features/register/presentation/pages/steps/fill_data_screen.dart';
 import 'package:dowami/features/splash_screen/presentation/pages/splash_screen.dart';
  import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -50,9 +55,11 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => di.sl<DowamiCaptainCubit>()),
           BlocProvider(create: (context) => di.sl<DowamiClientCubit>()),
           BlocProvider(create: (context) => di.sl<MainSettingsCubit>()),
+          BlocProvider(create: (context) => di.sl<ResetPassCubit>()),
           BlocProvider(create: (context) => BottomBarCubit()),
           BlocProvider(create: (context) => MapCubit()),
           BlocProvider(create: (context) => HomeCubit()),
+
 
         ],
         child: BlocConsumer<MainSettingsCubit,MainSettingsState>(
@@ -110,16 +117,25 @@ class MyApp extends StatelessWidget {
 
                 return supportedLocales.last;
               },*/
-                locale: MainSettingsCubit.get(context).language??const Locale('ar') ,
+                locale: MainSettingsCubit.get(context).language??
+                    const Locale('ar') ,
 
               home:
-              const SplashScreen()
+
+            //  CarRegisterScreen()
+                 const SplashScreen()
+              //SelectLog(),
+               // ForgetPassSendOtp()
+
+
                  // HomeScreen()
-                  //SelectLog(),
+
              // LoginScreen2(),
-             // RegisterStepTwoScreen()
+             // LogInScreen1()
+             // RegisterCarPaperScreen()
               // CarRegisterScreen()
-               // FillUserRegisterDataScreen(),
+               // RegisterCarPaperScreen()
+                //FillUserRegisterDataScreen(),
                   // RegisterCarPaperScreen(),
              // SettingCaptainDowamiScreen()
             );

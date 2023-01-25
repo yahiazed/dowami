@@ -57,7 +57,8 @@
     "Manufacture": "The Manufacture Company",
     "Vehicle name": "Vehicle name",
     "year of release": "year of release",
-    "Plate Number": "Plate Number",
+    "PlateNumberCharacters": "Plate Number    (characters)",
+    "PlateNumberNumbers":    "Plate Number    (numbers)",
     "Property Type": "Property Type : ",
     "ownership": "ownership : ",
     "rent": "rent",
@@ -128,7 +129,30 @@
     "SUV": "SUV",
     "priceOffer": "price offer",
     "R.S": "R.S",
-    "Search": "Search"
+    "Search": "Search",
+
+
+    "trip": "trip",
+
+    "orderAdded": "Your request has been added",
+    "offersWillBeDisplay": "The captain's requests will be displayed if offers are received",
+    "youCanFollow": "You can follow the status of the request in the section",
+    "forgetPass":"forget passsword ?",
+    "passNotIdentical":"passwords are not identical",
+    "enterPasswords":"Enter Passwords",
+    "weakPassword":"Weak Password",
+    "terms":"you must accept terms",
+    "selectAllImages":"select all images",
+    "select3Images":"select 3 Images ",
+    "selectCar":"select car",
+    "ResetSuccess":"password has reset successfully",
+    "reset":"Reset",
+    "password":"password",
+    "enterPassNew":"Enter new password",
+    "reEnterPassNew":"re-Enter new password"
+
+
+
 
 
 

@@ -13,7 +13,7 @@ abstract class DioHelper {
   Future<Response> postDataWithFile({
     required String url,
     required dynamic data,
-    required XFile xFile,
+    required XFile? xFile,
   required String name,
     required  String lang,
   });
@@ -62,7 +62,7 @@ class DioHelperImpl implements DioHelper {
   @override
   Future<Response> getData({required String url, query, String? token,required String lang}) async {
     dio.options.headers = {
-      'default-lang': lang??'en',
+     // 'default-lang': lang??'en',
       'Content-Type': 'application/json',
       'Authorization': token==null ? '':bearerString+token,
     };
@@ -72,7 +72,7 @@ class DioHelperImpl implements DioHelper {
   @override
   Future<Response> postData({required String url, required data, String? token,required String lang}) async {
     dio.options.headers = {
-      'default-lang': lang??'en',
+     // 'default-lang': lang??'en',
       'Content-Type': 'application/json',
       'Authorization': token==null ? '':bearerString+token,
     };
@@ -85,7 +85,7 @@ class DioHelperImpl implements DioHelper {
   @override
   Future<Response> putData({required String url, required data, String? token,required String lang}) async {
     dio.options.headers = {
-      'default-lang': lang??'en',
+      //'default-lang': lang??'en',
       'Content-Type': 'application/json',
       'Authorization': token==null ? '':bearerString+token,
     };
@@ -99,14 +99,15 @@ class DioHelperImpl implements DioHelper {
 
 
   @override
-  Future<Response> postDataWithFile({required String url, required  data,required XFile xFile ,required String name,required String lang, String? token })async {
+  Future<Response> postDataWithFile({required String url, required  data,required XFile? xFile ,required String name,required String lang, String? token })async {
     dio.options.headers = {
-      'default-lang': lang??'en',
+     // 'default-lang': lang??'en',
       'Authorization': token==null ? '':bearerString+token,
     };
 
 var formData= FormData.fromMap(data);
-formData .files.add(MapEntry(name,MultipartFile .fromFileSync(xFile.path, filename: xFile.path.split('/').last)));
+if(xFile!=null){formData .files.add(MapEntry(name,MultipartFile .fromFileSync(xFile.path, filename: xFile.path.split('/').last)));}
+
 
     return
       await dio.post (url, data: formData, options:Options(contentType: 'multipart/form-data', followRedirects: false,// validateStatus: (status) {return true;}
@@ -118,8 +119,9 @@ formData .files.add(MapEntry(name,MultipartFile .fromFileSync(xFile.path, filena
   @override
   Future<Response> postDataWithFiles({required String url, required Map<String,dynamic> data,required List<XFile> xFiles ,required String name,required String lang, String? token })async {
     dio.options.headers = {
-      'default-lang': lang??'en',
+    //  'default-lang': lang??'en',
       'Authorization': token==null ? '':bearerString+token,
+
     };
     FormData formData= FormData.fromMap(data);
 
