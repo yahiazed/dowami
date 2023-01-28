@@ -15,6 +15,7 @@ class DowamiJobModel extends Equatable {
   final String? passengersCount;
   final String? carType;
   final String? priceOffer;
+  final String? status;
 
   const DowamiJobModel({
     this.name,
@@ -28,6 +29,7 @@ class DowamiJobModel extends Equatable {
     this.passengersCount,
     this.carType,
     this.priceOffer,
+    this.status,
   });
 
 
@@ -44,6 +46,7 @@ class DowamiJobModel extends Equatable {
       passengersCount:map['passengers_count'],
       carType:map['car_type'],
       priceOffer:map['price_offer'],
+      status:map['status'],
 
 
     );
@@ -63,6 +66,7 @@ class DowamiJobModel extends Equatable {
       'passengers_count':passengersCount,
       'car_type':carType,
       'price_offer':priceOffer,
+      'status':status,
 
     };
   }

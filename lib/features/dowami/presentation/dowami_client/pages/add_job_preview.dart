@@ -5,6 +5,8 @@ import 'package:dowami/constant/extensions/round_extension.dart';
 import 'package:dowami/constant/extensions/time_extention.dart';
 import 'package:dowami/constant/shared_colors/shared_colors.dart';
 import 'package:dowami/constant/shared_widgets/shard_elevated_button.dart';
+import 'package:dowami/constant/shared_widgets/sharedDrawer.dart';
+import 'package:dowami/constant/shared_widgets/shared_appbar.dart';
 import 'package:dowami/constant/shared_widgets/shared_card_input.dart';
 import 'package:dowami/constant/shared_widgets/toast.dart';
 import 'package:dowami/constant/strings/strings.dart';
@@ -26,9 +28,12 @@ class AddJobClient extends StatelessWidget {
   AddJobClient({Key? key}) : super(key: key);
   final fromLocController = TextEditingController();
   final toLocController = TextEditingController();
+  final GlobalKey<FormState> dataFormKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
    return Scaffold(
+     appBar: sharedAppBar(context: context, onTap: (){Navigator.pop(context);}),
+
       body: preview(context),
 
     );
@@ -83,23 +88,26 @@ class AddJobClient extends StatelessWidget {
  Widget makeJobPreview(context, ) {
 
     return SingleChildScrollView(
-      child: Column(
-        children: [
+      child: Form(
+        key: dataFormKey,
+        child: Column(
+          children: [
 
-          _tripName(context),
-          _startPoint(context),
-          _endPoint(context),
-          _stopPoints(context),
-          _days(),
-          _timeAndComingAndGoing(),
-          _passengersCount(),
-          _carSize(),
-          _offerPrice(context),
-          _buildErrorsMessages(context)
-              .cardAll(elevation: 1, radius: 0)
-              .paddingSV(context,0.01),
-          _saveButton()
-        ],
+            _tripName(context),
+            _startPoint(context),
+            _endPoint(context),
+            _stopPoints(context),
+            _days(),
+            _timeAndComingAndGoing(),
+            _passengersCount(),
+            _carSize(),
+            _offerPrice(context),
+            _buildErrorsMessages(context)
+                .cardAll(elevation: 1, radius: 0)
+                .paddingSV(context,0.01),
+            _saveButton()
+          ],
+        ),
       ),
     ).paddingS(context, .05, .02);
   }
@@ -126,34 +134,37 @@ class AddJobClient extends StatelessWidget {
 
 
   Widget getLocButton({required BuildContext context, required TextEditingController controller, required String hint, required Function(LatLng l) func}) {
-    return sharedBorderedInput(context,
-        controller: controller,
-        hintText: hint,
-        borderWidth: 2,
-        fillColor: Recolor.whiteColor,
-        isPassword: false,
-        radius: 5,
-        suffix: Icon(Icons.location_on_outlined, color: Recolor.txtColor),
-        keyboardType: TextInputType.none,
-        hintStyle: bold12(context).copyWith(color: Recolor.txtGreyColor),
-        textStyle: bold14(context).copyWith(color: Recolor.txtGreyColor),
-        readOnly: true, onTap: () async {
-      LatLng? selectedLatLng = await openLocationDialog(context);
-      if (selectedLatLng == null) {
-        return;
-      }
+    return SizedBox(
+      height: .05.heightX(context),
+      child: sharedBorderedInput(context,
+          controller: controller,
+          hintText: hint,
+          borderWidth: 2,
+          fillColor: Recolor.whiteColor,
+          isPassword: false,
+          radius: 5,
+          suffix: Icon(Icons.location_on_outlined, color: Recolor.txtColor),
+          keyboardType: TextInputType.none,
+          hintStyle: bold12(context).copyWith(color: Recolor.txtGreyColor),
+          textStyle: bold14(context).copyWith(color: Recolor.txtGreyColor),
+          readOnly: true, onTap: () async {
+        LatLng? selectedLatLng = await openLocationDialog(context);
+        if (selectedLatLng == null) {
+          return;
+        }
 
-      Placemark myAddress = await selectedLatLng.getPlaceMark();
+        Placemark myAddress = await selectedLatLng.getPlaceMark();
 
-      var city = myAddress.administrativeArea!;
-      var area = myAddress.subAdministrativeArea!;
-      var district = myAddress.locality!;
-      controller.text = '$city,$area,$district';
-      func(selectedLatLng);
-     // print(startLoc);
-     // print(endLoc);
-    }).cardAllSized(context,
-        width: 1, height: .04, cardColor: Colors.transparent, elevation: 0);
+        var city = myAddress.administrativeArea!;
+        var area = myAddress.subAdministrativeArea!;
+        var district = myAddress.locality!;
+        controller.text = '$city,$area,$district';
+        func(selectedLatLng);
+       // print(startLoc);
+       // print(endLoc);
+      }).cardAllSized(context,
+          width: 1, height: .04, cardColor: Colors.transparent, elevation: 0),
+    );
   }
 
   Widget _tripName(context) {
@@ -170,22 +181,25 @@ class AddJobClient extends StatelessWidget {
               'tripName'.tr(context),
               style: eBold16(context),
             ).paddingB(context, .01),
-            sharedBorderedInput(
-              context,
-              controller:DowamiClientCubit.get(context) .nameController,
-              hintText: '',
-              borderWidth: 2,
-              fillColor: Recolor.whiteColor,
-              isPassword: false,
-              radius: 5,
-              suffix: Icon(Icons.location_on_outlined, color: Recolor.txtColor),
-              // keyboardType: TextInputType.none,
-              hintStyle: bold12(context).copyWith(color: Recolor.txtGreyColor),
-              textStyle: bold14(context).copyWith(color: Recolor.txtGreyColor),
-              readOnly: false,
+            SizedBox(
+              height: .05.heightX(context),
+              child: sharedBorderedInput(
+                context,
+                controller:DowamiClientCubit.get(context) .nameController,
+                hintText: '',
+                borderWidth: 2,
+                fillColor: Recolor.whiteColor,
+                isPassword: false,
+                radius: 5,
+                suffix: Icon(Icons.location_on_outlined, color: Recolor.txtColor),
+                // keyboardType: TextInputType.none,
+                hintStyle: bold12(context).copyWith(color: Recolor.txtGreyColor),
+                textStyle: bold14(context).copyWith(color: Recolor.txtGreyColor),
+                readOnly: false,
 
-            ).cardAllSized(context,
-                width: 1, height: .04, cardColor: Colors.transparent, elevation: 0)
+              ).cardAllSized(context,
+                  width: 1, height: .04, cardColor: Colors.transparent, elevation: 0),
+            )
           ],
         ).paddingSV(context, .01);
       }
@@ -490,8 +504,8 @@ class AddJobClient extends StatelessWidget {
               children: [
 
 
-                carSizeItem(carSize: 'Sedan',imageUrl: carSvg,context: context,cubit:cubit ),
-                carSizeItem(carSize: 'SUV',imageUrl: carSvg,context: context,cubit:cubit),
+                carSizeItem(carSize: 'Sedan',imageUrl: sedanCarUrl,context: context,cubit:cubit ),
+                carSizeItem(carSize: 'SUV',imageUrl: suvCarUrl,context: context,cubit:cubit),
 
               ],
             )
@@ -512,11 +526,11 @@ class AddJobClient extends StatelessWidget {
 
           child: Stack(
             children: [
-              SvgPicture.asset(
+              Image.asset(
                 imageUrl,
-                alignment: Alignment.center,
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
+                alignment: Alignment.bottomCenter,
+                width: 0.2.widthX(context),
+                height: 00.1.heightX(context),
               ),
 
               Row(
@@ -548,24 +562,29 @@ class AddJobClient extends StatelessWidget {
           children: [
             _title(context:context,name: 'priceOffer'.tr(context),icon: Icons.monetization_on_outlined),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                sharedBorderedInput(
-                  context,
-                  controller:cubit. priceController,
+                SizedBox(
+                 
+                  height: .05.heightX(context),
+                  child: sharedBorderedInput(
+                    context,
+                    controller:cubit. priceController,
 
-                  borderWidth: 2,
-                  fillColor: Recolor.whiteColor,
-                  isPassword: false,
-                  radius: 5,
-                 // suffix: Icon(Icons.location_on_outlined, color: Recolor.txtColor),
-                   keyboardType: TextInputType.number,
+                    borderWidth: 2,
+                    fillColor: Recolor.whiteColor,
+                    isPassword: false,
+                    radius: 5,
+                   // suffix: Icon(Icons.location_on_outlined, color: Recolor.txtColor),
+                     keyboardType: TextInputType.number,
 
-                  hintStyle: bold12(context).copyWith(color: Recolor.txtGreyColor),
-                  textStyle: bold14(context).copyWith(color: Recolor.txtGreyColor),
-                  readOnly: false,
-                  hintText: '',
-                ).cardAllSized(context,
-                    width: .7, height: .04, cardColor: Colors.transparent, elevation: 0).expandedWidget(flex: 1),
+                    hintStyle: bold12(context).copyWith(color: Recolor.txtGreyColor),
+                    textStyle: bold14(context).copyWith(color: Recolor.txtGreyColor),
+                    readOnly: false,
+                    hintText: '',
+                  ).cardAllSized(context,
+                      width: .8, height: .04, cardColor: Colors.transparent, elevation: 0),
+                ),
                 Text('R.S'.tr(context),style: eBold16(context),).paddingSH(context, .01)
               ],
             )
@@ -610,13 +629,15 @@ class AddJobClient extends StatelessWidget {
           return sharedElevatedButton(
             context: context,
               onPressed: () async{
+                if(cubit.startLoc==null||cubit.endLoc==null){
+                  showErrorToast(message: 'enter Location');
+                }
 
-
+                if (!dataFormKey.currentState!.validate()){return;}
                 DowamiJobModel dowamiJobModel=DowamiJobModel(
                   name:cubit. nameController.text,
                   days: cubit.selectedDaysIds,
-                  carType: cubit.selectedSize
-                    ,
+                  carType: cubit.selectedSize,
                   requestType: cubit.isGoingAndComing?'1':'0',
                   comingTime: cubit.isGoingAndComing?getStringFormat(context: context,time: cubit.comingTime) :null,
                   goingTime:getStringFormat(context: context,time: cubit.goingTime) ,
@@ -627,13 +648,9 @@ class AddJobClient extends StatelessWidget {
                   stopPoints:cubit. stopPointsLocs.map((e) =>LatLng(e.latitude,e.longitude).toStringPoint() ).toList()
 
                 );
-              await  cubit. makeJobDowami(
-                  dowamiJobModel: dowamiJobModel,
-                  token: LoginCubit.get(context).token!,
-                  lang: MainSettingsCubit.get(context).languageCode
+            //  await  cubit. makeJobDowami(dowamiJobModel: dowamiJobModel, token: LoginCubit.get(context).token!, lang: MainSettingsCubit.get(context).languageCode);
 
-              );
-
+                cubit.emit(SuccessMakeJobState());
 
               },
               txt: "Search".tr(context),

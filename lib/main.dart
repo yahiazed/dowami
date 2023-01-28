@@ -3,6 +3,7 @@ import 'package:dowami/constant/extensions/lat_lng_extension.dart';
 import 'package:dowami/constant/shared_colors/shared_colors.dart';
 import 'package:dowami/constant/text_style/text_style.dart';
 import 'package:dowami/features/bottom_bar/cubit/bottom_bar_cubit.dart';
+import 'package:dowami/features/dowami/presentation/dowami_client/pages/home_screen.dart';
 import 'package:dowami/features/forget_password/cubit/forget_pass_cubit.dart';
 import 'package:dowami/features/forget_password/presentation/forget_pass_sent_otp.dart';
 import 'package:dowami/features/home/cubit/home_cubit.dart';
@@ -128,6 +129,7 @@ class MyApp extends StatelessWidget {
              // const ProfileCarWaitingAccept()
             //  CarRegisterScreen()
                  const SplashScreen()
+             //  DowamiClientHome()
               //SelectLog(),
                // ForgetPassSendOtp()
 
@@ -139,7 +141,7 @@ class MyApp extends StatelessWidget {
              // RegisterCarPaperScreen()
               // CarRegisterScreen()
                // RegisterCarPaperScreen()
-               // FillUserRegisterDataScreen(),
+              // FillUserRegisterDataScreen(),
                   // RegisterCarPaperScreen(),
              // SettingCaptainDowamiScreen()
             );

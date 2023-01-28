@@ -149,7 +149,10 @@
     "reset":"Reset",
     "password":"password",
     "enterPassNew":"Enter new password",
-    "reEnterPassNew":"re-Enter new password"
+    "reEnterPassNew":"re-Enter new password",
+    "presentTrips": "present trips",
+    "showDetails": "show details",
+    "hideDetails": "hide details"
 
 
 

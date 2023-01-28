@@ -1,19 +1,37 @@
+import 'dart:math';
+
+import 'package:dowami/constant/extensions/lat_lng_extension.dart';
 import 'package:dowami/constant/extensions/media_extension.dart';
 import 'package:dowami/constant/extensions/round_extension.dart';
+import 'package:dowami/constant/extensions/time_extention.dart';
 import 'package:dowami/constant/shared_colors/shared_colors.dart';
+import 'package:dowami/constant/shared_function/navigator.dart';
 import 'package:dowami/constant/shared_widgets/loading_widget.dart';
 import 'package:dowami/constant/shared_widgets/shard_elevated_button.dart';
 import 'package:dowami/constant/text_style/text_style.dart';
 import 'package:dowami/features/dowami/cubit/dowami_client_cubit.dart';
 import 'package:dowami/features/dowami/cubit/dowami_client_state.dart';
+import 'package:dowami/features/dowami/data/models/dowami_job_model.dart';
+import 'package:dowami/features/dowami/presentation/dowami_client/components/job_item_widget.dart';
 import 'package:dowami/features/login/cubit/login_cubit.dart';
 import 'package:dowami/features/main_settings/cubit/main_settings_cubit.dart';
+import 'package:dowami/helpers/localization/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class DowamiClientHomePreview extends StatelessWidget {
-   DowamiClientHomePreview({Key? key}) : super(key: key);
-  final GlobalKey expansionTile =  GlobalKey();
+import 'add_job_preview.dart';
+
+class DowamiClientHomePreview extends StatefulWidget {
+   const DowamiClientHomePreview({Key? key}) : super(key: key);
+
+  @override
+  State<DowamiClientHomePreview> createState() => _DowamiClientHomePreviewState();
+}
+
+class _DowamiClientHomePreviewState extends State<DowamiClientHomePreview> {
+
+
   @override
   Widget build(BuildContext context) {
      /* return  BlocConsumer<DowamiClientCubit,DowamiClientState>(
@@ -85,97 +103,79 @@ class DowamiClientHomePreview extends StatelessWidget {
       }
     );*/
 
-    return SizedBox(
-        height: .6.heightX(context),
-        width: .8.widthX(context),
-
-        child: requestsPreview(context));
-  }
-
-
-
-
-
-
-
-  Widget requestsPreview (context){
-    return
-   DefaultTabController(
-     length: 3,
-     child:Column(
-       children: [
+    return Column(
+      children: [
+        _buildHireCaptainButton(context),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text('presentTrips'.tr(context),style: bold18(context),),
+          ],
+        ).paddingB(context, .025),
+        jobs().expandedWidget(flex: 1)
 
 
-         TabBar(
-
-
-           tabs:[
-           Tab(text: 'مفعله',),
-           Tab(text: 'ملغيه',),
-           Tab(text: 'تلقى العروض',),
-         ],
-
-         ).roundWidget(height: .1.heightX(context),width: .8.widthX(context)),
-         TabBarView(
-
-             children: [
-           Center(child: Text('مفعله',style:eBold20(context)),),
-           Center(child: Text('ملغيه',style:eBold20(context)),),
-           Center(child: Text('تلقى العروض',style:eBold20(context)),),
-         ]).roundWidget(height: .4.heightX(context),width: .8.widthX(context))
-       ],
-     )
-         //.roundWidget(height: .5.heightX(context),width: .8.widthX(context))
-
-     , );
-
-  }
-
-
-
-
-
-
-
-  Widget jobTile(context){
-    bool isOpen=false;
-    return  ExpansionTile(
-      key:expansionTile ,
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          isOpen? Text('الوظيفه',style: bold16(context),):Text('opened',style: bold16(context),),
-          Column(
-            children: [
-              CircleAvatar(child: Text('3',style: reg11(context).copyWith(color: Colors.white),),backgroundColor: Colors.red,radius:.02.widthX(context) ),
-              Text('تلقى العروض',style: reg11(context).copyWith(color: Colors.red),),
-            ],
-          ),
-          Text('عرض التفاصيل',style: reg11(context).copyWith(color:Recolor.hintColor,decoration: TextDecoration.underline)),
-        ],
-      ),
-
-      children: const[
-        Text('child'),
-        Text('child'),
-        Text('child'),
-        Text('child'),
 
       ],
-      trailing: Icon(Icons.info_outline),
-      onExpansionChanged: (d){
-        isOpen=d;
-        // expansionTile.currentState.collapse();
-
-        //DowamiClientCubit.get(context).onChangeExpansion(d);
-      },
-
-
-
-    );
+    ).paddingSH(context, .04);
   }
 
 
 
 
+
+
+
+Widget jobs(){
+    return ListView.builder(
+      itemBuilder: (context, index) =>ExpansionItem(jobModel: lista[index]) ,
+      itemCount: lista.length,
+    )
+    ;
 }
+
+
+
+
+  Widget _noTrips(context){
+    return
+      Text("NOSUBSCRIPTION".tr(context), style: med16(context).copyWith(color: Recolor.hintColor)).paddingSV(context, 0.03)
+    ;
+  }
+
+  Widget _buildHireCaptainButton(BuildContext context) {
+    return SizedBox(
+      height: 0.2.heightX(context),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Text("DAWAMITRIPS".tr(context), style: eBold16(context)).paddingB(context, 0.01),
+
+          sharedElevatedButton2(
+              context: context,
+              onPressed: () {
+                navigateTo(context, AddJobClient());
+              },
+              radius: 9,
+              //  horizontalPadding: 0.05.widthX(context),
+              verticalPadding: 0.023.heightX(context),
+              widget: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Hire a captain".tr(context),
+                    style: eBold18(context).copyWith( color: Theme.of(context).primaryColor,),
+                  ),
+                  Icon(
+                    Icons.add_circle_outline_outlined,
+                    color: Theme.of(context).primaryColor,
+                    size: .09.widthX(context),
+                  )
+                ],
+              )).expandedWidget(flex: 1)
+        ],
+      ).paddingS(context, 0.05,.03),
+    );
+  }
+}
+

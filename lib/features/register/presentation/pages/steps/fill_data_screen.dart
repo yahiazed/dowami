@@ -94,7 +94,10 @@ class FillUserRegisterDataScreen extends StatelessWidget {
          {
            if(loginCubit.state is SuccessSaveDataState){
 
-             navigateRem(context,const RegisterFinalScreen());}
+             navigateRem(context,const SelectLog());
+             showSuccessToast(message: 'Success');
+
+           }
 
            print('client loginCubit state is ${loginCubit.state}');
          }

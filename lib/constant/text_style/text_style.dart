@@ -50,6 +50,7 @@ const String fontPoppins='Poppins';
 
 TextStyle reg18Pop() => TextStyle(fontFamily: 'Poppins', fontSize: 18, color: Recolor.rowColor, fontWeight: FontWeight.bold,);
 
+TextStyle reg8(context) => TextStyle(fontFamily: fontRegular, fontSize: 8, color: Theme.of(context).canvasColor,);
 TextStyle reg11(context) => TextStyle(fontFamily: fontRegular, fontSize: 11, color: Theme.of(context).canvasColor,);
 TextStyle reg12(context) => TextStyle(fontFamily: fontRegular, fontSize: 12, color: Theme.of(context).canvasColor,);
 TextStyle reg14(context) => TextStyle(fontFamily: fontRegular, fontSize: 14, color: Theme.of(context).canvasColor,);
@@ -65,6 +66,7 @@ TextStyle reg30(context) => TextStyle(fontFamily: fontRegular, fontSize: 30, col
 
 
 
+TextStyle bold9(context) => TextStyle(fontFamily: fontBold, fontSize: 11, color: Theme.of(context).canvasColor);
 TextStyle bold11(context) => TextStyle(fontFamily: fontBold, fontSize: 11, color: Theme.of(context).canvasColor);
 TextStyle bold12(context) => TextStyle(fontFamily: fontBold, fontSize: 12, color: Theme.of(context).canvasColor);
 TextStyle bold14(context) => TextStyle(fontFamily: fontBold, fontSize: 14, color: Theme.of(context).canvasColor);

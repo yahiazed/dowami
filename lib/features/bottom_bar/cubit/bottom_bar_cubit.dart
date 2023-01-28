@@ -36,7 +36,7 @@ class BottomBarCubit extends Cubit<BottomBarState> {
 
   List<Widget> clientScreens = [
     const HomeModuleScreen(),
-     DowamiClientHome(),
+    const DowamiClientHome(),
     const WadinyScreen(),
     const MessageScreen(),
     const NotificationScreen()

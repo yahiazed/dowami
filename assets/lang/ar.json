@@ -152,7 +152,12 @@
     "reset":"إعاده تعيين",
     "password":"كلمه المرور",
     "enterPassNew":"أدخل كلمه المرور الجديده",
-    "reEnterPassNew":"أعد ادخال كلمه السر الجديده"
+    "reEnterPassNew":"أعد ادخال كلمه السر الجديده",
+
+
+    "presentTrips": "رحلاتي الحالية",
+    "showDetails": "عرض التفاصيل",
+    "hideDetails": "إخفاء التفاصيل"
 
 
 

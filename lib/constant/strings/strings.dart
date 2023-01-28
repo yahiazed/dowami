@@ -49,11 +49,13 @@ const String activeDowamSvg = 'assets/svg/activeDowam.svg';
 const String dawamiSvg = 'assets/svg/dawami.svg';
 const String drawerSvg = 'assets/svg/drawer.svg';
 const String carSvg = 'assets/svg/car.svg';
+const String suvCarUrl = 'assets/images/suv_car.jpg';
+const String sedanCarUrl = 'assets/images/sedan_car.png';
 
 
 
 
-List<String>carSizes=['small','medium','large'];
+
 
 
 //"token":"11|KJGMhHH8gRn6DLbAMoR2iWF0hoSm6Aa7vypZFxEG"

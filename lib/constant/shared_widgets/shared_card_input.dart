@@ -1,3 +1,4 @@
+import 'package:dowami/constant/extensions/media_extension.dart';
 import 'package:dowami/constant/shared_colors/shared_colors.dart';
 import 'package:dowami/helpers/localization/app_localization.dart';
 import 'package:flutter/material.dart';
@@ -75,8 +76,7 @@ Widget sharedUnderLineInput(context,
       textAlign: textAlign ?? TextAlign.start,
       inputFormatters: inputFormatters,
       decoration: InputDecoration(
-        border: UnderlineInputBorder(
-            borderSide: BorderSide(color: Recolor.underLineColor)),
+        border: UnderlineInputBorder(borderSide: BorderSide(color: Recolor.underLineColor)),
         enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Recolor.underLineColor)),
         focusedBorder: UnderlineInputBorder(
@@ -124,24 +124,27 @@ Widget sharedBorderedInput(context,
 
 
       decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 5,vertical: 1),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 5,vertical: 0),
 
+        border:OutlineInputBorder(
+            borderRadius: BorderRadius.circular(radius??0),
+            borderSide: BorderSide(color: Recolor.underLineColor.withOpacity(.5),width:borderWidth??1,)),
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(radius??0),
             borderSide: BorderSide(color: Recolor.underLineColor.withOpacity(.5),width:borderWidth??1,)),
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(radius??0),
             borderSide: BorderSide(color:Recolor.underLineColor.withOpacity(.5),width:borderWidth??1)),
-        errorBorder:  OutlineInputBorder(
-            borderRadius: BorderRadius.circular(radius??0),
-            borderSide: BorderSide(color: Recolor.redColor,width:borderWidth??1)),
+       // errorBorder:  OutlineInputBorder(borderRadius: BorderRadius.circular(radius??0), borderSide: BorderSide(color: Recolor.redColor,width:borderWidth??1)),
 
       //  labelStyle: labelStyle ?? reg18Blue().copyWith(color: Recolor.txtGreyColor),
 
         suffixIcon: suffix,
         hintText: hintText,
         hintStyle: hintStyle,
-        errorStyle: reg14(context).copyWith(color: Recolor.redColor),
+        errorStyle: reg11(context).copyWith(color: Recolor.redColor,fontSize: 0.000001),
+       // focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(radius??0), borderSide: BorderSide(color: Recolor.underLineColor.withOpacity(.5),width:borderWidth??1,)),
+
       ),
       validator: validator ?? (value) {
             if (value != null && value.isNotEmpty) {

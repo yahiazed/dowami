@@ -79,6 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
             body:  BlocConsumer<BottomBarCubit,BottomBarState>(
                 listener: (context, state) {},
                 builder: (context,state) {
+                  print(LoginCubit.get(context).isCaptain);
 
                   if(LoginCubit.get(context).isCaptain)
                   { return cubit.captainScreens[cubit.currentIndex];}
